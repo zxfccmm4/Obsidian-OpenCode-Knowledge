@@ -26,7 +26,17 @@
 
 ## 🚀 Quick Start
 
-### 3-Step Installation
+### Option 1: Let AI Deploy for You (Zero Effort)
+
+Send this message to any AI assistant (ChatGPT, Claude, GLM, etc.) and it will handle the entire deployment automatically:
+
+```
+Deploy an AI knowledge base for me: https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/GUIDE_FOR_AI.md
+```
+
+> 📖 The AI assistant will read [`GUIDE_FOR_AI.md`](GUIDE_FOR_AI.md) for the complete deployment procedure, including environment checks, installation, and configuration.
+
+### Option 2: Manual Installation (3 Steps)
 
 ```bash
 # Step 1: Clone the repository

@@ -24,7 +24,17 @@
 
 ## 🚀 快速开始
 
-### 3 步完成安装
+### 方式一：让 AI 帮你部署（零门槛）
+
+把下面这句话发给任何 AI 助手（ChatGPT、Claude、GLM 等），它会自动帮你完成全部部署：
+
+```
+请帮我部署 AI 知识库：https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/GUIDE_FOR_AI.md
+```
+
+> 📖 AI 助手会读取 [`GUIDE_FOR_AI.md`](GUIDE_FOR_AI.md) 中的完整部署流程，自动完成环境检查、安装、配置。
+
+### 方式二：手动安装（3 步）
 
 ```bash
 # 第 1 步：克隆仓库
