@@ -141,51 +141,192 @@ echo ""
 # ----------------------------------------------------------
 echo -e "${YELLOW}【第 5 步 / 共 5 步】配置 AI 服务${NC}"
 echo ""
-echo "知识库需要一个 AI 大模型来驱动。推荐使用智谱 GLM（国内服务，注册简单）。"
+echo "知识库需要一个 AI 大模型来驱动。请选择你的 AI 服务提供商："
 echo ""
-echo "如果你还没有 API Key："
-echo "  1. 访问 https://open.bigmodel.cn"
-echo "  2. 注册账号"
-echo "  3. 在「API Keys」页面创建一个 Key"
+echo "  1) 智谱 GLM    — 国内服务，中文友好，注册简单（推荐国内用户）"
+echo "  2) Anthropic   — Claude 系列模型"
+echo "  3) OpenAI      — GPT 系列模型"
+echo "  4) Google      — Gemini 系列模型"
+echo "  5) OpenRouter  — 多模型网关，一个 Key 用多个模型"
+echo "  6) DeepSeek    — DeepSeek 模型（国内服务）"
+echo "  7) 跳过        — 稍后手动配置"
 echo ""
-read -p "> 请粘贴你的 API Key（或回车跳过，稍后配置）: " API_KEY
+read -p "> 请选择 (1-7): " PROVIDER_CHOICE
 
-if [ -n "$API_KEY" ]; then
-    # 创建 OpenCode 全局配置目录
-    OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
-    mkdir -p "$OPENCODE_CONFIG_DIR"
+# 创建 OpenCode 全局配置目录
+OPENCODE_CONFIG_DIR="$HOME/.config/opencode"
+mkdir -p "$OPENCODE_CONFIG_DIR"
 
-    # 写入最小配置
-    cat > "$OPENCODE_CONFIG_DIR/opencode.json" << 'CONFIG_EOF'
+CONFIG_FILE="$OPENCODE_CONFIG_DIR/opencode.json"
+MODEL_ID=""
+PROVIDER_BLOCK=""
+ENV_HINT=""
+
+case "$PROVIDER_CHOICE" in
+    1)
+        # 智谱 GLM
+        echo ""
+        echo "请先获取 API Key："
+        echo "  1. 访问 https://open.bigmodel.cn"
+        echo "  2. 注册账号 →「API Keys」→ 创建 Key"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="zhipuglm/glm-4.5"
+            PROVIDER_BLOCK="\"zhipuglm\": {
+      \"name\": \"智谱 GLM\",
+      \"npm\": \"@ai-sdk/openai-compatible\",
+      \"models\": {
+        \"glm-4.5\": { \"name\": \"GLM-4.5\" },
+        \"glm-4.5-air\": { \"name\": \"GLM-4.5-Air\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\",
+        \"baseURL\": \"https://open.bigmodel.cn/api/coding/paas/v4\"
+      }
+    }"
+        fi
+        ;;
+    2)
+        # Anthropic
+        echo ""
+        echo "请先获取 API Key：https://console.anthropic.com/settings/keys"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="anthropic/claude-sonnet-4-20250514"
+            PROVIDER_BLOCK="\"anthropic\": {
+      \"models\": {
+        \"claude-sonnet-4-20250514\": { \"name\": \"Claude Sonnet 4\" },
+        \"claude-haiku-35-20241022\": { \"name\": \"Claude 3.5 Haiku\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\"
+      }
+    }"
+        fi
+        ;;
+    3)
+        # OpenAI
+        echo ""
+        echo "请先获取 API Key：https://platform.openai.com/api-keys"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="openai/gpt-4.1"
+            PROVIDER_BLOCK="\"openai\": {
+      \"models\": {
+        \"gpt-4.1\": { \"name\": \"GPT-4.1\" },
+        \"gpt-4.1-mini\": { \"name\": \"GPT-4.1 Mini\" },
+        \"gpt-4.1-nano\": { \"name\": \"GPT-4.1 Nano\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\"
+      }
+    }"
+        fi
+        ;;
+    4)
+        # Google Gemini
+        echo ""
+        echo "请先获取 API Key：https://aistudio.google.com/apikey"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="google/gemini-2.5-pro"
+            PROVIDER_BLOCK="\"google\": {
+      \"models\": {
+        \"gemini-2.5-pro\": { \"name\": \"Gemini 2.5 Pro\" },
+        \"gemini-2.5-flash\": { \"name\": \"Gemini 2.5 Flash\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\"
+      }
+    }"
+        fi
+        ;;
+    5)
+        # OpenRouter
+        echo ""
+        echo "请先获取 API Key：https://openrouter.ai/settings/keys"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="openrouter/anthropic/claude-sonnet-4-20250514"
+            PROVIDER_BLOCK="\"openrouter\": {
+      \"models\": {
+        \"anthropic/claude-sonnet-4-20250514\": { \"name\": \"Claude Sonnet 4\" },
+        \"openai/gpt-4.1\": { \"name\": \"GPT-4.1\" },
+        \"google/gemini-2.5-pro\": { \"name\": \"Gemini 2.5 Pro\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\"
+      }
+    }"
+        fi
+        ;;
+    6)
+        # DeepSeek
+        echo ""
+        echo "请先获取 API Key：https://platform.deepseek.com/api_keys"
+        echo ""
+        read -p "> 请粘贴你的 API Key: " API_KEY
+        if [ -z "$API_KEY" ]; then
+            echo -e "${YELLOW}跳过。${NC}"
+            PROVIDER_CHOICE="7"
+        else
+            MODEL_ID="deepseek/deepseek-chat"
+            PROVIDER_BLOCK="\"deepseek\": {
+      \"name\": \"DeepSeek\",
+      \"npm\": \"@ai-sdk/openai-compatible\",
+      \"models\": {
+        \"deepseek-chat\": { \"name\": \"DeepSeek V3\" },
+        \"deepseek-reasoner\": { \"name\": \"DeepSeek R1\" }
+      },
+      \"options\": {
+        \"apiKey\": \"${API_KEY}\",
+        \"baseURL\": \"https://api.deepseek.com/v1\"
+      }
+    }"
+        fi
+        ;;
+    7|*)
+        echo -e "${YELLOW}跳过 AI 服务配置。稍后请手动编辑 ~/.config/opencode/opencode.json${NC}"
+        PROVIDER_CHOICE="7"
+        ;;
+esac
+
+# 写入配置文件
+if [ "$PROVIDER_CHOICE" != "7" ] && [ -n "$PROVIDER_BLOCK" ]; then
+    cat > "$CONFIG_FILE" << CONFIG_EOF
 {
-  "$schema": "https://opencode.ai/config.json",
+  "\$schema": "https://opencode.ai/config.json",
   "agent": {
     "build": { "options": { "store": false } },
     "plan": { "options": { "store": false } }
   },
-  "model": "zhipuglm/glm-4.5",
+  "model": "${MODEL_ID}",
   "provider": {
-    "zhipuglm": {
-      "name": "智谱 GLM",
-      "npm": "@ai-sdk/openai-compatible",
-      "models": {
-        "glm-4.5": { "name": "GLM-4.5" },
-        "glm-4.5-air": { "name": "GLM-4.5-Air" }
-      },
-      "options": {
-        "apiKey": "API_KEY_PLACEHOLDER",
-        "baseURL": "https://open.bigmodel.cn/api/coding/paas/v4"
-      }
-    }
+    ${PROVIDER_BLOCK}
   }
 }
 CONFIG_EOF
-
-    # 替换 API Key
-    sed -i '' "s/API_KEY_PLACEHOLDER/$API_KEY/" "$OPENCODE_CONFIG_DIR/opencode.json"
     echo -e "${GREEN}✓ AI 服务配置完成${NC}"
-else
-    echo -e "${YELLOW}跳过 API 配置。稍后请手动编辑 ~/.config/opencode/opencode.json${NC}"
 fi
 echo ""
 
