@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Obsidian
+.obsidian/
+!vault-template/.obsidian/
+
+# OpenCode local config
+.opencode/config.json
+
+# Node
+node_modules/
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# User data (these are generated at deploy time)
+# The template uses .gitkeep for empty dirs
+raw/*
+!vault-template/raw/.gitkeep
+
+# Logs
+*.log
