@@ -170,7 +170,18 @@ AI 会检查：
 
 ### Q3：可以用其他 AI 服务吗？
 
-可以！默认使用智谱 GLM（国内服务，注册简单），但你可以编辑配置文件 `~/.config/opencode/opencode.json` 切换到其他服务，如 GitHub Copilot、OpenAI 等。
+可以！安装脚本支持 6 个 AI 服务提供商，运行时自由选择：
+
+| 服务 | 特点 |
+|------|------|
+| 智谱 GLM ⭐ | 国内服务，中文好，推荐国内用户 |
+| Anthropic | Claude 系列模型 |
+| OpenAI | GPT 系列模型 |
+| Google Gemini | Gemini 系列模型 |
+| OpenRouter | 多模型网关，一个 Key 用多个模型 |
+| DeepSeek | 国内服务，性价比高 |
+
+选择后粘贴 API Key 即可自动配置。后续想换？编辑 `~/.config/opencode/opencode.json` 即可。
 
 ---
 
@@ -217,7 +228,7 @@ AI 会检查：
 
 - **[OpenCode](https://opencode.ai)** — 让 AI 助手可以运行在本地终端
 - **[Obsidian](https://obsidian.md)** — 优秀的本地笔记软件
-- **[智谱 GLM](https://open.bigmodel.cn)** — 提供中文友好的大模型服务
+- **[智谱 GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — 支持多种 AI 服务提供商
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — 知识库架构灵感来源
 
 ---

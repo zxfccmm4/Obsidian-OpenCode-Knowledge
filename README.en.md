@@ -48,7 +48,7 @@ The setup script handles everything automatically:
 1. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
 2. **Installs OpenCode** — installs the OpenCode CLI tool globally via npm
 3. **Creates Your Vault** — copies the `vault-template/` to your chosen location
-4. **Configures AI Service** — sets up API Key for Zhipu GLM (or your preferred provider)
+4. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
 5. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
 
 ---
@@ -192,7 +192,18 @@ Very secure:
 
 ### Q3: Can I use other AI services?
 
-Yes! The default uses Zhipu GLM (Chinese service, easy registration), but you can edit the config file `~/.config/opencode/opencode.json` to switch to other services like GitHub Copilot, OpenAI, etc.
+Yes! The setup script supports 6 providers — choose your preferred one during installation:
+
+| Provider | Highlights |
+|----------|------------|
+| Zhipu GLM ⭐ | Chinese service, great for Chinese users |
+| Anthropic | Claude series models |
+| OpenAI | GPT series models |
+| Google Gemini | Gemini series models |
+| OpenRouter | Multi-model gateway, one key for many models |
+| DeepSeek | Chinese service, cost-effective |
+
+Just paste your API Key and the config is generated automatically. Want to switch later? Edit `~/.config/opencode/opencode.json`.
 
 ---
 
@@ -239,7 +250,7 @@ Thanks to these projects and teams for their support:
 
 - **[OpenCode](https://opencode.ai)** — Enables AI assistants to run locally in the terminal
 - **[Obsidian](https://obsidian.md)** — Excellent local note-taking software
-- **[智谱 GLM (Zhipu GLM)](https://open.bigmodel.cn)** — Provides Chinese-friendly large language model services
+- **[Zhipu GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — Multiple AI service providers supported
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — Inspiration for the knowledge base architecture
 
 ---
