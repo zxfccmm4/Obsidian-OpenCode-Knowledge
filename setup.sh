@@ -108,18 +108,20 @@ echo ""
 # ----------------------------------------------------------
 echo -e "${YELLOW}【第 3 步 / 共 5 步】安装 OpenCode${NC}"
 
-if command -v opencode &>/dev/null; then
-    echo -e "${GREEN}✓ 已安装 OpenCode$(opencode --version 2>/dev/null || echo "")${NC}"
-else
-    echo "正在安装 OpenCode..."
-    npm install -g opencode 2>/dev/null || {
-        echo -e "${YELLOW}全局安装需要管理员权限，尝试 sudo...${NC}"
-        sudo npm install -g opencode
-    }
-    echo -e "${GREEN}✓ OpenCode 安装完成${NC}"
-fi
+echo "正在安装或更新 OpenCode..."
+npm install -g opencode-ai 2>/dev/null || {
+    echo -e "${YELLOW}全局安装需要管理员权限，尝试 sudo...${NC}"
+    sudo npm install -g opencode-ai
+}
 
 OPENCODE_PATH=$(command -v opencode 2>/dev/null || echo "")
+if [ -z "$OPENCODE_PATH" ]; then
+    echo -e "${RED}✗ OpenCode 安装完成后仍未找到 opencode 命令${NC}"
+    echo "请确认 npm 全局 bin 已加入 PATH，然后重新运行脚本。"
+    exit 1
+fi
+
+echo -e "${GREEN}✓ OpenCode 已就绪：$OPENCODE_PATH $(opencode --version 2>/dev/null || echo "")${NC}"
 echo ""
 
 # ----------------------------------------------------------
@@ -375,13 +377,14 @@ echo ""
 echo "  1. 打开 Obsidian → 「打开文件夹作为仓库」→ 选择："
 echo "     $VAULT_PATH"
 echo ""
-echo "  2. 安装 opencode-obsidian 插件（二选一）："
-echo "     方式 A：在 Obsidian 设置 → 第三方插件 → 浏览 → 搜索「OpenCode」"
-echo "     方式 B：在 Obsidian 设置 → 第三方插件 → 搜索安装「BRAT」"
-echo "            → 打开 BRAT 设置 → Add Plugin → 输入：mtymek/opencode-obsidian"
+echo "  2. 安装 opencode-obsidian 插件："
+echo "     推荐方式：在 Obsidian 设置 → 第三方插件 → 搜索安装「BRAT」"
+echo "              → 打开 BRAT 设置 → Add Plugin → 输入：mtymek/opencode-obsidian"
 echo ""
 echo "  3. 启用插件后，侧边栏会出现 OpenCode 面板"
 echo "     点击开始对话，试试说：「帮我创建一篇笔记」"
 echo ""
 echo -e "详细说明请参考同目录下的 ${BLUE}部署指南.md${NC}"
+echo -e "插件配置与排障请参考 ${BLUE}OpenCode-Obsidian-标准安装与排障.md${NC}"
+echo -e "一键诊断脚本：${BLUE}bash \"$SCRIPT_DIR/scripts/opencode-obsidian-doctor.sh\" --vault \"$VAULT_PATH\"${NC}"
 echo ""

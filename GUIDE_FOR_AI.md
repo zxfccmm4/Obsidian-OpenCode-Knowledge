@@ -114,7 +114,7 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh
 ### 4.1 安装 OpenCode
 
 ```bash
-npm install -g opencode
+npm install -g opencode-ai
 ```
 
 权限不足时加 `sudo`。
@@ -271,11 +271,7 @@ EOF
 
 ### 5.2 安装 opencode-obsidian 插件
 
-二选一：
-
-**方式 A（推荐）：** Obsidian 设置 → 第三方插件 → 浏览 → 搜索「OpenCode」→ 安装并启用
-
-**方式 B（通过 BRAT）：**
+推荐通过 BRAT 安装：
 1. Obsidian 设置 → 第三方插件 → 浏览 → 搜索「BRAT」→ 安装并启用
 2. `⌘ P` 打开命令面板 →「BRAT: Add a plugin」
 3. 输入 `mtymek/opencode-obsidian` → 安装并启用
@@ -310,7 +306,7 @@ EOF
 
 | 问题 | 原因 | 解决方案 |
 |------|------|----------|
-| `npm install -g opencode` 权限不足 | 全局 npm 目录权限问题 | 加 `sudo`：`sudo npm install -g opencode` |
+| `npm install -g opencode-ai` 权限不足 | 全局 npm 目录权限问题 | 加 `sudo`：`sudo npm install -g opencode-ai` |
 | `brew: command not found` | 未安装 Homebrew | 先装 Homebrew，或让用户手动下载 Node.js |
 | OpenCode 面板连接失败 | API Key 无效或网络问题 | 检查 `~/.config/opencode/opencode.json` 中的 apiKey |
 | OpenCode 面板显示空白 | 插件未启用 | Obsidian 设置 → 第三方插件 → 启用 opencode-obsidian |
@@ -331,7 +327,7 @@ Obsidian-OpenCode-Knowledge/
 ├── CONTRIBUTING.md           ← 贡献指南
 ├── .github/                  ← Issue/PR 模板
 └── vault-template/           ← 知识库模板
-    ├── CLAUDE.md             ← AI 规则（Ingest/Query/Lint 三种行为）
+    ├── CLAUDE.md             ← AI 规则（Ingest/Query/Lint/Social Ingest 四种行为）
     ├── raw/                  ← 原始素材目录（AI 只读）
     ├── wiki/                 ← AI 维护的笔记
     │   ├── index.md          ← 全局索引
