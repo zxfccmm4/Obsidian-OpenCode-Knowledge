@@ -17,6 +17,7 @@
 | Feature | Description |
 |---------|-------------|
 | 📥 **Auto Ingest** | Drop articles, PDFs, screenshots to AI, automatically organized into structured notes |
+| 📱 **Social Media Collection** | Xiaohongshu, Douyin, Twitter, Weibo and more — auto-classify, analyze, and digest into knowledge |
 | 🔍 **Smart Query** | Chat with AI: "Have I written about XX before?" |
 | 🏥 **Regular Health Check** | AI automatically checks knowledge base health, finds broken links, duplicates, orphaned pages |
 | 🔒 **Fully Local** | All data stays on your computer, no cloud upload |
@@ -92,11 +93,19 @@ After installation, your knowledge base structure looks like this:
 My Knowledge Base/
 ├── 📄 CLAUDE.md              # AI rules (system-maintained)
 ├── 📁 raw/                   # Raw materials (PDFs/articles/screenshots)
-│   └── organized by topic...
+│   ├── organized by topic...
+│   └── 📁 social/            # Social media raw content (by knowledge domain)
+│       ├── consumer-research/ # Reviews, comparisons, recommendations
+│       ├── skills-methods/    # Tutorials, guides, best practices
+│       ├── industry-insights/ # Trends, business analysis
+│       ├── lifestyle/         # Travel, food, fashion, home
+│       ├── opinions/          # Commentary, value perspectives
+│       ├── creative/          # Design, copywriting, marketing cases
+│       └── resources/         # Tool recommendations, book lists
 ├── 📁 wiki/                  # AI-organized notes
 │   ├── index.md              # 📇 Global index (auto-updated by AI)
 │   ├── log.md                # 📝 Operation log (auto-recorded by AI)
-│   └── topic notes...
+│   └── topic notes...        # Including digested social media knowledge
 ├── 📁 assets/                # Image assets
 └── 📁 .opencode/
     └── 📁 skill/             # AI skills (3 pre-installed)
@@ -132,6 +141,31 @@ AI will automatically:
 - Save raw materials to the `raw/` directory
 - Organize into structured notes in `wiki/`
 - Update the global index and operation log
+
+---
+
+### 📱 Social Media Collection (Social Ingest)
+
+After scraping content from Xiaohongshu, Douyin, Twitter, Weibo, etc. (using tools like opencli):
+
+```
+Scraped this:
+[paste scraped note content]
+```
+
+```
+Add this Xiaohongshu post
+```
+
+AI will automatically:
+- Classify by knowledge domain (consumer research / skills & methods / industry insights / lifestyle / opinions / creative inspiration / resources)
+- Assess credibility (sponsored content detection, evidence quality)
+- Archive raw content to `raw/social/<domain>/`
+- Digest and merge or create wiki articles (removing social media slang, keeping useful info)
+- Auto-merge multiple posts on the same topic (e.g., multiple café reviews → city café guide)
+- Update global index and operation log
+
+> Supported platforms: Xiaohongshu, Douyin, Twitter/X, Weibo, Bilibili, WeChat, etc.
 
 ---
 
