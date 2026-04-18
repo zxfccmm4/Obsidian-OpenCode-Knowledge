@@ -117,12 +117,72 @@ tags: []
 
 **动作流程：**
 
-**第一步：分类**
-1. 读取 frontmatter 和正文，判断 domain（知识域）和 content_type
-2. 如果 frontmatter 缺失 domain / content_type / credibility，自动补全
-3. 移入 `raw/social/<domain>/`，文件名保持原样
+**第一步：抓取（opencli 管线）**
 
-**第二步：分析**
+用 opencli 批量抓取笔记详情和图片，每篇笔记独立处理：
+
+```bash
+# 1. 搜索（按平台替换 xiaohongshu）
+opencli xiaohongshu search "<关键词>" --limit 10 -f json
+
+# 2. 获取笔记详情（必须传完整签名 URL，含 xsec_token）
+opencli xiaohongshu note "<完整URL>" -f json
+
+# 3. 下载图片到 assets
+opencli xiaohongshu download "<完整URL>" --output "assets/xiaohongshu/<笔记标题>"
+```
+
+**图片存储规则：**
+- 目录用**笔记标题**命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用笔记 ID
+- opencli download 会自动创建以 ID 命名的子目录，抓取后需将文件提到标题目录下，删除空的 ID 子目录
+- 其他平台图片路径类推：`assets/douyin/<标题>/`、`assets/bilibili/<标题>/` 等
+
+**第二步：生成 raw 笔记（图文一体）**
+
+每篇 raw 笔记 = frontmatter + 正文 + 配图，**必须包含图片引用**。
+
+用 `opencli obsidian create` 创建笔记，确保 Obsidian markdown 格式正确：
+
+```bash
+opencli obsidian create path="raw/social/<domain>/<文件名>.md" content="<完整内容>"
+```
+
+笔记结构：
+```markdown
+---
+title: 标题
+source: Xiaohongshu | Douyin | ...
+author: 作者名
+created: YYYY-MM-DD
+note_url: 原始链接
+domain: 消费研究 | ...
+content_type: 实测体验 | ...
+credibility: high | medium | low
+metrics:
+  likes: 0
+  collects: 0
+  comments: 0
+  shares: 0
+  views: 0
+tags: []
+---
+
+<笔记正文>
+
+## 配图
+
+![](../../../assets/<平台>/<笔记标题>/xxx_1.jpg)
+![](../../../assets/<平台>/<笔记标题>/xxx_2.jpg)
+...
+```
+
+**配图路径关键规则：**
+- 从 `raw/social/<domain>/` 到 vault 根需要上溯**三层**：`../../../`
+- 完整路径模板：`![](../../../assets/<平台>/<笔记标题>/<文件名>.jpg)`
+- 图片文件名保持 opencli 下载的原始命名（`{note_id}_{index}.jpg`）
+- 如果笔记正文有图文对应关系（如 P2-4 对应某店），尽量将图片插到对应位置而非全部堆在末尾
+
+**第三步：分析**
 1. 提取核心信息点，形成结构化摘要
 2. 评估可信度 credibility：
    - high：专业领域作者 + 高互动 + 有实测证据
@@ -130,7 +190,7 @@ tags: []
    - low：疑似软广 / 无细节 / 搬运内容
 3. 扫描 wiki 中是否已有相关主题文章
 
-**第三步：消化（按 content_type 差异化处理）**
+**第四步：消化（按 content_type 差异化处理）**
 - **实测体验类**（探店、测评）：提取结构化数据（名称/价格/评分/优缺点），同主题多篇合并为对比维度
 - **教程攻略类**：提取可操作步骤，去掉废话，验证时效性，同技能多篇合并为最佳实践
 - **分析评论类**：提取核心论点和论据，与 wiki 已有内容做观点对照，矛盾观点并列保留
@@ -142,13 +202,13 @@ tags: []
 2. 全新主题 → 新建 `wiki/<domain>/<主题>.md`
 3. 跨域信息 → 主文章 + See Also 交叉引用
 
-**第四步：润色**
+**第五步：润色**
 - 去社交口语（emoji 堆叠、"绝绝子"、"yyds"、语气词堆砌）
 - 保留有信息密度的主观评价
 - 按 content_type 选择对应的结构化模板
 - 中英文平台内容统一用中文消化（专有名词保留原文）
 
-**第五步：收尾**
+**第六步：收尾**
 1. 更新 wiki/index.md
 2. 追加 wiki/log.md：
    ```
@@ -156,9 +216,10 @@ tags: []
    - Source: <平台> | <作者> | domain: <知识域>
    - Credibility: <high/medium/low>
    - Action: merged into <文章> / created new
+   - Images: <N> 张 → assets/<平台>/<笔记标题>/
    ```
 
-**批量模式：** 一次给多条笔记时，先全部分类，再按 domain 分组消化，减少重复扫描 wiki。
+**批量模式：** 一次给多条笔记时，先全部抓取（搜索+详情+图片），再按 domain 分组消化，减少重复扫描 wiki。被风控拦截的笔记跳过，在 log 中标注。
 
 ## 约定
 
@@ -166,7 +227,7 @@ tags: []
 - 对话里引用 wiki 文章用**相对 vault 根的路径**（例如 `wiki/主题/xxx.md`）。
 - 日期用今天的日期。Updated 反映文章内容最后变动的时间，不是文件系统时间戳。
 - **raw 绝对不能改**。如果发现 raw 里有错，在 wiki 文章里标注"source contains error"而不是改 raw。
-- **社交媒体图片目录**用笔记标题命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用 ID。opencli 抓取后需将 ID 目录重命名为标题。
+- **社交媒体图片目录**用笔记标题命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用 ID。opencli 抓取后需将 ID 子目录的文件提到标题目录下。
 
 ## 放开的约束
 
