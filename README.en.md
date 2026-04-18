@@ -50,7 +50,7 @@ bash setup.sh
 # Step 3: Open the generated "My Knowledge Base" folder in Obsidian
 ```
 
-> 📖 For detailed steps, see [`部署指南.md`](部署指南.md) (Chinese deployment guide)
+> 📖 For detailed steps, see [`deployment-guide.md`](deployment-guide.md) (Chinese deployment guide)
 
 ### What `setup.sh` Does
 
@@ -221,7 +221,7 @@ The basic version works great. Add these features on demand by simply telling Op
 
 ### Q1: I don't have a technical background. Can I still use this?
 
-Absolutely! This is designed specifically for non-technical users. Just follow the [`部署指南.md`](部署指南.md) step by step. No programming knowledge needed.
+Absolutely! This is designed specifically for non-technical users. Just follow the [`deployment-guide.md`](deployment-guide.md) step by step. No programming knowledge needed.
 
 ---
 

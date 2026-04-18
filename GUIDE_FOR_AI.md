@@ -319,7 +319,7 @@ EOF
 ```
 Obsidian-OpenCode-Knowledge/
 ├── setup.sh                  ← 一键部署脚本（交互式）
-├── 部署指南.md                ← 面向人类的部署文档
+├── deployment-guide.md        ← 面向人类的部署文档
 ├── GUIDE_FOR_AI.md           ← 你正在读的这个文件
 ├── README.md                 ← 项目说明（中文）
 ├── README.en.md              ← 项目说明（英文）

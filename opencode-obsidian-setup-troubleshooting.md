@@ -1,6 +1,6 @@
 # OpenCode-Obsidian 标准安装与排障
 
-这份文档补充 `setup.sh` 和 `部署指南.md` 中关于 `opencode-obsidian` 插件的配置与故障排查细节。
+这份文档补充 `setup.sh` 和 `deployment-guide.md` 中关于 `opencode-obsidian` 插件的配置与故障排查细节。
 
 适用场景：
 

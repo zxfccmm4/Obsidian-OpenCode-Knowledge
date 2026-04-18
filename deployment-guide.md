@@ -141,7 +141,7 @@ cd ~/Desktop/deploy && bash setup.sh
 
 如果你想进一步确认 `opencode-obsidian` 插件的推荐配置，或者面板显示 `Error` / `连接失败`，优先看这份补充说明：
 
-- [`OpenCode-Obsidian-标准安装与排障.md`](OpenCode-Obsidian-标准安装与排障.md)
+- [`opencode-obsidian-setup-troubleshooting.md`](opencode-obsidian-setup-troubleshooting.md)
 
 仓库里还附带了一个快速诊断脚本：
 
@@ -253,7 +253,7 @@ cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/D
 
 4. 仍然不行时，继续参考：
 
-- [`OpenCode-Obsidian-标准安装与排障.md`](OpenCode-Obsidian-标准安装与排障.md)
+- [`opencode-obsidian-setup-troubleshooting.md`](opencode-obsidian-setup-troubleshooting.md)
 
 ---
 
