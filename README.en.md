@@ -93,6 +93,7 @@ After installation, your knowledge base structure looks like this:
 ```
 My Knowledge Base/
 ├── 📄 AGENTS.md              # AI rules (system-maintained)
+├── 📄 AI_CONFIG.md           # ⚙️ AI configuration (user-customizable)
 ├── 📁 raw/                   # Raw materials (PDFs/articles/screenshots)
 │   ├── organized by topic...
 │   └── 📁 social/            # Social media raw content (by knowledge domain)
@@ -233,6 +234,18 @@ The basic version works great. Add these features on demand by simply telling Op
 ---
 
 ## ❓ FAQ
+
+### Q0: How do I customize AI behavior?
+
+Edit `AI_CONFIG.md` in your knowledge base root directory. You can customize:
+- **Knowledge domains**: Add/remove/modify categories (e.g., add "Academic Notes")
+- **Trigger words**: Change keywords that activate AI operations
+- **Output language**: Switch to English content processing
+- **Social platforms**: Add new platforms
+- **Lint checks**: Enable/disable individual health checks
+- **Custom rules**: Write additional rules in the `user-custom-rules` section
+
+> Changes take effect on the next conversation — no restart needed.
 
 ### Q1: I don't have a technical background. Can I still use this?
 

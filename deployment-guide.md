@@ -264,6 +264,7 @@ cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/D
 ```
 我的知识库/
 ├── AGENTS.md               # AI 规则（不要手动改）
+├── AI_CONFIG.md            # ⚙️ AI 配置（可自定义，修改后自动生效）
 ├── raw/                   # 原始素材（你扔进来的东西）
 ├── wiki/                  # AI 整理好的笔记
 │   ├── index.md           # 全局索引（AI 自动维护）

@@ -305,7 +305,7 @@ EOF
 | Node.js | `node -v` | v18+ |
 | OpenCode | `opencode --version` | 有版本号输出 |
 | OpenCLI | `opencli --version` | 有版本号输出（社交媒体采集需要） |
-| 知识库目录 | `ls ~/Desktop/我的知识库` | 看到 AGENTS.md, raw/, wiki/, assets/ |
+| 知识库目录 | `ls ~/Desktop/我的知识库` | 看到 AGENTS.md, AI_CONFIG.md, raw/, wiki/, assets/ |
 | AI 配置 | `cat ~/.config/opencode/opencode.json` | 包含用户选择的 provider 和 API Key |
 | Obsidian 插件 | `ls ~/Desktop/我的知识库/.obsidian/plugins/opencode-obsidian/` | 看到 data.json |
 
@@ -339,6 +339,7 @@ Obsidian-OpenCode-Knowledge/
 ├── .github/                  ← Issue/PR 模板
 └── vault-template/           ← 知识库模板
     ├── AGENTS.md              ← AI 规则（Ingest/Query/Lint/Social Ingest 四种行为）
+    ├── AI_CONFIG.md           ← 用户可编辑的 AI 配置（知识域/触发词/语言/自定义规则）
     ├── raw/                  ← 原始素材目录（AI 只读）
     ├── wiki/                 ← AI 维护的笔记
     │   ├── index.md          ← 全局索引
