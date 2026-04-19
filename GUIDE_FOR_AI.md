@@ -119,7 +119,17 @@ npm install -g opencode-ai
 
 权限不足时加 `sudo`。
 
-### 4.2 复制 Vault 模板
+### 4.2 安装 OpenCLI
+
+```bash
+npm install -g @jackwener/opencli
+```
+
+权限不足时加 `sudo`。
+
+OpenCLI 是社交媒体采集功能的驱动工具，支持 87+ 网站适配器（小红书、抖音、Twitter 等）。
+
+### 4.3 复制 Vault 模板
 
 ```bash
 VAULT_PATH="$HOME/Desktop/我的知识库"
@@ -127,7 +137,7 @@ cp -R ~/Desktop/Obsidian-OpenCode-Knowledge/vault-template "$VAULT_PATH"
 find "$VAULT_PATH" -name ".gitkeep" -delete
 ```
 
-### 4.3 配置 AI 服务
+### 4.4 配置 AI 服务
 
 根据用户选择的 provider，写入 `~/.config/opencode/opencode.json`：
 
@@ -231,7 +241,7 @@ mkdir -p ~/.config/opencode
 }
 ```
 
-### 4.4 配置 Obsidian 插件
+### 4.5 配置 Obsidian 插件
 
 ```bash
 VAULT_PATH="$HOME/Desktop/我的知识库"
@@ -294,7 +304,8 @@ EOF
 |--------|-----------|----------|
 | Node.js | `node -v` | v18+ |
 | OpenCode | `opencode --version` | 有版本号输出 |
-| 知识库目录 | `ls ~/Desktop/我的知识库` | 看到 CLAUDE.md, raw/, wiki/, assets/ |
+| OpenCLI | `opencli --version` | 有版本号输出（社交媒体采集需要） |
+| 知识库目录 | `ls ~/Desktop/我的知识库` | 看到 AGENTS.md, raw/, wiki/, assets/ |
 | AI 配置 | `cat ~/.config/opencode/opencode.json` | 包含用户选择的 provider 和 API Key |
 | Obsidian 插件 | `ls ~/Desktop/我的知识库/.obsidian/plugins/opencode-obsidian/` | 看到 data.json |
 
@@ -327,17 +338,23 @@ Obsidian-OpenCode-Knowledge/
 ├── CONTRIBUTING.md           ← 贡献指南
 ├── .github/                  ← Issue/PR 模板
 └── vault-template/           ← 知识库模板
-    ├── CLAUDE.md             ← AI 规则（Ingest/Query/Lint/Social Ingest 四种行为）
+    ├── AGENTS.md              ← AI 规则（Ingest/Query/Lint/Social Ingest 四种行为）
     ├── raw/                  ← 原始素材目录（AI 只读）
     ├── wiki/                 ← AI 维护的笔记
     │   ├── index.md          ← 全局索引
     │   ├── log.md            ← 操作日志
     │   └── 使用指南.md
     ├── assets/               ← 配图
-    └── .opencode/skill/      ← 预装 AI 技能
+    └── .opencode/skill/      ← 预装 AI 技能（共 9 个）
         ├── obsidian-cli/     ← Obsidian 操作能力
         ├── obsidian-markdown/ ← Markdown 生成
-        └── defuddle/         ← 网页内容提取
+        ├── defuddle/         ← 网页内容提取
+        ├── opencli-usage/    ← OpenCLI 命令参考（87+ 适配器）
+        ├── smart-search/     ← 智能搜索路由
+        ├── opencli-browser/  ← 浏览器自动化
+        ├── opencli-autofix/  ← 适配器自动修复
+        ├── opencli-explorer/ ← 适配器开发指南
+        └── opencli-oneshot/  ← 单点快速 CLI 生成
 ```
 
 ---

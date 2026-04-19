@@ -15,7 +15,7 @@
 | 功能 | 说明 |
 |------|------|
 | 📥 **自动录入** | 文章、PDF、截图直接丢给 AI，自动整理成结构化笔记 |
-| 📱 **社交媒体采集** | 小红书、抖音、Twitter、微博等平台内容一键归类、分析、消化 |
+| 📱 **社交媒体采集** | 小红书、抖音、Twitter、微博等平台内容一键归类、分析、消化（通过 [OpenCLI](https://github.com/jackwener/OpenCLI) 驱动） |
 | 🔍 **智能查询** | 像聊天一样问 AI：「我之前写过关于 XX 的内容吗？」 |
 | 🏥 **定期体检** | AI 自动检查知识库健康度，发现死链、重复、孤岛页面 |
 | 🔒 **完全本地** | 所有数据存在你的电脑上，不上传云端 |
@@ -60,7 +60,7 @@ bash setup.sh
 ┌─────────────────────────────────────────────────────────┐
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
 │  │   Obsidian  │◄──►│  OpenCode   │◄──►│  知识库规则 │ │
-│  │  (笔记软件)  │    │  (AI 助手)  │    │ (CLAUDE.md) │ │
+│  │  (笔记软件)  │    │  (AI 助手)  │    │ (AGENTS.md) │ │
 │  └─────────────┘    └─────────────┘    └─────────────┘ │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -79,7 +79,7 @@ bash setup.sh
 
 ```
 我的知识库/
-├── 📄 CLAUDE.md              # AI 规则（由系统维护）
+├── 📄 AGENTS.md               # AI 规则（由系统维护）
 ├── 📁 raw/                   # 原始素材（PDF/文章/截图等）
 │   ├── 按主题分类存放...
 │   └── 📁 social/            # 社交媒体原始内容（按知识域分类）
@@ -99,7 +99,13 @@ bash setup.sh
     └── 📁 skill/             # AI 技能
         ├── obsidian-cli/     # Obsidian 操作能力
         ├── obsidian-markdown/ # Markdown 生成能力
-        └── defuddle/         # 网页内容提取能力
+        ├── defuddle/         # 网页内容提取能力
+        ├── opencli-usage/    # OpenCLI 命令参考（87+ 网站适配器）
+        ├── smart-search/     # 智能搜索路由器
+        ├── opencli-browser/  # 浏览器自动化
+        ├── opencli-autofix/  # 适配器自动修复
+        ├── opencli-explorer/ # 适配器开发指南
+        └── opencli-oneshot/  # 单点快速 CLI 生成
 ```
 
 ---
@@ -139,6 +145,8 @@ AI 会自动：
 - 判断内容知识域（消费研究/技能方法/行业洞察/生活方式/观点思考/创意灵感/资源收藏）
 - 评估可信度（是否软广、是否有实测细节）
 - 归档原始内容到 `raw/social/<知识域>/`
+
+> OpenCLI 支持通过 Chrome 浏览器自动抓取内容，复用你的登录状态，无需额外配置密码。详见 [OpenCLI 项目](https://github.com/jackwener/OpenCLI)。
 - 消化润色后合并或新建 wiki 文章（去除社交口语，保留有效信息）
 - 同主题多篇自动合并（如多篇咖啡探店 → 一篇城市咖啡指南）
 - 更新全局索引和操作日志
@@ -272,6 +280,7 @@ AI 会检查：
 
 - **[OpenCode](https://opencode.ai)** — 让 AI 助手可以运行在本地终端
 - **[Obsidian](https://obsidian.md)** — 优秀的本地笔记软件
+- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — 让任何网站变成命令行，支持 87+ 网站适配器
 - **[智谱 GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — 支持多种 AI 服务提供商
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — 知识库架构灵感来源
 

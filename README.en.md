@@ -17,7 +17,7 @@
 | Feature | Description |
 |---------|-------------|
 | 📥 **Auto Ingest** | Drop articles, PDFs, screenshots to AI, automatically organized into structured notes |
-| 📱 **Social Media Collection** | Xiaohongshu, Douyin, Twitter, Weibo and more — auto-classify, analyze, and digest into knowledge |
+| 📱 **Social Media Collection** | Xiaohongshu, Douyin, Twitter, Weibo and more — auto-classify, analyze, and digest into knowledge (powered by [OpenCLI](https://github.com/jackwener/OpenCLI)) |
 | 🔍 **Smart Query** | Chat with AI: "Have I written about XX before?" |
 | 🏥 **Regular Health Check** | AI automatically checks knowledge base health, finds broken links, duplicates, orphaned pages |
 | 🔒 **Fully Local** | All data stays on your computer, no cloud upload |
@@ -58,9 +58,10 @@ The setup script handles everything automatically:
 
 1. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
 2. **Installs OpenCode** — installs the OpenCode CLI tool globally via npm
-3. **Creates Your Vault** — copies the `vault-template/` to your chosen location
-4. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
-5. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
+3. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (87+ site adapters)
+4. **Creates Your Vault** — copies the `vault-template/` to your chosen location
+5. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
+6. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
 
 ---
 
@@ -71,7 +72,7 @@ This solution works with three components:
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
-│  │   Obsidian  │◄──►│  OpenCode   │◄──►│   CLAUDE.md │ │
+│  │   Obsidian  │◄──►│  OpenCode   │◄──►│   AGENTS.md │ │
 │  │ (Notes App) │    │  (AI Agent) │    │  (AI Rules) │ │
 │  └─────────────┘    └─────────────┘    └─────────────┘ │
 └─────────────────────────────────────────────────────────┘
@@ -81,7 +82,7 @@ This solution works with three components:
 |-----------|---------|----------------------|
 | **Obsidian** | Local note-taking app | Write notes like using a regular notebook |
 | **OpenCode** | AI model interface | Chat with AI directly in Obsidian |
-| **CLAUDE.md** | AI behavior guide | AI knows how to organize, query, and check your knowledge base |
+| **AGENTS.md** | AI behavior guide | AI knows how to organize, query, and check your knowledge base |
 
 ---
 
@@ -91,7 +92,7 @@ After installation, your knowledge base structure looks like this:
 
 ```
 My Knowledge Base/
-├── 📄 CLAUDE.md              # AI rules (system-maintained)
+├── 📄 AGENTS.md              # AI rules (system-maintained)
 ├── 📁 raw/                   # Raw materials (PDFs/articles/screenshots)
 │   ├── organized by topic...
 │   └── 📁 social/            # Social media raw content (by knowledge domain)
@@ -108,21 +109,33 @@ My Knowledge Base/
 │   └── topic notes...        # Including digested social media knowledge
 ├── 📁 assets/                # Image assets
 └── 📁 .opencode/
-    └── 📁 skill/             # AI skills (3 pre-installed)
+    └── 📁 skill/             # AI skills (9 pre-installed)
         ├── obsidian-cli/     # Obsidian operation capabilities
         ├── obsidian-markdown/ # Markdown generation capabilities
-        └── defuddle/         # Web content extraction capabilities
+        ├── defuddle/         # Web content extraction capabilities
+        ├── opencli-usage/    # OpenCLI command reference (87+ adapters)
+        ├── smart-search/     # Intelligent search router
+        ├── opencli-browser/  # Browser automation
+        ├── opencli-autofix/  # Adapter auto-repair
+        ├── opencli-explorer/ # Adapter development guide
+        └── opencli-oneshot/  # Quick CLI generation
 ```
 
 ### Pre-installed Skills
 
-The template comes with 3 core skills in `vault-template/.opencode/skill/`:
+The template comes with 9 pre-installed skills in `vault-template/.opencode/skill/`:
 
 | Skill | Purpose |
 |-------|---------|
 | `obsidian-cli` | Read, create, search notes in your Obsidian vault |
 | `obsidian-markdown` | Generate and edit Obsidian-flavored Markdown |
 | `defuddle` | Extract clean content from web pages |
+| `opencli-usage` | OpenCLI command reference (87+ site adapters) |
+| `smart-search` | Intelligent search router across multiple platforms |
+| `opencli-browser` | Browser automation for AI agents |
+| `opencli-autofix` | Automatically fix broken site adapters |
+| `opencli-explorer` | Guide for creating new site adapters |
+| `opencli-oneshot` | Quick 4-step template for adding a single command |
 
 ---
 
@@ -161,6 +174,8 @@ AI will automatically:
 - Classify by knowledge domain (consumer research / skills & methods / industry insights / lifestyle / opinions / creative inspiration / resources)
 - Assess credibility (sponsored content detection, evidence quality)
 - Archive raw content to `raw/social/<domain>/`
+
+> OpenCLI supports automatic content scraping via Chrome browser, reusing your login sessions. See [OpenCLI project](https://github.com/jackwener/OpenCLI).
 - Digest and merge or create wiki articles (removing social media slang, keeping useful info)
 - Auto-merge multiple posts on the same topic (e.g., multiple café reviews → city café guide)
 - Update global index and operation log
@@ -294,6 +309,7 @@ Thanks to these projects and teams for their support:
 
 - **[OpenCode](https://opencode.ai)** — Enables AI assistants to run locally in the terminal
 - **[Obsidian](https://obsidian.md)** — Excellent local note-taking software
+- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — Make any website your CLI, 87+ site adapters
 - **[Zhipu GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — Multiple AI service providers supported
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — Inspiration for the knowledge base architecture
 

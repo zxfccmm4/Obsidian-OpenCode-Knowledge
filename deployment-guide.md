@@ -263,7 +263,7 @@ cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/D
 
 ```
 我的知识库/
-├── CLAUDE.md              # AI 规则（不要手动改）
+├── AGENTS.md               # AI 规则（不要手动改）
 ├── raw/                   # 原始素材（你扔进来的东西）
 ├── wiki/                  # AI 整理好的笔记
 │   ├── index.md           # 全局索引（AI 自动维护）
@@ -271,10 +271,16 @@ cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/D
 │   └── 使用指南.md         # 使用说明
 ├── assets/                # 配图
 └── .opencode/
-    └── skill/             # AI 技能（已预装 3 个核心技能）
+    └── skill/             # AI 技能（已预装 9 个核心技能）
         ├── obsidian-cli/  # Obsidian 操作能力
         ├── obsidian-markdown/  # Markdown 生成能力
-        └── defuddle/      # 网页内容提取能力
+        ├── defuddle/      # 网页内容提取能力
+        ├── opencli-usage/ # OpenCLI 命令参考（87+ 适配器）
+        ├── smart-search/  # 智能搜索路由
+        ├── opencli-browser/  # 浏览器自动化
+        ├── opencli-autofix/  # 适配器自动修复
+        ├── opencli-explorer/ # 适配器开发指南
+        └── opencli-oneshot/  # 单点快速 CLI 生成
 ```
 
 ---
