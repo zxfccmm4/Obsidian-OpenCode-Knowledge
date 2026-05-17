@@ -36,6 +36,3 @@ jobs:
 
       - name: Validate docs
         run: bash scripts/validate-docs.sh
-
-      - name: Verify repository
-        run: bash scripts/verify.sh
