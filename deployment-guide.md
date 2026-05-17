@@ -42,6 +42,19 @@ tags:
 
 ---
 
+## 先做只读检查
+
+如果你还不确定要不要开始安装，或者只是想先确认仓库和本机环境，建议先运行：
+
+```bash
+git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git ~/Desktop/Obsidian-OpenCode-Knowledge
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/verify.sh
+```
+
+这一步不会安装依赖，也不会改你的配置文件。
+
+---
+
 ## 安装步骤
 
 ### 第 1 步：安装 Obsidian
@@ -84,12 +97,20 @@ tags:
 
 1. 打开 **终端**（在「启动台」→「其他」里找到「终端」，或按 `⌘ 空格` 搜索「Terminal」）
 
-2. 把部署包（`deploy` 文件夹）拖到桌面
+2. 获取仓库文件：
+   - 会用 Git：运行 `git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git ~/Desktop/Obsidian-OpenCode-Knowledge`
+   - 不会用 Git：在 GitHub 页面点击 **Code → Download ZIP**，解压后把文件夹放到桌面
 
 3. 在终端里输入以下命令，然后按回车：
 
 ```bash
-cd ~/Desktop/deploy && bash setup.sh
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh
+```
+
+如果你只是想先预演、不真正安装，也可以运行：
+
+```bash
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh --dry-run --non-interactive --provider skip
 ```
 
 4. 按照脚本提示操作：
@@ -146,7 +167,13 @@ cd ~/Desktop/deploy && bash setup.sh
 仓库里还附带了一个快速诊断脚本：
 
 ```bash
-cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库"
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库"
+```
+
+以及一个只读检查脚本：
+
+```bash
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/verify.sh --vault "$HOME/Desktop/我的知识库"
 ```
 
 它会帮你检查：
@@ -221,13 +248,20 @@ open ~/.config/opencode/opencode.json
 
 ### Q4：数据安全吗？
 
-- **所有数据都在你自己的电脑上**，不会上传到云端（除非你自己配置了同步）
+- **笔记文件保存在你自己的电脑上**，本项目本身不额外托管你的笔记数据
+- **使用 AI 时**，当前对话内容会发送给你配置的模型服务商（如 OpenAI、Anthropic、GLM 等）
 - `raw/` 目录里的原始素材**永远不会被 AI 修改**
 - Obsidian 的笔记就是普通的 Markdown 文件，随时可以复制备份
 
 ### Q5：脚本运行出错
 
-把终端里的错误信息截图，发给帮你部署的人。
+先运行：
+
+```bash
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/verify.sh --vault "$HOME/Desktop/我的知识库"
+```
+
+再把终端里的错误信息截图，发给帮你部署的人。
 
 ### Q6：OpenCode 面板显示 `Error` 或 `Process exited unexpectedly (exit code 1)`
 
@@ -236,19 +270,19 @@ open ~/.config/opencode/opencode.json
 1. 运行：
 
 ```bash
-cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库"
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库"
 ```
 
 2. 如果看到端口被占用，再运行：
 
 ```bash
-cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库" --kill-port
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库" --kill-port
 ```
 
 3. 如果想手动验证服务能不能启动，再运行：
 
 ```bash
-cd ~/Desktop/deploy && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库" --start-test
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/opencode-obsidian-doctor.sh --vault "$HOME/Desktop/我的知识库" --start-test
 ```
 
 4. 仍然不行时，继续参考：

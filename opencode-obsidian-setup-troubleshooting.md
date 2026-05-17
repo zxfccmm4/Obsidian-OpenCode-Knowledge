@@ -169,7 +169,13 @@ sed -n '1,120p' ~/.local/share/opencode/log/<最新日志文件>
 仓库里已经附带诊断脚本：
 
 ```bash
-bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/opencode-obsidian-doctor.sh
+```
+
+如果想先做更温和的只读检查，可以先运行：
+
+```bash
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/verify.sh
 ```
 
 默认检查 `~/Desktop/我的知识库`。
@@ -177,19 +183,19 @@ bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh
 如果你的 Vault 在别处：
 
 ```bash
-bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径"
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径"
 ```
 
 如果要自动清理占用端口的旧进程：
 
 ```bash
-bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径" --kill-port
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径" --kill-port
 ```
 
 如果要用当前环境做一次前台启动验证：
 
 ```bash
-bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径" --start-test
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径" --start-test
 ```
 
 ---
@@ -257,7 +263,7 @@ curl http://127.0.0.1:14096/global/health
 以后每次遇到 `OpenCode` 面板异常，先跑：
 
 ```bash
-bash /path/to/deploy/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径"
+bash /path/to/Obsidian-OpenCode-Knowledge/scripts/opencode-obsidian-doctor.sh --vault "/你的/Vault/路径"
 ```
 
 先让脚本把二进制、端口、健康接口、插件配置和日志都看一遍，再决定是重启 Obsidian、杀旧进程，还是修插件配置。

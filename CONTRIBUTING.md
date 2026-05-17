@@ -23,20 +23,20 @@ Thank you for your interest in this project! Whether you're a seasoned developer
 ### 快速开始 / Quick Start
 
 1. **Fork 仓库** / Fork the repository
-   
+
    点击 GitHub 右上角的 "Fork" 按钮，将仓库复制到你的账户下。
-   
+
    Click the "Fork" button in the top right of GitHub to copy the repository to your account.
 
 2. **克隆你的 Fork** / Clone your fork
-   
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/Obsidian-OpenCode-Knowledge.git
    cd Obsidian-OpenCode-Knowledge
    ```
 
 3. **创建分支** / Create a branch
-   
+
    ```bash
    git checkout -b feat/your-feature-name
    # 或者 / or
@@ -46,7 +46,7 @@ Thank you for your interest in this project! Whether you're a seasoned developer
 4. **进行修改** / Make your changes
 
 5. **提交并推送** / Commit and push
-   
+
    ```bash
    git add .
    git commit -m "feat: add new feature"
@@ -54,9 +54,9 @@ Thank you for your interest in this project! Whether you're a seasoned developer
    ```
 
 6. **创建 Pull Request** / Create a Pull Request
-   
+
    回到 GitHub，点击 "Compare & pull request"。
-   
+
    Go back to GitHub and click "Compare & pull request".
 
 ---
@@ -70,32 +70,48 @@ Thank you for your interest in this project! Whether you're a seasoned developer
 - **Obsidian** (用于测试知识库模板 / for testing the knowledge base template)
 - **OpenCode** (可选，用于体验完整工作流 / optional, for experiencing the full workflow)
 
-### 快速测试 / Quick Testing
+### 快速体验 / Quick Trial
 
-我们提供了 `setup.sh` 脚本来快速验证环境：
+我们提供了 `setup.sh` 脚本来快速体验完整安装流程。它会安装依赖、创建知识库目录，并可能更新你的全局 OpenCode 配置，所以建议先在测试环境或一次性目录里运行。
 
-We provide a `setup.sh` script for quick environment verification:
+We provide a `setup.sh` script to try the full installation flow quickly. It installs dependencies, creates a vault directory, and may update your global OpenCode configuration, so it's best to run it in a disposable or test environment first.
 
 ```bash
 # 克隆仓库 / Clone the repository
 git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
 cd Obsidian-OpenCode-Knowledge
 
-# 运行测试脚本 / Run the test script
+# 运行安装脚本 / Run the installer
 ./setup.sh
 ```
 
-这个脚本会检查：
+这个脚本会：
 
-- macOS 版本兼容性
-- 必要的命令行工具
-- 目录结构完整性
+- 检查 Node.js / npm 环境
+- 安装或更新 OpenCode 与 OpenCLI
+- 从模板创建一个新的知识库目录
+- 可选写入 OpenCode provider 配置和 Obsidian 插件配置
+- 支持 `--dry-run` 和 `--non-interactive`，便于自动化或预演
 
-This script checks:
+This script will:
 
-- macOS version compatibility
-- Required command-line tools
-- Directory structure integrity
+- Check the Node.js / npm environment
+- Install or update OpenCode and OpenCLI
+- Create a new vault directory from the template
+- Optionally write OpenCode provider config and Obsidian plugin config
+- Support `--dry-run` and `--non-interactive` for automation or preview use
+
+如果你只想做只读检查，不想安装任何东西，请运行：
+
+```bash
+bash scripts/verify.sh
+```
+
+If you only want read-only checks and do not want to install anything, run:
+
+```bash
+bash scripts/verify.sh
+```
 
 ---
 

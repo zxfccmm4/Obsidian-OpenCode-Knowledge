@@ -20,7 +20,7 @@
 | 📱 **Social Media Collection** | Xiaohongshu, Douyin, Twitter, Weibo and more — auto-classify, analyze, and digest into knowledge (powered by [OpenCLI](https://github.com/jackwener/OpenCLI)) |
 | 🔍 **Smart Query** | Chat with AI: "Have I written about XX before?" |
 | 🏥 **Regular Health Check** | AI automatically checks knowledge base health, finds broken links, duplicates, orphaned pages |
-| 🔒 **Fully Local** | All data stays on your computer, no cloud upload |
+| 🔒 **Local Storage** | Your note files stay on your computer; when you use AI, content is sent to your configured model provider |
 | 🛠️ **One-Click Deploy** | Run the script, setup completes in 5 minutes |
 
 ---
@@ -42,7 +42,7 @@ Deploy an AI knowledge base for me: https://github.com/zxfccmm4/Obsidian-OpenCod
 ```bash
 # Step 1: Clone the repository
 git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
-cd Obsidian-OpenCode-Knowledge/deploy
+cd Obsidian-OpenCode-Knowledge
 
 # Step 2: Run the setup script (macOS)
 bash setup.sh
@@ -51,6 +51,14 @@ bash setup.sh
 ```
 
 > 📖 For detailed steps, see [`deployment-guide.md`](deployment-guide.md) (Chinese deployment guide)
+
+### Start With a Read-Only Check
+
+If you do not want to install anything yet, or you just want to verify the repo and local environment first, run:
+
+```bash
+bash scripts/verify.sh
+```
 
 ### What `setup.sh` Does
 
@@ -61,7 +69,27 @@ The setup script handles everything automatically:
 3. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (87+ site adapters)
 4. **Creates Your Vault** — copies the `vault-template/` to your chosen location
 5. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
-6. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
+6. **Handles Existing Config** — if `~/.config/opencode/opencode.json` already exists, the script asks before overwriting and creates a backup first
+7. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
+
+### Automation Mode
+
+If you're letting an AI agent, script, or CI run the installer, these options help:
+
+- `--non-interactive`: skips prompts and relies on explicit flags or safe defaults
+- `--dry-run`: previews the flow without installing dependencies or writing files
+
+Example:
+
+```bash
+bash setup.sh --dry-run --non-interactive --vault "$HOME/Desktop/My Knowledge Base" --provider skip
+```
+
+For a real non-interactive install, a common flag combination looks like:
+
+```bash
+bash setup.sh --non-interactive --vault "$HOME/Desktop/My Knowledge Base" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+```
 
 ---
 
@@ -256,7 +284,8 @@ Absolutely! This is designed specifically for non-technical users. Just follow t
 ### Q2: Is my data secure?
 
 Very secure:
-- ✅ **All data stays on your own computer**, no cloud upload
+- ✅ **Your note files stay on your own computer**; this project does not additionally host your notes
+- ✅ **When you use AI**, the active conversation content is sent to the model provider you configured
 - ✅ **Raw materials in `raw/` are never modified by AI**
 - ✅ Notes are plain Markdown files, easy to copy and backup anytime
 
@@ -283,7 +312,8 @@ Just paste your API Key and the config is generated automatically. Want to switc
 
 1. Make sure your Mac is running macOS 12 or later
 2. Make sure your computer has internet access
-3. Take a screenshot of the error message in terminal and open an Issue
+3. Run the read-only check first: `bash scripts/verify.sh`
+4. Then take a screenshot of the error message in terminal and open an Issue
 
 ---
 

@@ -1,0 +1,41 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  scripts-and-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Check Bash syntax
+        run: |
+          bash -n setup.sh
+          bash -n scripts/opencode-obsidian-doctor.sh
+          bash -n scripts/check-doc-links.sh
+          bash -n scripts/validate-docs.sh
+          bash -n scripts/verify.sh
+
+      - name: Run shellcheck
+        run: |
+          shellcheck \
+            setup.sh \
+            scripts/opencode-obsidian-doctor.sh \
+            scripts/check-doc-links.sh \
+            scripts/validate-docs.sh \
+            scripts/verify.sh
+
+      - name: Validate docs
+        run: bash scripts/validate-docs.sh
+
+      - name: Verify repository
+        run: bash scripts/verify.sh

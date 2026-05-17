@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -u
+set -uo pipefail
 
 PORT="${OPENCODE_PORT:-14096}"
 HOST="${OPENCODE_HOST:-127.0.0.1}"
@@ -12,7 +12,7 @@ START_TEST=0
 usage() {
   cat <<'EOF'
 Usage:
-  bash <deploy>/scripts/opencode-obsidian-doctor.sh [--vault PATH] [--port PORT] [--host HOST] [--kill-port] [--start-test]
+  bash <repo>/scripts/opencode-obsidian-doctor.sh [--vault PATH] [--port PORT] [--host HOST] [--kill-port] [--start-test]
 
 Options:
   --vault PATH    Vault path. Default: ~/Desktop/我的知识库
@@ -131,10 +131,10 @@ if [[ "$KILL_PORT" -eq 1 ]]; then
   if [[ -z "$LSOF_OUTPUT" ]]; then
     warn "Nothing is listening on port $PORT"
   else
-    PIDS="$(printf '%s\n' "$LSOF_OUTPUT" | awk 'NR > 1 { print $2 }' | sort -u)"
-    if [[ -n "$PIDS" ]]; then
-      echo "Trying to stop: $PIDS"
-      kill $PIDS 2>/dev/null || kill -9 $PIDS 2>/dev/null || true
+    mapfile -t PIDS < <(printf '%s\n' "$LSOF_OUTPUT" | awk 'NR > 1 { print $2 }' | sort -u)
+    if [[ "${#PIDS[@]}" -gt 0 ]]; then
+      echo "Trying to stop: ${PIDS[*]}"
+      kill "${PIDS[@]}" 2>/dev/null || kill -9 "${PIDS[@]}" 2>/dev/null || true
       sleep 1
       REMAINING="$(lsof -nP -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true)"
       if [[ -n "$REMAINING" ]]; then
@@ -165,6 +165,7 @@ else
 fi
 
 if [[ -f "$PLUGIN_MAIN" ]]; then
+  # shellcheck disable=SC2016
   if grep -Fq 'fetch(`http://${this.settings.hostname}:${this.settings.port}/global/health`' "$PLUGIN_MAIN"; then
     ok "Plugin uses direct /global/health check"
   elif grep -Fq 'getUrl()}/global/health' "$PLUGIN_MAIN"; then
@@ -185,10 +186,18 @@ fi
 
 hr "Recent Logs"
 if [[ -d "$LOG_DIR" ]]; then
-  LATEST_LOG="$(ls -1t "$LOG_DIR" 2>/dev/null | head -n 1)"
+  shopt -s nullglob
+  LOG_FILES=("$LOG_DIR"/*)
+  shopt -u nullglob
+  LATEST_LOG=""
+  for log_file in "${LOG_FILES[@]}"; do
+    if [[ -z "$LATEST_LOG" || "$log_file" -nt "$LATEST_LOG" ]]; then
+      LATEST_LOG="$log_file"
+    fi
+  done
   if [[ -n "$LATEST_LOG" ]]; then
-    ok "Latest log: $LOG_DIR/$LATEST_LOG"
-    sed -n '1,80p' "$LOG_DIR/$LATEST_LOG"
+    ok "Latest log: $LATEST_LOG"
+    sed -n '1,80p' "$LATEST_LOG"
   else
     warn "No log files found"
   fi

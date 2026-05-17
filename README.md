@@ -1,4 +1,4 @@
-[English](README.en.md) | 中文
+[English](README.en.md) | [中文](README.md)
 
 # 🧠 Obsidian + OpenCode AI 知识库
 
@@ -18,7 +18,7 @@
 | 📱 **社交媒体采集** | 小红书、抖音、Twitter、微博等平台内容一键归类、分析、消化（通过 [OpenCLI](https://github.com/jackwener/OpenCLI) 驱动） |
 | 🔍 **智能查询** | 像聊天一样问 AI：「我之前写过关于 XX 的内容吗？」 |
 | 🏥 **定期体检** | AI 自动检查知识库健康度，发现死链、重复、孤岛页面 |
-| 🔒 **完全本地** | 所有数据存在你的电脑上，不上传云端 |
+| 🔒 **本地存储** | 笔记文件保存在你的电脑上；使用 AI 时，内容会发送给你配置的模型服务商 |
 | 🛠️ **一键部署** | 运行脚本，5 分钟搞定安装 |
 
 ---
@@ -40,7 +40,7 @@
 ```bash
 # 第 1 步：克隆仓库
 git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
-cd Obsidian-OpenCode-Knowledge/deploy
+cd Obsidian-OpenCode-Knowledge
 
 # 第 2 步：运行安装脚本（macOS）
 bash setup.sh
@@ -49,6 +49,45 @@ bash setup.sh
 ```
 
 > 📖 详细步骤请参考 [`deployment-guide.md`](deployment-guide.md)
+
+### 先做只读检查
+
+如果你还不想安装，或者想先确认仓库状态和本机环境，建议先跑一次：
+
+```bash
+bash scripts/verify.sh
+```
+
+### `setup.sh` 会做什么
+
+安装脚本会自动完成这些事情：
+
+1. **检查 Node.js**：确认是否已安装，缺失时可引导用 Homebrew 安装
+2. **安装 OpenCode**：通过 npm 全局安装 OpenCode CLI
+3. **安装 OpenCLI**：安装社交媒体采集和网页自动化所需 CLI
+4. **创建你的 Vault**：把 `vault-template/` 复制到你选择的位置
+5. **配置 AI 服务**：从 6 个 provider 中选择一个并生成配置
+6. **处理已有配置**：如果检测到已有 `~/.config/opencode/opencode.json`，会先询问是否覆盖，并在覆盖前自动备份
+7. **生成 Obsidian 插件配置**：为 `opencode-obsidian` 写入推荐的 `data.json`
+
+### 自动化模式
+
+如果你是让 AI、脚本或 CI 帮你部署，可以用这两个参数：
+
+- `--non-interactive`：不再提问，必须配合显式参数或安全默认值
+- `--dry-run`：只预演流程，不安装依赖、不写文件
+
+示例：
+
+```bash
+bash setup.sh --dry-run --non-interactive --vault "$HOME/Desktop/我的知识库" --provider skip
+```
+
+如果要真正的非交互安装，常见参数组合是：
+
+```bash
+bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+```
 
 ---
 
@@ -108,6 +147,22 @@ bash setup.sh
         ├── opencli-explorer/ # 适配器开发指南
         └── opencli-oneshot/  # 单点快速 CLI 生成
 ```
+
+### 预装技能
+
+模板会预装 9 个技能，位于 `vault-template/.opencode/skill/`：
+
+| 技能 | 作用 |
+|------|------|
+| `obsidian-cli` | 读取、创建、搜索 Obsidian 笔记 |
+| `obsidian-markdown` | 生成和编辑 Obsidian 风格 Markdown |
+| `defuddle` | 提取网页正文内容 |
+| `opencli-usage` | OpenCLI 命令参考（87+ 网站适配器） |
+| `smart-search` | 多平台智能搜索路由 |
+| `opencli-browser` | 浏览器自动化 |
+| `opencli-autofix` | 自动修复站点适配器 |
+| `opencli-explorer` | 新适配器开发指南 |
+| `opencli-oneshot` | 单点快速 CLI 生成模板 |
 
 ---
 
@@ -227,7 +282,8 @@ AI 会检查：
 ### Q2：我的数据安全吗？
 
 非常安全：
-- ✅ **所有数据都在你自己的电脑上**，不会上传到云端
+- ✅ **笔记文件保存在你自己的电脑上**，本项目本身不额外托管你的笔记数据
+- ✅ **使用 AI 时**，当前对话内容会发送给你选择并配置的模型服务商
 - ✅ `raw/` 目录里的原始素材**永远不会被 AI 修改**
 - ✅ 笔记就是普通的 Markdown 文件，随时可以复制备份
 
@@ -254,7 +310,8 @@ AI 会检查：
 
 1. 确保你的 Mac 系统是 macOS 12 或更高版本
 2. 确保电脑能正常上网
-3. 把终端里的错误信息截图，发 Issue 给我们
+3. 先运行只读检查：`bash scripts/verify.sh`
+4. 再把终端里的错误信息截图，发 Issue 给我们
 
 ---
 

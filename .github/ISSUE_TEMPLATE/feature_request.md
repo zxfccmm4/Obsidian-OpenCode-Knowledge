@@ -51,9 +51,9 @@ Describe the scenarios where this feature would be used.
 Who would use this feature?
 -->
 
-1. **场景 1 / Scenario 1**: 
-2. **场景 2 / Scenario 2**: 
-3. **场景 3 / Scenario 3**: 
+1. **场景 1 / Scenario 1**:
+2. **场景 2 / Scenario 2**:
+3. **场景 3 / Scenario 3**:
 
 ## 🎨 界面示例 / UI Examples (可选 / Optional)
 

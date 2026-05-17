@@ -76,6 +76,12 @@ git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git ~/Desktop/
 cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh
 ```
 
+如果你只是想预演流程、不真正安装，可以改用：
+
+```bash
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh --dry-run --non-interactive --provider skip
+```
+
 ### 脚本是交互式的，你需要代替用户回答以下问题：
 
 | 提示 | 建议回答 | 备注 |
@@ -83,8 +89,15 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh
 | 知识库存放位置 | 直接回车（默认 `~/Desktop/我的知识库`） | 可按用户意愿修改 |
 | 目录已存在是否覆盖 | 看用户意愿 | 新用户通常不会遇到 |
 | Node.js 安装方式 | 1（Homebrew 自动安装） | 前面已装好则不会出现 |
+| 检测到已有 OpenCode 配置是否覆盖 | **必须问用户** | 脚本会先备份旧配置 |
 | 选择 AI 服务提供商 | 见下方决策表 | **必须问用户** |
 | 粘贴 API Key | 用户提供的 Key | **必须问用户** |
+
+如果你需要完全自动化执行，可以改用这些参数组合：
+
+```bash
+bash setup.sh --non-interactive --vault "<路径>" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+```
 
 ### AI 服务选择决策表
 
@@ -143,6 +156,12 @@ find "$VAULT_PATH" -name ".gitkeep" -delete
 
 ```bash
 mkdir -p ~/.config/opencode
+```
+
+如果这个文件已经存在，先备份：
+
+```bash
+cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(date +%Y%m%d-%H%M%S)
 ```
 
 然后根据用户选择的 provider 生成配置。以下是各 provider 的配置模板：
@@ -292,6 +311,12 @@ EOF
 
 ```
 帮我创建一篇笔记，标题是《我的第一篇 AI 笔记》
+```
+
+如果部署失败，先让用户运行只读检查：
+
+```bash
+cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/verify.sh --vault "$HOME/Desktop/我的知识库"
 ```
 
 ---
