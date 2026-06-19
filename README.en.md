@@ -1,13 +1,13 @@
 [English](README.en.md) | [中文](README.md)
 
-# 🧠 Obsidian + OpenCode AI Knowledge Base
+# 🧠 Obsidian + AI Agent Knowledge Base
 
-> A local AI knowledge management solution for non-technical users. No coding required, one-click deployment, ready to use out of the box.
+> A local AI knowledge management solution for non-technical users. Supports OpenCode / Claude Code / Codex. No coding required, one-click deployment, ready to use out of the box.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/zxfccmm4/Obsidian-OpenCode-Knowledge?style=social)](https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/stargazers)
 [![Platform: macOS](https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white)](#-quick-start)
-[![OpenCode](https://img.shields.io/badge/Powered%20by-OpenCode-blue)](https://opencode.ai)
+[![Agents](https://img.shields.io/badge/Agents-OpenCode%20%7C%20Claude%20Code%20%7C%20Codex-blue)](docs/agents.md)
 
 > **Note:** This project was originally designed for Chinese users, but international users are welcome! The interface and documentation can be adapted for English usage.
 

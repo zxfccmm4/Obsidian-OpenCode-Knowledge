@@ -68,7 +68,7 @@ Thank you for your interest in this project! Whether you're a seasoned developer
 - **macOS** (主要支持平台 / primary supported platform)
 - **Node.js** 21+ (用于运行某些工具 / for running certain tools)
 - **Obsidian** (用于测试知识库模板 / for testing the knowledge base template)
-- **OpenCode** (可选，用于体验完整工作流 / optional, for experiencing the full workflow)
+- **AI Agent**：OpenCode / Claude Code / Codex 三选一（可选，用于体验完整工作流 / pick one of three agents, optional for the full workflow）。详见 [`docs/agents.md`](docs/agents.md)
 
 ### 快速体验 / Quick Trial
 

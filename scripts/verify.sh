@@ -139,11 +139,14 @@ else
   warn "npm not found"
 fi
 
-if command -v opencode &>/dev/null; then
-  ok "opencode found: $(opencode --version 2>/dev/null || echo "version unknown")"
-else
-  warn "opencode not found"
-fi
+# 检测支持的 AI agent 二进制（至少一个可用即可，warn 仅提示）
+for agent_bin in opencode claude codex; do
+  if command -v "$agent_bin" &>/dev/null; then
+    ok "${agent_bin} found: $("$agent_bin" --version 2>/dev/null || echo "version unknown")"
+  else
+    warn "${agent_bin} not found（可选，三个 agent 任选其一）"
+  fi
+done
 
 if command -v opencli &>/dev/null; then
   ok "opencli found: $(opencli --version 2>/dev/null || echo "version unknown")"
@@ -172,7 +175,14 @@ if [[ -n "$VAULT_PATH" ]]; then
   check_path "$VAULT_PATH/raw" "vault raw directory"
   check_path "$VAULT_PATH/wiki" "vault wiki directory"
   check_path "$VAULT_PATH/assets" "vault assets directory"
-  check_path "$VAULT_PATH/.opencode" "vault .opencode directory"
+  # 技能目录按 agent 不同：.opencode（opencode）或 .claude（claude-code），codex 在用户级
+  if [[ -d "$VAULT_PATH/.opencode" ]]; then
+    check_path "$VAULT_PATH/.opencode" "vault .opencode directory"
+  elif [[ -d "$VAULT_PATH/.claude" ]]; then
+    check_path "$VAULT_PATH/.claude" "vault .claude directory"
+  else
+    warn "vault neither .opencode nor .claude found（codex 用户的技能在用户级 ~/.codex/skills）"
+  fi
 fi
 
 echo ""

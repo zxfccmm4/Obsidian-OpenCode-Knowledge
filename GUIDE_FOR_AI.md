@@ -124,10 +124,21 @@ bash setup.sh --non-interactive --vault "<路径>" --provider openai --api-key "
 
 如果 `setup.sh` 运行失败，按以下步骤手动完成：
 
-### 4.1 安装 OpenCode
+> 💡 **多 Agent 支持：** 本知识库支持 OpenCode / Claude Code / Codex。下面以默认的 OpenCode 为例；若用户选了其他 agent，安装对应的 npm 包并参考 [`docs/agents.md`](docs/agents.md) 的配置差异。
+
+| Agent | npm 包 | 配置文件 |
+|-------|--------|----------|
+| OpenCode（默认） | `opencode-ai` | `~/.config/opencode/opencode.json` |
+| Claude Code | `@anthropic-ai/claude-code` | `~/.claude/settings.json` |
+| Codex | `@openai/codex` | `~/.codex/config.toml` |
+
+### 4.1 安装 Agent
 
 ```bash
+# OpenCode（默认）
 npm install -g opencode-ai
+# 或 Claude Code：npm install -g @anthropic-ai/claude-code
+# 或 Codex：npm install -g @openai/codex
 ```
 
 权限不足时加 `sudo`。
