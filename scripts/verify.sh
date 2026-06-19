@@ -83,8 +83,12 @@ cd "$REPO_ROOT"
 
 echo "== Repo Files =="
 check_script_exists "setup.sh"
+check_script_exists "scripts/upgrade.sh"
+check_script_exists "scripts/uninstall.sh"
+check_script_exists "vault-template/scripts/organize-social-assets.sh"
 check_path "README.md" "README.md"
 check_path "README.en.md" "README.en.md"
+check_path "CHANGELOG.md" "CHANGELOG.md"
 check_path "deployment-guide.md" "deployment-guide.md"
 check_path "GUIDE_FOR_AI.md" "GUIDE_FOR_AI.md"
 check_script_exists "scripts/opencode-obsidian-doctor.sh"
@@ -99,6 +103,9 @@ check_path "vault-template/wiki/log.md" "vault template wiki log"
 echo ""
 echo "== Script Syntax =="
 run_required_check "setup.sh syntax" bash -n setup.sh
+run_required_check "upgrade.sh syntax" bash -n scripts/upgrade.sh
+run_required_check "uninstall.sh syntax" bash -n scripts/uninstall.sh
+run_required_check "organize-social-assets.sh syntax" bash -n vault-template/scripts/organize-social-assets.sh
 run_required_check "doctor script syntax" bash -n scripts/opencode-obsidian-doctor.sh
 run_required_check "doc link checker syntax" bash -n scripts/check-doc-links.sh
 run_required_check "doc validation syntax" bash -n scripts/validate-docs.sh
@@ -113,7 +120,7 @@ if command -v shellcheck &>/dev/null; then
   echo "== Shellcheck =="
   run_required_check \
     "shellcheck" \
-    shellcheck setup.sh scripts/opencode-obsidian-doctor.sh scripts/check-doc-links.sh scripts/validate-docs.sh scripts/verify.sh
+    shellcheck setup.sh scripts/upgrade.sh scripts/uninstall.sh vault-template/scripts/organize-social-assets.sh scripts/opencode-obsidian-doctor.sh scripts/check-doc-links.sh scripts/validate-docs.sh scripts/verify.sh
 else
   warn "shellcheck not installed; skipping shell lint"
 fi

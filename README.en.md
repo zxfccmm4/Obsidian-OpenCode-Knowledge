@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/zxfccmm4/Obsidian-OpenCode-Knowledge?style=social)](https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/stargazers)
+[![Platform: macOS](https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white)](#-quick-start)
 [![OpenCode](https://img.shields.io/badge/Powered%20by-OpenCode-blue)](https://opencode.ai)
 
 > **Note:** This project was originally designed for Chinese users, but international users are welcome! The interface and documentation can be adapted for English usage.
@@ -26,6 +27,9 @@
 ---
 
 ## 🚀 Quick Start
+
+> 📌 **Platform support:** The one-click script currently supports **macOS** only (it relies on `open`, Homebrew, etc.).
+> Linux users can run `setup.sh` manually after replacing `open` with `xdg-open`; Windows users should use WSL2.
 
 ### Option 1: Let AI Deploy for You (Zero Effort)
 
@@ -66,7 +70,7 @@ The setup script handles everything automatically:
 
 1. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
 2. **Installs OpenCode** — installs the OpenCode CLI tool globally via npm
-3. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (87+ site adapters)
+3. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (100+ site adapters)
 4. **Creates Your Vault** — copies the `vault-template/` to your chosen location
 5. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
 6. **Handles Existing Config** — if `~/.config/opencode/opencode.json` already exists, the script asks before overwriting and creates a backup first
@@ -142,7 +146,7 @@ My Knowledge Base/
         ├── obsidian-cli/     # Obsidian operation capabilities
         ├── obsidian-markdown/ # Markdown generation capabilities
         ├── defuddle/         # Web content extraction capabilities
-        ├── opencli-usage/    # OpenCLI command reference (87+ adapters)
+        ├── opencli-usage/    # OpenCLI command reference (100+ adapters)
         ├── smart-search/     # Intelligent search router
         ├── opencli-browser/  # Browser automation
         ├── opencli-autofix/  # Adapter auto-repair
@@ -159,7 +163,7 @@ The template comes with 9 pre-installed skills in `vault-template/.opencode/skil
 | `obsidian-cli` | Read, create, search notes in your Obsidian vault |
 | `obsidian-markdown` | Generate and edit Obsidian-flavored Markdown |
 | `defuddle` | Extract clean content from web pages |
-| `opencli-usage` | OpenCLI command reference (87+ site adapters) |
+| `opencli-usage` | OpenCLI command reference (100+ site adapters) |
 | `smart-search` | Intelligent search router across multiple platforms |
 | `opencli-browser` | Browser automation for AI agents |
 | `opencli-autofix` | Automatically fix broken site adapters |
@@ -205,6 +209,8 @@ AI will automatically:
 - Archive raw content to `raw/social/<domain>/`
 
 > OpenCLI supports automatic content scraping via Chrome browser, reusing your login sessions. See [OpenCLI project](https://github.com/jackwener/OpenCLI).
+>
+> ⚠️ **Compliance & responsible use:** Automated scraping may violate the Terms of Service of some platforms — especially Chinese ones like Xiaohongshu, Douyin, and Weibo. This project is for **personal learning and research only**. You bear the risk of scraping frequency, content redistribution, and commercial use. Respect platform ToS and local laws, and be aware of account risk-control (rate limiting, suspension). Neither this project nor OpenCLI is liable for consequences of misuse.
 - Digest and merge or create wiki articles (removing social media slang, keeping useful info)
 - Auto-merge multiple posts on the same topic (e.g., multiple café reviews → city café guide)
 - Update global index and operation log
@@ -352,7 +358,7 @@ Thanks to these projects and teams for their support:
 
 - **[OpenCode](https://opencode.ai)** — Enables AI assistants to run locally in the terminal
 - **[Obsidian](https://obsidian.md)** — Excellent local note-taking software
-- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — Make any website your CLI, 87+ site adapters
+- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — Make any website your CLI, 100+ site adapters
 - **[Zhipu GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — Multiple AI service providers supported
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — Inspiration for the knowledge base architecture
 

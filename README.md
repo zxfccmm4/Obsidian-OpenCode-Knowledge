@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/zxfccmm4/Obsidian-OpenCode-Knowledge?style=social)](https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/stargazers)
+[![Platform: macOS](https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white)](#-快速开始)
 [![OpenCode](https://img.shields.io/badge/Powered%20by-OpenCode-blue)](https://opencode.ai)
 
 ---
@@ -24,6 +25,9 @@
 ---
 
 ## 🚀 快速开始
+
+> 📌 **平台支持：** 一键脚本当前仅支持 **macOS**（脚本依赖 `open`、Homebrew 等系统命令）。
+> Linux 用户可手动执行 `setup.sh`，部分调用需把 `open` 替换为 `xdg-open`；Windows 用户建议在 WSL2 中使用。
 
 ### 方式一：让 AI 帮你部署（零门槛）
 
@@ -89,6 +93,29 @@ bash setup.sh --dry-run --non-interactive --vault "$HOME/Desktop/我的知识库
 bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
 ```
 
+### 🔄 升级与卸载
+
+部署后，如果想获取最新的规则、技能或脚本：
+
+```bash
+# 先更新仓库，再升级你的知识库（只更新规则/技能，绝不碰你的笔记）
+git pull
+bash scripts/upgrade.sh --vault "$HOME/Desktop/我的知识库"
+```
+
+> `upgrade.sh` 只刷新 `AGENTS.md`、技能、辅助脚本；`raw/` `wiki/` `assets/` 原封不动；`AI_CONFIG.md` 会先备份。
+
+想清理（卸载 OpenCode 配置 / 插件配置 / 可选删除 vault 与 npm 包）：
+
+```bash
+bash scripts/uninstall.sh --vault "$HOME/Desktop/我的知识库"
+# 严格清理：bash scripts/uninstall.sh --vault <路径> --remove-vault --remove-packages --non-interactive
+```
+
+> ⚠️ `--remove-vault` 会永久删除你的全部笔记，需二次确认。
+
+更新历史详见 [`CHANGELOG.md`](CHANGELOG.md)。
+
 ---
 
 ## 🏗️ 架构概览
@@ -140,7 +167,7 @@ bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provid
         ├── obsidian-cli/     # Obsidian 操作能力
         ├── obsidian-markdown/ # Markdown 生成能力
         ├── defuddle/         # 网页内容提取能力
-        ├── opencli-usage/    # OpenCLI 命令参考（87+ 网站适配器）
+        ├── opencli-usage/    # OpenCLI 命令参考（100+ 网站适配器）
         ├── smart-search/     # 智能搜索路由器
         ├── opencli-browser/  # 浏览器自动化
         ├── opencli-autofix/  # 适配器自动修复
@@ -157,7 +184,7 @@ bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provid
 | `obsidian-cli` | 读取、创建、搜索 Obsidian 笔记 |
 | `obsidian-markdown` | 生成和编辑 Obsidian 风格 Markdown |
 | `defuddle` | 提取网页正文内容 |
-| `opencli-usage` | OpenCLI 命令参考（87+ 网站适配器） |
+| `opencli-usage` | OpenCLI 命令参考（100+ 网站适配器） |
 | `smart-search` | 多平台智能搜索路由 |
 | `opencli-browser` | 浏览器自动化 |
 | `opencli-autofix` | 自动修复站点适配器 |
@@ -203,6 +230,8 @@ AI 会自动：
 - 归档原始内容到 `raw/social/<知识域>/`
 
 > OpenCLI 支持通过 Chrome 浏览器自动抓取内容，复用你的登录状态，无需额外配置密码。详见 [OpenCLI 项目](https://github.com/jackwener/OpenCLI)。
+>
+> ⚠️ **合规与使用须知：** 自动化抓取可能违反部分平台的服务条款（ToS），尤其小红书、抖音、微博等国内平台。本项目仅供**个人学习与研究用途**；抓取频率、内容再分发、商用等行为的风险由用户自行承担。请遵守各平台条款、当地法律法规，并对账号风控（限流、封禁）风险有预期。本项目与 OpenCLI 均不对因违规使用导致的后果负责。
 - 消化润色后合并或新建 wiki 文章（去除社交口语，保留有效信息）
 - 同主题多篇自动合并（如多篇咖啡探店 → 一篇城市咖啡指南）
 - 更新全局索引和操作日志
@@ -350,7 +379,7 @@ AI 会检查：
 
 - **[OpenCode](https://opencode.ai)** — 让 AI 助手可以运行在本地终端
 - **[Obsidian](https://obsidian.md)** — 优秀的本地笔记软件
-- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — 让任何网站变成命令行，支持 87+ 网站适配器
+- **[OpenCLI](https://github.com/jackwener/OpenCLI)** — 让任何网站变成命令行，支持 100+ 网站适配器
 - **[智谱 GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — 支持多种 AI 服务提供商
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — 知识库架构灵感来源
 

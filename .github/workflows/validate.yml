@@ -20,6 +20,9 @@ jobs:
       - name: Check Bash syntax
         run: |
           bash -n setup.sh
+          bash -n scripts/upgrade.sh
+          bash -n scripts/uninstall.sh
+          bash -n vault-template/scripts/organize-social-assets.sh
           bash -n scripts/opencode-obsidian-doctor.sh
           bash -n scripts/check-doc-links.sh
           bash -n scripts/validate-docs.sh
@@ -29,6 +32,9 @@ jobs:
         run: |
           shellcheck \
             setup.sh \
+            scripts/upgrade.sh \
+            scripts/uninstall.sh \
+            vault-template/scripts/organize-social-assets.sh \
             scripts/opencode-obsidian-doctor.sh \
             scripts/check-doc-links.sh \
             scripts/validate-docs.sh \

@@ -3,6 +3,16 @@
 # AI 知识库一键部署脚本
 # 适用于 macOS | 面向非技术用户
 # ============================================================
+# 单一事实源：支持的模型清单（更新模型时只改这里，再同步 GUIDE_FOR_AI.md）
+#   zhipu     → glm-4.6 / glm-4.5-air      (GLM-5.x API 2026-06 刚上线，暂用稳定的 4.6)
+#   anthropic → claude-opus-4-1 / claude-sonnet-4-5
+#   openai    → gpt-5 / gpt-5-mini
+#   google    → gemini-3-pro / gemini-3-flash
+#   openrouter→ anthropic/claude-opus-4.1 / openai/gpt-5
+#   deepseek  → deepseek-v4-pro / deepseek-v4-flash
+#               ⚠ deepseek-chat / deepseek-reasoner 将于 2026-07-24 下线，已弃用
+# Node.js 要求：>= 21（OpenCode 运行时要求）
+# ============================================================
 set -euo pipefail
 
 RED='\033[0;31m'
@@ -278,12 +288,12 @@ prompt_for_api_key_if_needed() {
 build_provider_config() {
   case "$PROVIDER_CHOICE" in
     1)
-      MODEL_ID="zhipuglm/glm-4.5"
+      MODEL_ID="zhipuglm/glm-4.6"
       PROVIDER_BLOCK="\"zhipuglm\": {
       \"name\": \"智谱 GLM\",
       \"npm\": \"@ai-sdk/openai-compatible\",
       \"models\": {
-        \"glm-4.5\": { \"name\": \"GLM-4.5\" },
+        \"glm-4.6\": { \"name\": \"GLM-4.6\" },
         \"glm-4.5-air\": { \"name\": \"GLM-4.5-Air\" }
       },
       \"options\": {
@@ -293,11 +303,11 @@ build_provider_config() {
     }"
       ;;
     2)
-      MODEL_ID="anthropic/claude-sonnet-4-20250514"
+      MODEL_ID="anthropic/claude-opus-4-1"
       PROVIDER_BLOCK="\"anthropic\": {
       \"models\": {
-        \"claude-sonnet-4-20250514\": { \"name\": \"Claude Sonnet 4\" },
-        \"claude-haiku-35-20241022\": { \"name\": \"Claude 3.5 Haiku\" }
+        \"claude-opus-4-1\": { \"name\": \"Claude Opus 4.1\" },
+        \"claude-sonnet-4-5\": { \"name\": \"Claude Sonnet 4.5\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -305,12 +315,11 @@ build_provider_config() {
     }"
       ;;
     3)
-      MODEL_ID="openai/gpt-4.1"
+      MODEL_ID="openai/gpt-5"
       PROVIDER_BLOCK="\"openai\": {
       \"models\": {
-        \"gpt-4.1\": { \"name\": \"GPT-4.1\" },
-        \"gpt-4.1-mini\": { \"name\": \"GPT-4.1 Mini\" },
-        \"gpt-4.1-nano\": { \"name\": \"GPT-4.1 Nano\" }
+        \"gpt-5\": { \"name\": \"GPT-5\" },
+        \"gpt-5-mini\": { \"name\": \"GPT-5 Mini\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -318,11 +327,11 @@ build_provider_config() {
     }"
       ;;
     4)
-      MODEL_ID="google/gemini-2.5-pro"
+      MODEL_ID="google/gemini-3-pro"
       PROVIDER_BLOCK="\"google\": {
       \"models\": {
-        \"gemini-2.5-pro\": { \"name\": \"Gemini 2.5 Pro\" },
-        \"gemini-2.5-flash\": { \"name\": \"Gemini 2.5 Flash\" }
+        \"gemini-3-pro\": { \"name\": \"Gemini 3 Pro\" },
+        \"gemini-3-flash\": { \"name\": \"Gemini 3 Flash\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -330,12 +339,12 @@ build_provider_config() {
     }"
       ;;
     5)
-      MODEL_ID="openrouter/anthropic/claude-sonnet-4-20250514"
+      MODEL_ID="openrouter/anthropic/claude-opus-4.1"
       PROVIDER_BLOCK="\"openrouter\": {
       \"models\": {
-        \"anthropic/claude-sonnet-4-20250514\": { \"name\": \"Claude Sonnet 4\" },
-        \"openai/gpt-4.1\": { \"name\": \"GPT-4.1\" },
-        \"google/gemini-2.5-pro\": { \"name\": \"Gemini 2.5 Pro\" }
+        \"anthropic/claude-opus-4.1\": { \"name\": \"Claude Opus 4.1\" },
+        \"openai/gpt-5\": { \"name\": \"GPT-5\" },
+        \"google/gemini-3-pro\": { \"name\": \"Gemini 3 Pro\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -343,13 +352,13 @@ build_provider_config() {
     }"
       ;;
     6)
-      MODEL_ID="deepseek/deepseek-chat"
+      MODEL_ID="deepseek/deepseek-v4-pro"
       PROVIDER_BLOCK="\"deepseek\": {
       \"name\": \"DeepSeek\",
       \"npm\": \"@ai-sdk/openai-compatible\",
       \"models\": {
-        \"deepseek-chat\": { \"name\": \"DeepSeek V3\" },
-        \"deepseek-reasoner\": { \"name\": \"DeepSeek R1\" }
+        \"deepseek-v4-pro\": { \"name\": \"DeepSeek V4 Pro\" },
+        \"deepseek-v4-flash\": { \"name\": \"DeepSeek V4 Flash\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\",
@@ -503,7 +512,27 @@ NODE_PATH="$(command -v node 2>/dev/null || true)"
 NPM_PATH="$(command -v npm 2>/dev/null || true)"
 
 if [[ -n "$NODE_PATH" ]]; then
-  echo -e "${GREEN}✓ 已安装 Node.js $("$NODE_PATH" -v)${NC}"
+  NODE_VERSION="$("$NODE_PATH" -v | sed 's/^v//')"
+  NODE_MAJOR="${NODE_VERSION%%.*}"
+  echo -e "${GREEN}✓ 已安装 Node.js v${NODE_VERSION}${NC}"
+
+  # OpenCode 运行时要求 Node >= 21
+  if [[ "$NODE_MAJOR" -lt 21 ]]; then
+    echo -e "${YELLOW}⚠ Node.js 版本过低（当前 v${NODE_VERSION}，OpenCode 需要 v21+）${NC}"
+    echo "建议升级：brew upgrade node   或   访问 https://nodejs.org/zh-cn 下载 LTS 版"
+    echo ""
+    if [[ "$NON_INTERACTIVE" -eq 0 ]]; then
+      read -r -p "  仍然继续部署吗？(y/N): " NODE_LOW_VERSION_CONTINUE
+      if [[ "$NODE_LOW_VERSION_CONTINUE" != "y" && "$NODE_LOW_VERSION_CONTINUE" != "Y" ]]; then
+        echo "已取消。请先升级 Node.js 到 v21+。"
+        exit 0
+      fi
+    elif [[ "$DRY_RUN" -eq 0 ]]; then
+      echo -e "${RED}✗ 非交互模式下 Node 版本过低（需要 v21+），退出${NC}"
+      echo "请先升级 Node.js 后重试。"
+      exit 1
+    fi
+  fi
 else
   echo -e "${RED}✗ 未检测到 Node.js${NC}"
   echo ""
