@@ -9,6 +9,30 @@
 
 ---
 
+## [0.5.0] - 2026-06-20
+
+### 新增
+- **多 AI Agent 支持**：除默认的 OpenCode 外，新增 **Claude Code** 和 **Codex** 两种 agent 驱动。部署时用 `--agent opencode|claude-code|codex` 选择。
+- **`resolve_agent()` 抽象层**：所有 agent 差异（二进制、配置路径、技能目录、记忆文件、Obsidian 插件）收敛到一组变量，单一事实源驱动。
+- **三套配置生成**：
+  - OpenCode：`~/.config/opencode/opencode.json`（JSON）
+  - Claude Code：`~/.claude/settings.json`（JSON + env 段）
+  - Codex：`~/.codex/config.toml`（TOML）
+- **技能目录按 agent 分发**：`.opencode/skill/`（opencode）/ `.claude/skills/`（claude-code）/ `~/.codex/skills/`（codex 用户级）。技能内容一致，格式兼容。
+- **AGENTS.md / CLAUDE.md 双写**：claude-code 额外生成 CLAUDE.md；AGENTS.md 措辞泛化为「由 AI agent 自动加载」。
+- **Obsidian 插件按 agent 分发**：opencode → opencode-obsidian；claude-code → claudian；codex 无成熟插件（提示终端用）。
+- **[`docs/agents.md`](docs/agents.md)**：三 agent 横向对比、选型建议、能力边界。
+- **两篇排障文档**：[`claude-code-setup-troubleshooting.md`](claude-code-setup-troubleshooting.md)、[`codex-setup-troubleshooting.md`](codex-setup-troubleshooting.md)。
+
+### 变更
+- `setup.sh` / `upgrade.sh` / `uninstall.sh` / `verify.sh` 全部支持 `--agent` 参数。
+- README 标题改为「Obsidian + AI Agent 知识库」，加三 agent 对比与 `--agent` 说明。
+- `GUIDE_FOR_AI.md` 手动部署段加 agent 选择表。
+- bug_report 模板字段改为「使用的 Agent + 版本」。
+- `.markdownlint-cli2.jsonc` / `check-doc-links.sh` 纳入新文档。
+
+---
+
 ## [0.4.0] - 2026-06-19
 
 ### 新增

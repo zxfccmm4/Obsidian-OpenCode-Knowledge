@@ -1,13 +1,13 @@
 [English](README.en.md) | [中文](README.md)
 
-# 🧠 Obsidian + OpenCode AI 知识库
+# 🧠 Obsidian + AI Agent 知识库
 
-> 面向非技术用户的本地 AI 知识管理方案。无需编程，一键部署，开箱即用。
+> 面向非技术用户的本地 AI 知识管理方案。支持 OpenCode / Claude Code / Codex，无需编程，一键部署，开箱即用。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/zxfccmm4/Obsidian-OpenCode-Knowledge?style=social)](https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/stargazers)
 [![Platform: macOS](https://img.shields.io/badge/Platform-macOS-000000?logo=apple&logoColor=white)](#-快速开始)
-[![OpenCode](https://img.shields.io/badge/Powered%20by-OpenCode-blue)](https://opencode.ai)
+[![Agents](https://img.shields.io/badge/Agents-OpenCode%20%7C%20Claude%20Code%20%7C%20Codex-blue)](docs/agents.md)
 
 ---
 
@@ -53,6 +53,24 @@ bash setup.sh
 ```
 
 > 📖 详细步骤请参考 [`deployment-guide.md`](deployment-guide.md)
+
+### 选择 AI Agent
+
+知识库支持三个 AI agent 驱动，部署时用 `--agent` 选择（默认 `opencode`）：
+
+| Agent | Obsidian 插件 | 适合 |
+|-------|-------------|------|
+| **OpenCode** ⭐（默认） | ✅ opencode-obsidian | 想在 Obsidian 内直接对话 |
+| **Claude Code** | ✅ claudian | Anthropic 生态用户 |
+| **Codex** | ⚠️ 主要终端用 | OpenAI 生态、终端工作流 |
+
+```bash
+bash setup.sh --agent opencode        # 默认，推荐大多数用户
+bash setup.sh --agent claude-code     # Claude Code
+bash setup.sh --agent codex           # OpenAI Codex
+```
+
+> 📖 详细的对比与选型建议见 [`docs/agents.md`](docs/agents.md)
 
 ### 先做只读检查
 

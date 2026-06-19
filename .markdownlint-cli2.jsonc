@@ -6,8 +6,14 @@
     "GUIDE_FOR_AI.md",
     "CONTRIBUTING.md",
     "opencode-obsidian-setup-troubleshooting.md",
+    "claude-code-setup-troubleshooting.md",
+    "codex-setup-troubleshooting.md",
+    "docs/**/*.md",
     ".github/**/*.md",
     "vault-template/**/*.md"
+  ],
+  "ignores": [
+    "CHANGELOG.md"
   ],
   "config": {
     "MD013": false,

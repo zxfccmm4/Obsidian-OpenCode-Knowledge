@@ -10,10 +10,14 @@ readonly REPO_ROOT
 FILES=(
   "README.md"
   "README.en.md"
+  "CHANGELOG.md"
   "deployment-guide.md"
   "GUIDE_FOR_AI.md"
   "CONTRIBUTING.md"
   "opencode-obsidian-setup-troubleshooting.md"
+  "claude-code-setup-troubleshooting.md"
+  "codex-setup-troubleshooting.md"
+  "docs/agents.md"
 )
 
 should_skip_target() {

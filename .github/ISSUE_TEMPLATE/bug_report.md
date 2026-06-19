@@ -17,7 +17,8 @@ assignees: ''
 
 - **macOS 版本 / Version**: <!-- 例如：macOS 14.2.1 -->
 - **Node.js 版本 / Version**: <!-- 运行 `node --version` -->
-- **OpenCode 版本 / Version**: <!-- 运行 `opencode --version` -->
+- **使用的 Agent / Agent used**: <!-- opencode / claude-code / codex，运行 `<agent> --version` -->
+- **Agent 版本 / Version**: <!-- 运行 `opencode --version` 或 `claude --version` 或 `codex --version` -->
 - **Obsidian 版本 / Version**: <!-- 设置 > 关于 -->
 - **仓库版本 / Repository Version**: <!-- 你使用的代码版本或 commit hash -->
 
