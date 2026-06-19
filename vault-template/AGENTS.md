@@ -1,6 +1,6 @@
 # Personal LLM Wiki
 
-AI 知识管理员的工作手册。本文件由 opencode 启动时自动加载。
+AI 知识管理员的工作手册。本文件由 AI agent（OpenCode / Claude Code / Codex）启动时自动加载。
 
 ## 配置
 

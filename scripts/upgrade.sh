@@ -34,15 +34,24 @@ Usage:
 
 Options:
   --vault PATH        要升级的 Vault 目录（必填）
+  --agent NAME        AI agent：opencode | claude-code | codex（默认：opencode）
   --dry-run           只预演，不写文件
   --non-interactive   不提问，使用安全默认值
   -h, --help          显示帮助
 EOF
 }
 
+AGENT_CHOICE="opencode"
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --vault) VAULT="$2"; shift 2 ;;
+    --agent)
+      case "$2" in
+        opencode|claude-code|codex) AGENT_CHOICE="$2" ;;
+        *) echo "无效的 --agent 值：$2" >&2; exit 1 ;;
+      esac
+      shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
     --non-interactive) NON_INTERACTIVE=1; shift ;;
     -h|--help) usage; exit 0 ;;
@@ -149,10 +158,25 @@ if [[ -f "$VAULT/AI_CONFIG.md" && "$DRY_RUN" -eq 0 ]]; then
 fi
 sync_file "$TEMPLATE_DIR/AI_CONFIG.md" "$VAULT/AI_CONFIG.md"
 
-# 3. 技能目录 —— 整树同步（删除旧技能，写入新技能）
+# 3. 技能目录 —— 按 agent 分发到对应目录
 echo ""
-echo -e "${YELLOW}【3/4】更新技能目录 .opencode/skill/（整树同步）${NC}"
-sync_tree "$TEMPLATE_DIR/.opencode/skill" "$VAULT/.opencode/skill"
+case "$AGENT_CHOICE" in
+  opencode)
+    echo -e "${YELLOW}【3/4】更新技能目录 .opencode/skill/（整树同步）${NC}"
+    sync_tree "$TEMPLATE_DIR/.opencode/skill" "$VAULT/.opencode/skill"
+    ;;
+  claude-code)
+    echo -e "${YELLOW}【3/4】更新技能目录 .claude/skills/（整树同步）${NC}"
+    sync_tree "$TEMPLATE_DIR/.opencode/skill" "$VAULT/.claude/skills"
+    # 同步 CLAUDE.md（Claude Code 记忆文件）
+    sync_file "$TEMPLATE_DIR/AGENTS.md" "$VAULT/CLAUDE.md"
+    echo -e "${GREEN}✓ CLAUDE.md 已同步${NC}"
+    ;;
+  codex)
+    echo -e "${YELLOW}【3/4】更新技能目录 ~/.codex/skills/（用户级，整树同步）${NC}"
+    sync_tree "$TEMPLATE_DIR/.opencode/skill" "$HOME/.codex/skills"
+    ;;
+esac
 
 # 4. 辅助脚本
 echo ""
