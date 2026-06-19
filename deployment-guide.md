@@ -310,7 +310,7 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/opencode-obsidian-docto
         ├── obsidian-cli/  # Obsidian 操作能力
         ├── obsidian-markdown/  # Markdown 生成能力
         ├── defuddle/      # 网页内容提取能力
-        ├── opencli-usage/ # OpenCLI 命令参考（87+ 适配器）
+        ├── opencli-usage/ # OpenCLI 命令参考（100+ 适配器）
         ├── smart-search/  # 智能搜索路由
         ├── opencli-browser/  # 浏览器自动化
         ├── opencli-autofix/  # 适配器自动修复

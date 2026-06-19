@@ -26,9 +26,9 @@
 uname -s
 ```
 
-必须是 `Darwin`（macOS）。如果是 Linux，流程类似但 `open` 命令需替换；如果是 Windows，暂不支持一键脚本，建议用户使用 WSL。
+必须是 `Darwin`（macOS）。如果是 Linux，流程类似但 `open` 命令需替换为 `xdg-open`、Homebrew 需改用系统包管理器；如果是 Windows，暂不支持一键脚本，建议用户使用 WSL2。
 
-### 1.2 Node.js（≥ 18）
+### 1.2 Node.js（≥ 21）
 
 ```bash
 node -v
@@ -140,7 +140,7 @@ npm install -g @jackwener/opencli
 
 权限不足时加 `sudo`。
 
-OpenCLI 是社交媒体采集功能的驱动工具，支持 87+ 网站适配器（小红书、抖音、Twitter 等）。
+OpenCLI 是社交媒体采集功能的驱动工具，支持 100+ 网站适配器（小红书、抖音、Twitter 等）。
 
 ### 4.3 复制 Vault 模板
 
@@ -171,12 +171,12 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "zhipuglm/glm-4.5",
+  "model": "zhipuglm/glm-4.6",
   "provider": {
     "zhipuglm": {
       "name": "智谱 GLM",
       "npm": "@ai-sdk/openai-compatible",
-      "models": { "glm-4.5": { "name": "GLM-4.5" }, "glm-4.5-air": { "name": "GLM-4.5-Air" } },
+      "models": { "glm-4.6": { "name": "GLM-4.6" }, "glm-4.5-air": { "name": "GLM-4.5-Air" } },
       "options": { "apiKey": "<用户的API Key>", "baseURL": "https://open.bigmodel.cn/api/coding/paas/v4" }
     }
   }
@@ -188,10 +188,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "anthropic/claude-sonnet-4-20250514",
+  "model": "anthropic/claude-opus-4-1",
   "provider": {
     "anthropic": {
-      "models": { "claude-sonnet-4-20250514": { "name": "Claude Sonnet 4" }, "claude-haiku-35-20241022": { "name": "Claude 3.5 Haiku" } },
+      "models": { "claude-opus-4-1": { "name": "Claude Opus 4.1" }, "claude-sonnet-4-5": { "name": "Claude Sonnet 4.5" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -203,10 +203,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "openai/gpt-4.1",
+  "model": "openai/gpt-5",
   "provider": {
     "openai": {
-      "models": { "gpt-4.1": { "name": "GPT-4.1" }, "gpt-4.1-mini": { "name": "GPT-4.1 Mini" } },
+      "models": { "gpt-5": { "name": "GPT-5" }, "gpt-5-mini": { "name": "GPT-5 Mini" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -218,10 +218,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "google/gemini-2.5-pro",
+  "model": "google/gemini-3-pro",
   "provider": {
     "google": {
-      "models": { "gemini-2.5-pro": { "name": "Gemini 2.5 Pro" }, "gemini-2.5-flash": { "name": "Gemini 2.5 Flash" } },
+      "models": { "gemini-3-pro": { "name": "Gemini 3 Pro" }, "gemini-3-flash": { "name": "Gemini 3 Flash" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -233,10 +233,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "openrouter/anthropic/claude-sonnet-4-20250514",
+  "model": "openrouter/anthropic/claude-opus-4.1",
   "provider": {
     "openrouter": {
-      "models": { "anthropic/claude-sonnet-4-20250514": { "name": "Claude Sonnet 4" }, "openai/gpt-4.1": { "name": "GPT-4.1" } },
+      "models": { "anthropic/claude-opus-4.1": { "name": "Claude Opus 4.1" }, "openai/gpt-5": { "name": "GPT-5" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -248,17 +248,19 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "deepseek/deepseek-chat",
+  "model": "deepseek/deepseek-v4-pro",
   "provider": {
     "deepseek": {
       "name": "DeepSeek",
       "npm": "@ai-sdk/openai-compatible",
-      "models": { "deepseek-chat": { "name": "DeepSeek V3" }, "deepseek-reasoner": { "name": "DeepSeek R1" } },
+      "models": { "deepseek-v4-pro": { "name": "DeepSeek V4 Pro" }, "deepseek-v4-flash": { "name": "DeepSeek V4 Flash" } },
       "options": { "apiKey": "<用户的API Key>", "baseURL": "https://api.deepseek.com/v1" }
     }
   }
 }
 ```
+
+> ⚠️ DeepSeek 旧的 `deepseek-chat` / `deepseek-reasoner` 模型名将于 **2026-07-24 下线**，已改用 V4-Pro / V4-Flash。
 
 ### 4.5 配置 Obsidian 插件
 
@@ -327,7 +329,7 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash scripts/verify.sh --vault "$HOM
 
 | 检查项 | 命令/方法 | 预期结果 |
 |--------|-----------|----------|
-| Node.js | `node -v` | v18+ |
+| Node.js | `node -v` | v21+ |
 | OpenCode | `opencode --version` | 有版本号输出 |
 | OpenCLI | `opencli --version` | 有版本号输出（社交媒体采集需要） |
 | 知识库目录 | `ls ~/Desktop/我的知识库` | 看到 AGENTS.md, AI_CONFIG.md, raw/, wiki/, assets/ |
@@ -375,7 +377,7 @@ Obsidian-OpenCode-Knowledge/
         ├── obsidian-cli/     ← Obsidian 操作能力
         ├── obsidian-markdown/ ← Markdown 生成
         ├── defuddle/         ← 网页内容提取
-        ├── opencli-usage/    ← OpenCLI 命令参考（87+ 适配器）
+        ├── opencli-usage/    ← OpenCLI 命令参考（100+ 适配器）
         ├── smart-search/     ← 智能搜索路由
         ├── opencli-browser/  ← 浏览器自动化
         ├── opencli-autofix/  ← 适配器自动修复

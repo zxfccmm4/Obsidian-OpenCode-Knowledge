@@ -66,7 +66,7 @@ Thank you for your interest in this project! Whether you're a seasoned developer
 ### 基本要求 / Basic Requirements
 
 - **macOS** (主要支持平台 / primary supported platform)
-- **Node.js** 18+ (用于运行某些工具 / for running certain tools)
+- **Node.js** 21+ (用于运行某些工具 / for running certain tools)
 - **Obsidian** (用于测试知识库模板 / for testing the knowledge base template)
 - **OpenCode** (可选，用于体验完整工作流 / optional, for experiencing the full workflow)
 

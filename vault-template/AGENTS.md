@@ -21,6 +21,18 @@ AI 知识管理员的工作手册。本文件由 opencode 启动时自动加载�
 
 ## 四个触发行为
 
+### 触发词消歧规则（多个触发词同时命中时按此判定）
+
+触发词是模糊匹配，真实对话里一句话可能同时命中多个行为。按以下优先级和信号判定，**不要同时执行多个行为**：
+
+1. **有素材 + 暗示保存 → Ingest**（优先级最高）。判断「是否有素材」：用户粘贴了文章/链接/图片/长文本，或明确说"这个/这条/这篇"。即便句子里也出现了"查一下"之类的 query 词，只要带着素材，就按 Ingest 处理。
+2. **素材带社交来源标记 → Social Ingest**。素材的 `source` 字段是社交平台名，或用户说"爬了这个/收录这条"，走 Social Ingest 而非普通 Ingest。
+3. **无素材 + 提问/总结/对比 → Query**。用户只是问问题、要总结、做对比，没有要保存的新内容时，走 Query。**默认只答不写文件**。
+4. **明确说"lint/体检/wiki 有啥问题" → Lint**。这是显式指令，不与其他触发混淆。
+5. **含"存下来/归档到 wiki" → Query 的归档分支**（见触发 2 例外）。只对 Query 已生成的答案做归档，不是新 Ingest。
+
+不确定时：**优先问用户一句**（"你是想保存这个，还是查询已有内容？"），而不是猜。
+
 ### 触发 1：Ingest（录入素材）
 
 **触发词：** 读取 [[AI_CONFIG]] → `triggers.ingest`。默认："加到 wiki"、"ingest 这个"、"把这个收进来"、"记录下来"、"保存这个"。给 AI 一份新素材并暗示要保存时也触发。
@@ -88,6 +100,8 @@ AI 知识管理员的工作手册。本文件由 opencode 启动时自动加载�
 
 ### 触发 4：Social Ingest（社交媒体内容录入）
 
+> ⚠️ **合规边界：** 自动化抓取可能违反部分平台 ToS。仅处理用户**本人主动提供**的素材；不要主动高频抓取、不要批量再分发他人内容。若用户未提供素材、只是口头要求抓取，先提示合规风险再行动。
+
 **触发词：** 读取 [[AI_CONFIG]] → `triggers.social_ingest`。默认："爬了这个"、"收录这条"、"这条收进来"。给 AI 一份带 `source` 字段为社交平台名的文件，或 vault 根目录出现未归档的社交媒体笔记时也触发。
 
 **内容知识域分类（按内容主题，不按平台）：**
@@ -147,10 +161,20 @@ opencli xiaohongshu note "<完整URL>" -f json
 opencli xiaohongshu download "<完整URL>" --output "assets/xiaohongshu/<笔记标题>"
 ```
 
-**图片存储规则：**
+**图片存储规则（用脚本整理，不要手动 mv/rmdir）：**
 - 目录用**笔记标题**命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用笔记 ID
-- opencli download 会自动创建以 ID 命名的子目录，抓取后需将文件提到标题目录下，删除空的 ID 子目录
-- 其他平台图片路径类推：`assets/douyin/<标题>/`、`assets/bilibili/<标题>/` 等
+- opencli download 会自动创建以 ID 命名的子目录。整理成标题目录 + 生成图片引用，**直接调用脚本**，不要自己拼相对路径：
+
+```bash
+bash scripts/organize-social-assets.sh \
+  --vault <vault 根路径> \
+  --platform <xiaohongshu|douyin|bilibili|...> \
+  --note-id <opencli 下载的 ID 目录名> \
+  --title "<笔记标题>"
+```
+
+- 脚本会：把 ID 子目录的文件提升到标题目录 → 删空 ID 目录 → 输出带正确相对路径（`../../../`）的图片引用，直接粘贴进 raw 笔记
+- 其他平台同理：`--platform douyin`、`--platform bilibili` 等
 
 **第二步：生成 raw 笔记（图文一体）**
 
@@ -192,9 +216,7 @@ tags: []
 ```
 
 **配图路径关键规则：**
-- 从 `raw/social/<domain>/` 到 vault 根需要上溯**三层**：`../../../`
-- 完整路径模板：`![](../../../assets/<平台>/<笔记标题>/<文件名>.jpg)`
-- 图片文件名保持 opencli 下载的原始命名（`{note_id}_{index}.jpg`）
+- **相对路径由 `organize-social-assets.sh` 脚本自动生成**（上溯三层 `../../../`），不要手算；直接用脚本输出粘贴
 - 如果笔记正文有图文对应关系（如 P2-4 对应某店），尽量将图片插到对应位置而非全部堆在末尾
 
 **第三步：分析**
@@ -245,7 +267,7 @@ tags: []
 - 日期用今天的日期。Updated 反映文章内容最后变动的时间，不是文件系统时间戳。
 - **raw 绝对不能改**。如果发现 raw 里有错，在 wiki 文章里标注"source contains error"而不是改 raw。
 - **wiki 的 Sources 必须链接到本地 raw 文件**，使用相对路径。外部 URL 仅保留在 raw 文件的 frontmatter `note_url` 字段中，不出现在 wiki 的 Sources 里。
-- **社交媒体图片目录**用笔记标题命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用 ID。opencli 抓取后需将 ID 子目录的文件提到标题目录下。
+- **社交媒体图片目录**用笔记标题命名（如 `assets/xiaohongshu/宁波咖啡三巨头/`），不用 ID。用 `scripts/organize-social-assets.sh` 完成提升 + 引用生成，不要手动 mv。
 
 ## 放开的约束
 
