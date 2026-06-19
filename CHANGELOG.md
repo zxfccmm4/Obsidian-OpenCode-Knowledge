@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+---
+
+## [0.4.0] - 2026-06-19
+
 ### 新增
 - **升级脚本 `scripts/upgrade.sh`**：一键把仓库里的规则、技能、辅助脚本同步到已部署的 vault，**绝不触碰** `raw/` `wiki/` `assets/`。`AI_CONFIG.md` 会先备份再覆盖。
 - **卸载脚本 `scripts/uninstall.sh`**：清理 OpenCode 配置和 Obsidian 插件配置；`--remove-vault` 可连同 vault 一起删，`--remove-packages` 卸载全局 npm 包。默认保留用户数据，高风险操作需二次确认。
@@ -15,12 +19,12 @@
 - **平台与合规标识**：README 加 macOS 平台徽章与跨平台说明；社交媒体采集章节加 ToS / 合规免责声明。
 
 ### 变更
-- **更新全部 AI 模型到 2026 当前版本**（`setup.sh` 顶部已沉淀为单一事实源）：
-  - 智谱 GLM：`glm-4.5` → `glm-4.6`（GLM-5.x API 2026-06 刚上线，暂用稳定的 4.6）
-  - Anthropic：`claude-sonnet-4-20250514` → `claude-opus-4-1`
-  - OpenAI：`gpt-4.1` → `gpt-5`
-  - Google：`gemini-2.5-pro` → `gemini-3-pro`
-  - DeepSeek：`deepseek-chat` → `deepseek-v4-pro`（⚠️ 旧模型名 2026-07-24 下线）
+- **更新全部 AI 模型到 2026 当前版本**（按各 provider 官方文档一手源核实，`setup.sh` 顶部沉淀为单一事实源）：
+  - 智谱 GLM：`glm-4.5` → **`glm-5.2`**（旗舰，100万上下文）/ `glm-5.1` / `glm-5`
+  - Anthropic：`claude-sonnet-4-20250514` → **`claude-opus-4-8`**（当前旗舰）/ `claude-sonnet-4-6`
+  - OpenAI：`gpt-4.1` → **`gpt-5.5`**（当前旗舰）/ `gpt-5.4-mini`
+  - Google：`gemini-2.5-pro` → **`gemini-3.1-pro-preview`**（原 `gemini-3-pro` 已 shut down）
+  - DeepSeek：`deepseek-chat` → **`deepseek-v4-pro`** / `deepseek-v4-flash`（⚠️ 旧模型名 2026-07-24 下线）
 - **Node.js 要求提升到 v21+**（OpenCode 运行时要求）；`setup.sh` 现在会检查版本并提示升级。
 - OpenCLI 适配器数量描述统一更新为 **100+**（原 87+）。
 - Social Ingest 流程改为调用 `organize-social-assets.sh`，移除让 AI 手动 `mv`/数相对层数的步骤。
