@@ -4,11 +4,12 @@
 # 适用于 macOS | 面向非技术用户
 # ============================================================
 # 单一事实源：支持的模型清单（更新模型时只改这里，再同步 GUIDE_FOR_AI.md）
-#   zhipu     → glm-4.6 / glm-4.5-air      (GLM-5.x API 2026-06 刚上线，暂用稳定的 4.6)
-#   anthropic → claude-opus-4-1 / claude-sonnet-4-5
-#   openai    → gpt-5 / gpt-5-mini
-#   google    → gemini-3-pro / gemini-3-flash
-#   openrouter→ anthropic/claude-opus-4.1 / openai/gpt-5
+# 核对来源（2026-06）：
+#   zhipu     → glm-5.2 / glm-5.1 / glm-5     (docs.bigmodel.cn; GLM-5.2 当前旗舰，100万上下文)
+#   anthropic → claude-opus-4-8 / claude-sonnet-4-6   (platform.claude.com; Opus 4.8 当前旗舰)
+#   openai    → gpt-5.5 / gpt-5.4-mini       (developers.openai.com; GPT-5.5 当前旗舰)
+#   google    → gemini-3.1-pro-preview / gemini-3-flash   (ai.google.dev; 原 gemini-3-pro 已 shut down)
+#   openrouter→ anthropic/claude-opus-4.8 / openai/gpt-5.5
 #   deepseek  → deepseek-v4-pro / deepseek-v4-flash
 #               ⚠ deepseek-chat / deepseek-reasoner 将于 2026-07-24 下线，已弃用
 # Node.js 要求：>= 21（OpenCode 运行时要求）
@@ -288,13 +289,14 @@ prompt_for_api_key_if_needed() {
 build_provider_config() {
   case "$PROVIDER_CHOICE" in
     1)
-      MODEL_ID="zhipuglm/glm-4.6"
+      MODEL_ID="zhipuglm/glm-5.2"
       PROVIDER_BLOCK="\"zhipuglm\": {
       \"name\": \"智谱 GLM\",
       \"npm\": \"@ai-sdk/openai-compatible\",
       \"models\": {
-        \"glm-4.6\": { \"name\": \"GLM-4.6\" },
-        \"glm-4.5-air\": { \"name\": \"GLM-4.5-Air\" }
+        \"glm-5.2\": { \"name\": \"GLM-5.2\" },
+        \"glm-5.1\": { \"name\": \"GLM-5.1\" },
+        \"glm-5\": { \"name\": \"GLM-5\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\",
@@ -303,11 +305,11 @@ build_provider_config() {
     }"
       ;;
     2)
-      MODEL_ID="anthropic/claude-opus-4-1"
+      MODEL_ID="anthropic/claude-opus-4-8"
       PROVIDER_BLOCK="\"anthropic\": {
       \"models\": {
-        \"claude-opus-4-1\": { \"name\": \"Claude Opus 4.1\" },
-        \"claude-sonnet-4-5\": { \"name\": \"Claude Sonnet 4.5\" }
+        \"claude-opus-4-8\": { \"name\": \"Claude Opus 4.8\" },
+        \"claude-sonnet-4-6\": { \"name\": \"Claude Sonnet 4.6\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -315,11 +317,11 @@ build_provider_config() {
     }"
       ;;
     3)
-      MODEL_ID="openai/gpt-5"
+      MODEL_ID="openai/gpt-5.5"
       PROVIDER_BLOCK="\"openai\": {
       \"models\": {
-        \"gpt-5\": { \"name\": \"GPT-5\" },
-        \"gpt-5-mini\": { \"name\": \"GPT-5 Mini\" }
+        \"gpt-5.5\": { \"name\": \"GPT-5.5\" },
+        \"gpt-5.4-mini\": { \"name\": \"GPT-5.4 Mini\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"
@@ -327,10 +329,10 @@ build_provider_config() {
     }"
       ;;
     4)
-      MODEL_ID="google/gemini-3-pro"
+      MODEL_ID="google/gemini-3.1-pro-preview"
       PROVIDER_BLOCK="\"google\": {
       \"models\": {
-        \"gemini-3-pro\": { \"name\": \"Gemini 3 Pro\" },
+        \"gemini-3.1-pro-preview\": { \"name\": \"Gemini 3.1 Pro\" },
         \"gemini-3-flash\": { \"name\": \"Gemini 3 Flash\" }
       },
       \"options\": {
@@ -339,12 +341,12 @@ build_provider_config() {
     }"
       ;;
     5)
-      MODEL_ID="openrouter/anthropic/claude-opus-4.1"
+      MODEL_ID="openrouter/anthropic/claude-opus-4.8"
       PROVIDER_BLOCK="\"openrouter\": {
       \"models\": {
-        \"anthropic/claude-opus-4.1\": { \"name\": \"Claude Opus 4.1\" },
-        \"openai/gpt-5\": { \"name\": \"GPT-5\" },
-        \"google/gemini-3-pro\": { \"name\": \"Gemini 3 Pro\" }
+        \"anthropic/claude-opus-4.8\": { \"name\": \"Claude Opus 4.8\" },
+        \"openai/gpt-5.5\": { \"name\": \"GPT-5.5\" },
+        \"google/gemini-3.1-pro-preview\": { \"name\": \"Gemini 3.1 Pro\" }
       },
       \"options\": {
         \"apiKey\": \"${API_KEY}\"

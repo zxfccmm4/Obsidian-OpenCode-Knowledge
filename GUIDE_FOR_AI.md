@@ -171,12 +171,12 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "zhipuglm/glm-4.6",
+  "model": "zhipuglm/glm-5.2",
   "provider": {
     "zhipuglm": {
       "name": "智谱 GLM",
       "npm": "@ai-sdk/openai-compatible",
-      "models": { "glm-4.6": { "name": "GLM-4.6" }, "glm-4.5-air": { "name": "GLM-4.5-Air" } },
+      "models": { "glm-5.2": { "name": "GLM-5.2" }, "glm-5.1": { "name": "GLM-5.1" }, "glm-5": { "name": "GLM-5" } },
       "options": { "apiKey": "<用户的API Key>", "baseURL": "https://open.bigmodel.cn/api/coding/paas/v4" }
     }
   }
