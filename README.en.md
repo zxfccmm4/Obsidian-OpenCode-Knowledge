@@ -56,6 +56,24 @@ bash setup.sh
 
 > 📖 For detailed steps, see [`deployment-guide.md`](deployment-guide.md) (Chinese deployment guide)
 
+### Choose an AI Agent
+
+The knowledge base supports three AI agents. Pick one with `--agent` during deployment (default: `opencode`):
+
+| Agent | Obsidian Plugin | Best For |
+|-------|-----------------|----------|
+| **OpenCode** ⭐ (default) | ✅ opencode-obsidian | Chat directly inside Obsidian |
+| **Claude Code** | ✅ claudian | Anthropic ecosystem users |
+| **Codex** | ✅ claudian | OpenAI ecosystem users |
+
+```bash
+bash setup.sh --agent opencode        # default, recommended for most users
+bash setup.sh --agent claude-code     # Claude Code
+bash setup.sh --agent codex           # OpenAI Codex
+```
+
+> 📖 For a detailed comparison and selection guide, see [`docs/agents.md`](docs/agents.md)
+
 ### Start With a Read-Only Check
 
 If you do not want to install anything yet, or you just want to verify the repo and local environment first, run:
@@ -68,13 +86,15 @@ bash scripts/verify.sh
 
 The setup script handles everything automatically:
 
-1. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
-2. **Installs OpenCode** — installs the OpenCode CLI tool globally via npm
-3. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (100+ site adapters)
-4. **Creates Your Vault** — copies the `vault-template/` to your chosen location
-5. **Configures AI Service** — choose from 6 providers (Zhipu GLM, Anthropic, OpenAI, Google Gemini, OpenRouter, DeepSeek)
-6. **Handles Existing Config** — if `~/.config/opencode/opencode.json` already exists, the script asks before overwriting and creates a backup first
-7. **Sets Up Obsidian Plugin** — generates configuration for the opencode-obsidian plugin
+1. **Choose AI Agent** — pick one of opencode / claude-code / codex (default: opencode)
+2. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
+3. **Installs the Chosen Agent** — installs the corresponding CLI globally via npm (opencode-ai / @anthropic-ai/claude-code / @openai/codex)
+4. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (100+ site adapters)
+5. **Creates Your Vault** — copies the `vault-template/` to your chosen location
+6. **Distributes Skills & Rules** — places skills into the agent-specific directory; generates `AGENTS.md` (claude-code also generates `CLAUDE.md`)
+7. **Configures AI Service** — choose from 6 providers and generate the config file for the chosen agent
+8. **Handles Existing Config** — if the agent config already exists, the script asks before overwriting and creates a backup first
+9. **Sets Up Obsidian Plugin** — generates plugin `data.json` for the chosen agent (opencode → opencode-obsidian; claude-code/codex → claudian)
 
 ### Automation Mode
 
@@ -95,26 +115,52 @@ For a real non-interactive install, a common flag combination looks like:
 bash setup.sh --non-interactive --vault "$HOME/Desktop/My Knowledge Base" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
 ```
 
+### 🔄 Upgrade & Uninstall
+
+After deployment, to get the latest rules, skills, or scripts:
+
+```bash
+# Update the repo first, then upgrade your knowledge base (only rules/skills, never touches your notes)
+git pull
+bash scripts/upgrade.sh --agent <your-agent> --vault "$HOME/Desktop/My Knowledge Base"
+# e.g.: bash scripts/upgrade.sh --agent claude-code --vault "$HOME/Desktop/My Knowledge Base"
+```
+
+> `upgrade.sh` only refreshes `AGENTS.md`/`CLAUDE.md`, skills, and helper scripts; `raw/` `wiki/` `assets/` are left untouched; `AI_CONFIG.md` is backed up first. Omitting `--agent` defaults to opencode.
+
+To clean up (remove the agent config / plugin config / optionally delete the vault and npm packages):
+
+```bash
+bash scripts/uninstall.sh --agent <your-agent> --vault "$HOME/Desktop/My Knowledge Base"
+# Full clean: bash scripts/uninstall.sh --agent codex --vault <path> --remove-vault --remove-packages --non-interactive
+```
+
+> ⚠️ `--remove-vault` permanently deletes all your notes and requires a second confirmation.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for version history.
+
 ---
 
 ## 🏗️ Architecture Overview
 
-This solution works with three components:
+This solution works with three components, with the AI Agent being one of three choices:
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
-│  │   Obsidian  │◄──►│  OpenCode   │◄──►│   AGENTS.md │ │
-│  │ (Notes App) │    │  (AI Agent) │    │  (AI Rules) │ │
-│  └─────────────┘    └─────────────┘    └─────────────┘ │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  ┌─────────────┐    ┌──────────────────────┐    ┌─────────────┐ │
+│  │   Obsidian  │◄──►│   AI Agent (pick 1)   │◄──►│   AGENTS.md │ │
+│  │ (Notes App) │    │ OpenCode/Claude/Codex│    │  (AI Rules) │ │
+│  └─────────────┘    └──────────────────────┘    └─────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 | Component | Purpose | What It Means for You |
 |-----------|---------|----------------------|
 | **Obsidian** | Local note-taking app | Write notes like using a regular notebook |
-| **OpenCode** | AI model interface | Chat with AI directly in Obsidian |
+| **AI Agent** | AI model interface | Chat with AI directly in Obsidian (pick one of OpenCode / Claude Code / Codex) |
 | **AGENTS.md** | AI behavior guide | AI knows how to organize, query, and check your knowledge base |
+
+> All three agents share the same rules and skills; they differ only in installation method and config format. See [`docs/agents.md`](docs/agents.md).
 
 ---
 
@@ -141,8 +187,10 @@ My Knowledge Base/
 │   ├── log.md                # 📝 Operation log (auto-recorded by AI)
 │   └── topic notes...        # Including digested social media knowledge
 ├── 📁 assets/                # Image assets
-└── 📁 .opencode/
-    └── 📁 skill/             # AI skills (9 pre-installed)
+└── 📁 .opencode/            # AI skills dir (opencode)
+  │                          #   claude-code uses .claude/skills/
+  │                          #   codex uses ~/.codex/skills/ (user-level)
+    └── 📁 skill/             # AI skills (shared across all agents)
         ├── obsidian-cli/     # Obsidian operation capabilities
         ├── obsidian-markdown/ # Markdown generation capabilities
         ├── defuddle/         # Web content extraction capabilities
@@ -156,7 +204,7 @@ My Knowledge Base/
 
 ### Pre-installed Skills
 
-The template comes with 9 pre-installed skills in `vault-template/.opencode/skill/`:
+The template comes with 9 pre-installed skills (source of truth: `vault-template/.opencode/skill/`). At deploy time they are distributed to the agent-specific directory (`.opencode/skill/` / `.claude/skills/` / `~/.codex/skills/`). The skill content is shared across all three agents:
 
 | Skill | Purpose |
 |-------|---------|
@@ -255,7 +303,7 @@ AI will check:
 
 ## 🔧 Advanced Options (Optional)
 
-The basic version works great. Add these features on demand by simply telling OpenCode to install them:
+The basic version works great. Add these features on demand by simply telling your AI agent to install them:
 
 | Feature | Install Command | Purpose |
 |---------|-----------------|---------|
@@ -301,16 +349,19 @@ Very secure:
 
 Yes! The setup script supports 6 providers — choose your preferred one during installation:
 
-| Provider | Highlights |
-|----------|------------|
-| Zhipu GLM ⭐ | Chinese service, great for Chinese users |
-| Anthropic | Claude series models |
-| OpenAI | GPT series models |
-| Google Gemini | Gemini series models |
-| OpenRouter | Multi-model gateway, one key for many models |
-| DeepSeek | Chinese service, cost-effective |
+| Provider | Default Model | Highlights |
+|----------|---------------|------------|
+| Zhipu GLM ⭐ | `glm-5.2` | Chinese service, great for Chinese users |
+| Anthropic | `claude-opus-4-8` | Claude series models |
+| OpenAI | `gpt-5.5` | GPT series models |
+| Google Gemini | `gemini-3.1-pro-preview` | Gemini series models |
+| OpenRouter | `anthropic/claude-opus-4.8` | Multi-model gateway, one key for many models |
+| DeepSeek | `deepseek-v4-pro` | Chinese service, cost-effective |
 
-Just paste your API Key and the config is generated automatically. Want to switch later? Edit `~/.config/opencode/opencode.json`.
+Just paste your API Key and the config is generated automatically (the config file path differs per agent, see [`docs/agents.md`](docs/agents.md)). Want to switch later? Re-run `setup.sh` or manually edit your agent's config file:
+- OpenCode: `~/.config/opencode/opencode.json`
+- Claude Code: `~/.claude/settings.json`
+- Codex: `~/.codex/config.toml`
 
 ---
 
@@ -357,7 +408,11 @@ You are free to use, modify, and distribute, just keep the copyright notice.
 Thanks to these projects and teams for their support:
 
 - **[OpenCode](https://opencode.ai)** — Enables AI assistants to run locally in the terminal
+- **[Claude Code](https://www.anthropic.com/claude-code)** — Anthropic's official AI coding agent
+- **[Codex](https://developers.openai.com/codex/)** — OpenAI's official AI coding agent
 - **[Obsidian](https://obsidian.md)** — Excellent local note-taking software
+- **[claudian](https://github.com/YishenTu/claudian)** — A universal plugin that embeds AI agents in Obsidian
+- **[opencode-obsidian](https://github.com/mtymek/opencode-obsidian)** — The OpenCode Obsidian plugin
 - **[OpenCLI](https://github.com/jackwener/OpenCLI)** — Make any website your CLI, 100+ site adapters
 - **[Zhipu GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — Multiple AI service providers supported
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — Inspiration for the knowledge base architecture
