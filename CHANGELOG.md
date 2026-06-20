@@ -20,7 +20,7 @@
   - Codex：`~/.codex/config.toml`（TOML）
 - **技能目录按 agent 分发**：`.opencode/skill/`（opencode）/ `.claude/skills/`（claude-code）/ `~/.codex/skills/`（codex 用户级）。技能内容一致，格式兼容。
 - **AGENTS.md / CLAUDE.md 双写**：claude-code 额外生成 CLAUDE.md；AGENTS.md 措辞泛化为「由 AI agent 自动加载」。
-- **Obsidian 插件按 agent 分发**：opencode → opencode-obsidian；claude-code → claudian；codex 无成熟插件（提示终端用）。
+- **Obsidian 插件按 agent 分发**：opencode → opencode-obsidian（默认）；claude-code / codex → [claudian](https://github.com/YishenTu/claudian)（通用插件，用 `cliPathsByHost` 配置）。**三个 agent 都能在 Obsidian 内使用**。
 - **[`docs/agents.md`](docs/agents.md)**：三 agent 横向对比、选型建议、能力边界。
 - **两篇排障文档**：[`claude-code-setup-troubleshooting.md`](claude-code-setup-troubleshooting.md)、[`codex-setup-troubleshooting.md`](codex-setup-troubleshooting.md)。
 

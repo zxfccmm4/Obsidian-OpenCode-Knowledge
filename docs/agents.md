@@ -22,7 +22,7 @@ bash setup.sh --agent codex
 | **记忆文件** | `AGENTS.md` | `CLAUDE.md`（+ AGENTS.md） | `AGENTS.md` |
 | **用户配置** | `~/.config/opencode/opencode.json`（JSON） | `~/.claude/settings.json`（JSON） | `~/.codex/config.toml`（TOML） |
 | **技能目录** | `.opencode/skill/`（项目级） | `.claude/skills/`（项目级） | `~/.codex/skills/`（用户级） |
-| **Obsidian 插件** | ✅ [opencode-obsidian](https://github.com/mtymek/opencode-obsidian) | ✅ [claudian](https://github.com/YishenTu/claudian) | ⚠️ 实验性（建议终端） |
+| **Obsidian 插件** | ✅ [opencode-obsidian](https://github.com/mtymek/opencode-obsidian)（默认）/ [claudian](https://github.com/YishenTu/claudian) | ✅ [claudian](https://github.com/YishenTu/claudian) | ✅ [claudian](https://github.com/YishenTu/claudian) |
 | **serve 模式** | ✅ `opencode serve`（后台服务） | ❌（通过 CLI 调用） | ❌（通过 CLI 调用） |
 | **原生 provider** | 智谱/Anthropic/OpenAI/Google/OpenRouter/DeepSeek | Anthropic（第三方走 base_url） | OpenAI（第三方走 base_url） |
 | **Node 要求** | ≥ 21 | ≥ 18 | ≥ 22 |
@@ -51,10 +51,10 @@ bash setup.sh --agent codex
 
 ### ⚡ Codex
 
-**适合：** 已经在用 OpenAI Codex、或主要在终端工作的用户。
+**适合：** 已经在用 OpenAI Codex、或偏好 OpenAI 生态的用户。
 
 - OpenAI 官方 CLI
-- ⚠️ Obsidian 插件生态尚不成熟，**主要在终端使用**（setup 会提示）
+- 通过 [claudian](https://github.com/YishenTu/claudian) 插件也能在 Obsidian 内用
 - 配置是 TOML 格式；技能装在用户级 `~/.codex/skills/`
 
 ---
@@ -63,7 +63,12 @@ bash setup.sh --agent codex
 
 ### Obsidian 集成
 
-只有 **OpenCode 和 Claude Code** 有成熟的 Obsidian 插件，能在 Obsidian 侧边栏直接对话。**Codex 用户**目前主要在终端运行 `codex`（setup 会明确提示这一点）。
+三个 agent 都能在 Obsidian 内使用：
+- **OpenCode**：默认用 [opencode-obsidian](https://github.com/mtymek/opencode-obsidian)（最成熟，`opencode serve` 后台服务）；也可用 claudian
+- **Claude Code**：用 [claudian](https://github.com/YishenTu/claudian)
+- **Codex**：用 [claudian](https://github.com/YishenTu/claudian)（Codex 走自己的 CLI-managed MCP）
+
+claudian 是一个通用插件，支持 Claude Code / Codex / OpenCode 等多个 agent。
 
 ### Provider 兼容性
 
