@@ -84,13 +84,15 @@ bash scripts/verify.sh
 
 安装脚本会自动完成这些事情：
 
-1. **检查 Node.js**：确认是否已安装，缺失时可引导用 Homebrew 安装
-2. **安装 OpenCode**：通过 npm 全局安装 OpenCode CLI
-3. **安装 OpenCLI**：安装社交媒体采集和网页自动化所需 CLI
-4. **创建你的 Vault**：把 `vault-template/` 复制到你选择的位置
-5. **配置 AI 服务**：从 6 个 provider 中选择一个并生成配置
-6. **处理已有配置**：如果检测到已有 `~/.config/opencode/opencode.json`，会先询问是否覆盖，并在覆盖前自动备份
-7. **生成 Obsidian 插件配置**：为 `opencode-obsidian` 写入推荐的 `data.json`
+1. **选择 AI Agent**：opencode / claude-code / codex 三选一（默认 opencode）
+2. **检查 Node.js**：确认是否已安装，缺失时可引导用 Homebrew 安装
+3. **安装所选 Agent**：通过 npm 全局安装对应的 CLI（opencode-ai / @anthropic-ai/claude-code / @openai/codex）
+4. **安装 OpenCLI**：安装社交媒体采集和网页自动化所需 CLI
+5. **创建你的 Vault**：把 `vault-template/` 复制到你选择的位置
+6. **分发技能与规则**：按所选 agent 把技能放到对应目录，生成 `AGENTS.md`（claude-code 额外生成 `CLAUDE.md`）
+7. **配置 AI 服务**：从 6 个 provider 中选择一个，生成对应 agent 的配置文件
+8. **处理已有配置**：如果检测到已有 agent 配置，会先询问是否覆盖，并在覆盖前自动备份
+9. **生成 Obsidian 插件配置**：按所选 agent 写入插件 `data.json`（opencode → opencode-obsidian；claude-code/codex → claudian）
 
 ### 自动化模式
 
@@ -118,16 +120,17 @@ bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provid
 ```bash
 # 先更新仓库，再升级你的知识库（只更新规则/技能，绝不碰你的笔记）
 git pull
-bash scripts/upgrade.sh --vault "$HOME/Desktop/我的知识库"
+bash scripts/upgrade.sh --agent <你的agent> --vault "$HOME/Desktop/我的知识库"
+# 例如：bash scripts/upgrade.sh --agent claude-code --vault "$HOME/Desktop/我的知识库"
 ```
 
-> `upgrade.sh` 只刷新 `AGENTS.md`、技能、辅助脚本；`raw/` `wiki/` `assets/` 原封不动；`AI_CONFIG.md` 会先备份。
+> `upgrade.sh` 只刷新 `AGENTS.md`/`CLAUDE.md`、技能、辅助脚本；`raw/` `wiki/` `assets/` 原封不动；`AI_CONFIG.md` 会先备份。不传 `--agent` 时默认 opencode。
 
-想清理（卸载 OpenCode 配置 / 插件配置 / 可选删除 vault 与 npm 包）：
+想清理（卸载对应 agent 的配置 / 插件配置 / 可选删除 vault 与 npm 包）：
 
 ```bash
-bash scripts/uninstall.sh --vault "$HOME/Desktop/我的知识库"
-# 严格清理：bash scripts/uninstall.sh --vault <路径> --remove-vault --remove-packages --non-interactive
+bash scripts/uninstall.sh --agent <你的agent> --vault "$HOME/Desktop/我的知识库"
+# 严格清理：bash scripts/uninstall.sh --agent codex --vault <路径> --remove-vault --remove-packages --non-interactive
 ```
 
 > ⚠️ `--remove-vault` 会永久删除你的全部笔记，需二次确认。
@@ -138,22 +141,24 @@ bash scripts/uninstall.sh --vault "$HOME/Desktop/我的知识库"
 
 ## 🏗️ 架构概览
 
-这套方案由三个组件协同工作：
+这套方案由三个组件协同工作，中间的 AI Agent 可三选一：
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
-│  │   Obsidian  │◄──►│  OpenCode   │◄──►│  知识库规则 │ │
-│  │  (笔记软件)  │    │  (AI 助手)  │    │ (AGENTS.md) │ │
-│  └─────────────┘    └─────────────┘    └─────────────┘ │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  ┌─────────────┐    ┌──────────────────────┐    ┌─────────────┐ │
+│  │   Obsidian  │◄──►│   AI Agent (三选一)   │◄──►│  知识库规则 │ │
+│  │  (笔记软件)  │    │ OpenCode/Claude/Codex│    │ (AGENTS.md) │ │
+│  └─────────────┘    └──────────────────────┘    └─────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 | 组件 | 作用 | 对你意味着什么 |
 |------|------|----------------|
 | **Obsidian** | 本地笔记软件 | 像用普通笔记本一样写笔记 |
-| **OpenCode** | AI 大模型接口 | 在 Obsidian 里和 AI 对话 |
-| **知识库规则** | AI 行为指南 | AI 知道怎么帮你整理、查询、体检 |
+| **AI Agent** | AI 大模型接口 | 在 Obsidian 里和 AI 对话（OpenCode / Claude Code / Codex 三选一） |
+| **知识库规则** | AI 行为指南（`AGENTS.md`） | AI 知道怎么帮你整理、查询、体检 |
+
+> 三个 agent 共用同一套规则和技能，差异仅在安装方式和配置格式。详见 [`docs/agents.md`](docs/agents.md)。
 
 ---
 
@@ -180,8 +185,10 @@ bash scripts/uninstall.sh --vault "$HOME/Desktop/我的知识库"
 │   ├── log.md                # 📝 操作日志（AI 自动记录）
 │   └── 各主题笔记...         # 含社交媒体消化后的知识文章
 ├── 📁 assets/                # 配图资源
-└── 📁 .opencode/
-    └── 📁 skill/             # AI 技能
+└── 📁 .opencode/            # AI 技能目录（opencode）
+  │                          #   claude-code 用 .claude/skills/
+  │                          #   codex 用 ~/.codex/skills/（用户级）
+    └── 📁 skill/             # AI 技能（内容三者通用）
         ├── obsidian-cli/     # Obsidian 操作能力
         ├── obsidian-markdown/ # Markdown 生成能力
         ├── defuddle/         # 网页内容提取能力
@@ -195,7 +202,7 @@ bash scripts/uninstall.sh --vault "$HOME/Desktop/我的知识库"
 
 ### 预装技能
 
-模板会预装 9 个技能，位于 `vault-template/.opencode/skill/`：
+模板预装 9 个技能（真相源在 `vault-template/.opencode/skill/`），部署时按所选 agent 分发到对应目录（`.opencode/skill/` / `.claude/skills/` / `~/.codex/skills/`）。技能内容三者通用：
 
 | 技能 | 作用 |
 |------|------|
@@ -294,7 +301,7 @@ AI 会检查：
 
 ## 🔧 高级选项（可选）
 
-基础版已经能用了。以下功能按需添加，只需在 OpenCode 里一句话安装：
+基础版已经能用了。以下功能按需添加，只需在你的 AI agent 里一句话安装：
 
 | 功能 | 安装命令 | 用途 |
 |------|----------|------|
@@ -338,18 +345,21 @@ AI 会检查：
 
 ### Q3：可以用其他 AI 服务吗？
 
-可以！安装脚本支持 6 个 AI 服务提供商，运行时自由选择：
+可以！安装脚本支持 6 个 AI 服务提供商（provider），运行时自由选择：
 
-| 服务 | 特点 |
-|------|------|
-| 智谱 GLM ⭐ | 国内服务，中文好，推荐国内用户 |
-| Anthropic | Claude 系列模型 |
-| OpenAI | GPT 系列模型 |
-| Google Gemini | Gemini 系列模型 |
-| OpenRouter | 多模型网关，一个 Key 用多个模型 |
-| DeepSeek | 国内服务，性价比高 |
+| 服务 | 默认模型 | 特点 |
+|------|---------|------|
+| 智谱 GLM ⭐ | `glm-5.2` | 国内服务，中文好，推荐国内用户 |
+| Anthropic | `claude-opus-4-8` | Claude 系列模型 |
+| OpenAI | `gpt-5.5` | GPT 系列模型 |
+| Google Gemini | `gemini-3.1-pro-preview` | Gemini 系列模型 |
+| OpenRouter | `anthropic/claude-opus-4.8` | 多模型网关，一个 Key 用多个模型 |
+| DeepSeek | `deepseek-v4-pro` | 国内服务，性价比高 |
 
-选择后粘贴 API Key 即可自动配置。后续想换？编辑 `~/.config/opencode/opencode.json` 即可。
+选择后粘贴 API Key 即可自动配置（不同 agent 的配置文件路径不同，见 [`docs/agents.md`](docs/agents.md)）。后续想换？重跑 `setup.sh` 或手动编辑对应 agent 的配置文件：
+- OpenCode：`~/.config/opencode/opencode.json`
+- Claude Code：`~/.claude/settings.json`
+- Codex：`~/.codex/config.toml`
 
 ---
 
@@ -396,7 +406,11 @@ AI 会检查：
 感谢以下项目和团队的支持：
 
 - **[OpenCode](https://opencode.ai)** — 让 AI 助手可以运行在本地终端
+- **[Claude Code](https://www.anthropic.com/claude-code)** — Anthropic 官方 AI 编码 agent
+- **[Codex](https://developers.openai.com/codex/)** — OpenAI 官方 AI 编码 agent
 - **[Obsidian](https://obsidian.md)** — 优秀的本地笔记软件
+- **[claudian](https://github.com/YishenTu/claudian)** — 在 Obsidian 内嵌入 AI agent 的通用插件
+- **[opencode-obsidian](https://github.com/mtymek/opencode-obsidian)** — OpenCode 的 Obsidian 插件
 - **[OpenCLI](https://github.com/jackwener/OpenCLI)** — 让任何网站变成命令行，支持 100+ 网站适配器
 - **[智谱 GLM](https://open.bigmodel.cn)** / **[Anthropic](https://anthropic.com)** / **[OpenAI](https://openai.com)** / **[Google Gemini](https://ai.google)** / **[OpenRouter](https://openrouter.ai)** / **[DeepSeek](https://deepseek.com)** — 支持多种 AI 服务提供商
 - **[helloianneo/obsidian-ai-second-brain](https://github.com/helloianneo/obsidian-ai-second-brain)** — 知识库架构灵感来源
