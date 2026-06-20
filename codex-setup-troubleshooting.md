@@ -19,11 +19,18 @@ npm install -g @openai/codex
 
 ---
 
-## ⚠️ 关于 Obsidian 集成
+## 在 Obsidian 内使用 Codex
 
-**Codex 目前没有成熟的 Obsidian 插件**。选 codex 时，setup 不会生成插件配置，你主要在**终端**使用 `codex` 命令。
+Codex 通过 [claudian](https://github.com/YishenTu/claudian) 插件也能在 Obsidian 内使用。`--agent codex` 部署时，setup 会自动生成 claudian 的 `data.json`，用 `cliPathsByHost` 指向你的 `codex` 二进制。
 
-如果你非常需要在 Obsidian 里用，可关注社区插件进展；但当前建议把 Codex 当作终端工具，配合 Obsidian 仅做笔记编辑。
+**安装步骤：**
+1. Obsidian 设置 → 第三方插件 → 搜索安装「BRAT」
+2. BRAT 设置 → Add Plugin → 输入 `YishenTu/claudian`
+3. 启用 claudian，在插件设置里选择 Codex 作为 agent
+
+> claudian 是通用插件，支持 Claude Code / Codex / OpenCode 等多个 agent。Codex 走自己的 CLI-managed MCP。
+
+如果插件连不上 Codex，检查 `data.json` 的 `cliPathsByHost.darwin.codex` 是否指向真实路径（`which codex` 确认）。
 
 ---
 

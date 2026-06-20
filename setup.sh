@@ -258,7 +258,7 @@ resolve_agent() {
       AGENT_USER_SKILL_DIR="$HOME/.codex/skills"
       AGENT_MEMORY_FILE="AGENTS.md"
       AGENT_NEEDS_CLAUDE_MD=0
-      AGENT_OBSIDIAN_PLUGIN=""
+      AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
       AGENT_SERVE_CMD=""
       ;;
     *)
@@ -1030,21 +1030,27 @@ OPCODE_DAT
       write_file "$plugin_dir/data.json" "$plugin_content"
       echo -e "${GREEN}✓ Obsidian 插件配置已生成（opencode-obsidian）${NC}"
       ;;
-    claude-code)
-      # claudian 调用 claude CLI；apiKey/model 来自上面的 agent 配置或环境变量
+    claude-code|codex)
+      # claudian 支持多个 agent（Claude Code / Codex / OpenCode）。
+      # 配置用 cliPathsByHost 按 OS 映射对应 agent 的 CLI 路径。
+      local host_os="darwin"
       local plugin_content
       plugin_content=$(cat <<CLAUDE_DAT
 {
-  "claudePath": "$AGENT_BIN_PATH",
   "autoStart": true,
   "defaultViewLocation": "sidebar",
   "maxNotesInContext": 20,
-  "maxSelectionLength": 2000
+  "maxSelectionLength": 2000,
+  "cliPathsByHost": {
+    "${host_os}": {
+      "${AGENT_BIN}": "$AGENT_BIN_PATH"
+    }
+  }
 }
 CLAUDE_DAT
 )
       write_file "$plugin_dir/data.json" "$plugin_content"
-      echo -e "${GREEN}✓ Obsidian 插件配置已生成（claudian）${NC}"
+      echo -e "${GREEN}✓ Obsidian 插件配置已生成（claudian · ${AGENT_DISPLAY_NAME}）${NC}"
       ;;
   esac
 }
@@ -1071,17 +1077,21 @@ echo ""
 echo "  1. 打开 Obsidian → 「打开文件夹作为仓库」→ 选择："
 echo "     $VAULT_PATH"
 echo ""
-echo "  2. 安装 opencode-obsidian 插件："
+echo "  2. 安装 ${AGENT_DISPLAY_NAME} 的 Obsidian 插件："
 echo "     推荐方式：在 Obsidian 设置 → 第三方插件 → 搜索安装「BRAT」"
-echo "              → 打开 BRAT 设置 → Add Plugin → 输入：mtymek/opencode-obsidian"
+echo "              → 打开 BRAT 设置 → Add Plugin → 输入：${AGENT_OBSIDIAN_PLUGIN}"
 echo ""
-echo "  3. 启用插件后，侧边栏会出现 OpenCode 面板"
+echo "  3. 启用插件后，侧边栏会出现 ${AGENT_DISPLAY_NAME} 面板，"
 echo "     点击开始对话，试试说：「帮我创建一篇笔记」"
 echo ""
 echo -e "${BLUE}💡 自定义提示：${NC}编辑 $VAULT_PATH/AI_CONFIG.md 可以修改 AI 行为"
 echo "   例如：添加知识域、修改触发词、调整输出语言等"
 echo ""
 echo -e "详细说明请参考同目录下的 ${BLUE}deployment-guide.md${NC}"
-echo -e "插件配置与排障请参考 ${BLUE}opencode-obsidian-setup-troubleshooting.md${NC}"
+# 按 agent 指向对应排障文档
+TROUBLESHOOTING_DOC="opencode-obsidian-setup-troubleshooting.md"
+[[ "$AGENT_ID" == "claude-code" ]] && TROUBLESHOOTING_DOC="claude-code-setup-troubleshooting.md"
+[[ "$AGENT_ID" == "codex" ]] && TROUBLESHOOTING_DOC="codex-setup-troubleshooting.md"
+echo -e "插件配置与排障请参考 ${BLUE}${TROUBLESHOOTING_DOC}${NC}"
 echo -e "一键诊断脚本：${BLUE}bash \"$SCRIPT_DIR/scripts/opencode-obsidian-doctor.sh\" --vault \"$VAULT_PATH\"${NC}"
 echo ""

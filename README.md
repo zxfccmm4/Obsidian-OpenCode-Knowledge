@@ -62,7 +62,7 @@ bash setup.sh
 |-------|-------------|------|
 | **OpenCode** ⭐（默认） | ✅ opencode-obsidian | 想在 Obsidian 内直接对话 |
 | **Claude Code** | ✅ claudian | Anthropic 生态用户 |
-| **Codex** | ⚠️ 主要终端用 | OpenAI 生态、终端工作流 |
+| **Codex** | ✅ claudian | OpenAI 生态用户 |
 
 ```bash
 bash setup.sh --agent opencode        # 默认，推荐大多数用户
