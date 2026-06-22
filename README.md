@@ -56,20 +56,23 @@ bash setup.sh
 
 ### 选择 AI Agent
 
-知识库支持三个 AI agent 驱动，部署时用 `--agent` 选择（默认 `opencode`）：
+知识库支持四个 AI agent 驱动，部署时用 `--agent` 选择（默认 `opencode`）：
 
 | Agent | Obsidian 插件 | 适合 |
 |-------|-------------|------|
-| **OpenCode** ⭐（默认） | ✅ opencode-obsidian | 想在 Obsidian 内直接对话 |
-| **Claude Code** | ✅ claudian | Anthropic 生态用户 |
-| **Codex** | ✅ claudian | OpenAI 生态用户 |
+| **OpenCode** ⭐（默认） | ✅ claudian（默认）/ opencode-obsidian | 原生 6 大模型，体验最佳 |
+| **Claude Code** | ✅ claudian | Anthropic 生态，推理能力强 |
+| **Codex** | ✅ claudian | OpenAI 生态 |
+| **Pi** | ✅ claudian | 开源轻量，15+ provider |
 
 ```bash
 bash setup.sh --agent opencode        # 默认，推荐大多数用户
 bash setup.sh --agent claude-code     # Claude Code
 bash setup.sh --agent codex           # OpenAI Codex
+bash setup.sh --agent pi              # Pi（开源轻量）
 ```
 
+> **Obsidian 插件：** 默认用 [claudian](https://github.com/YishenTu/claudian)（支持全部四个 agent）。OpenCode 还可用 `--plugin opencode-obsidian` 切到原生 serve 模式。
 > 📖 详细的对比与选型建议见 [`docs/agents.md`](docs/agents.md)
 
 ### 先做只读检查

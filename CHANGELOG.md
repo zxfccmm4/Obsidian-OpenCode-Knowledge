@@ -9,6 +9,24 @@
 
 ---
 
+## [0.6.0] - 2026-06-22
+
+### 新增
+- **第四个 AI Agent：Pi**（`--agent pi`）。开源轻量 CLI（[earendil-works/pi](https://github.com/earendil-works/pi)），支持 15+ provider。配置 `~/.pi/config.json`，技能装在用户级 `~/.pi/skills/`。
+- **`--plugin` 选项**：`claudian`（默认）| `opencode-obsidian`（仅 opencode，切回 serve 模式）。
+- **claudian 成为默认 Obsidian 插件**：统一支持全部四个 agent（OpenCode / Claude Code / Codex / Pi）。
+- [pi-setup-troubleshooting.md](pi-setup-troubleshooting.md) 排障文档。
+
+### 变更
+- OpenCode 默认 Obsidian 插件从 opencode-obsidian 改为 **claudian**（opencode-obsidian 仍可通过 `--plugin opencode-obsidian` 选用）。
+- `setup.sh` / `upgrade.sh` / `uninstall.sh` / `verify.sh` 全部支持四个 agent。
+- docs/agents.md 横向对比表加 Pi 列；README 中英 agent 表更新。
+- uninstall 对 opencode 同时清理 claudian 和 opencode-obsidian 两个插件目录。
+
+---
+
+---
+
 ## [0.5.0] - 2026-06-20
 
 ### 新增
