@@ -140,11 +140,11 @@ else
 fi
 
 # 检测支持的 AI agent 二进制（至少一个可用即可，warn 仅提示）
-for agent_bin in opencode claude codex; do
+for agent_bin in opencode claude codex pi; do
   if command -v "$agent_bin" &>/dev/null; then
     ok "${agent_bin} found: $("$agent_bin" --version 2>/dev/null || echo "version unknown")"
   else
-    warn "${agent_bin} not found（可选，三个 agent 任选其一）"
+    warn "${agent_bin} not found（可选，四个 agent 任选其一）"
   fi
 done
 

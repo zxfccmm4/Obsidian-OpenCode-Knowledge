@@ -17,6 +17,7 @@ FILES=(
   "opencode-obsidian-setup-troubleshooting.md"
   "claude-code-setup-troubleshooting.md"
   "codex-setup-troubleshooting.md"
+  "pi-setup-troubleshooting.md"
   "docs/agents.md"
 )
 

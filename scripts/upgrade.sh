@@ -48,7 +48,7 @@ while [[ $# -gt 0 ]]; do
     --vault) VAULT="$2"; shift 2 ;;
     --agent)
       case "$2" in
-        opencode|claude-code|codex) AGENT_CHOICE="$2" ;;
+        opencode|claude-code|codex|pi) AGENT_CHOICE="$2" ;;
         *) echo "无效的 --agent 值：$2" >&2; exit 1 ;;
       esac
       shift 2 ;;
@@ -175,6 +175,10 @@ case "$AGENT_CHOICE" in
   codex)
     echo -e "${YELLOW}【3/4】更新技能目录 ~/.codex/skills/（用户级，整树同步）${NC}"
     sync_tree "$TEMPLATE_DIR/.opencode/skill" "$HOME/.codex/skills"
+    ;;
+  pi)
+    echo -e "${YELLOW}【3/4】更新技能目录 ~/.pi/skills/（用户级，整树同步）${NC}"
+    sync_tree "$TEMPLATE_DIR/.opencode/skill" "$HOME/.pi/skills"
     ;;
 esac
 

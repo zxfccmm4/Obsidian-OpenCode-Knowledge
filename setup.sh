@@ -39,6 +39,7 @@ NODE_INSTALL_CHOICE=""
 PROVIDER_CHOICE=""
 API_KEY="${OPENCODE_API_KEY:-}"
 AGENT_CHOICE=""
+PLUGIN_CHOICE=""
 
 # Agent 相关变量由 resolve_agent() 根据上面 AGENT_CHOICE 填充：
 AGENT_ID=""              # opencode | claude-code | codex
@@ -228,8 +229,8 @@ resolve_agent() {
       AGENT_USER_SKILL_DIR=""
       AGENT_MEMORY_FILE="AGENTS.md"
       AGENT_NEEDS_CLAUDE_MD=0
-      AGENT_OBSIDIAN_PLUGIN="mtymek/opencode-obsidian"
-      AGENT_SERVE_CMD="serve --port 14096 --hostname 127.0.0.1 --cors app://obsidian.md"
+      AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
+      AGENT_SERVE_CMD=""
       ;;
     claude-code|claudecode|claude)
       AGENT_ID="claude-code"
@@ -261,10 +262,48 @@ resolve_agent() {
       AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
       AGENT_SERVE_CMD=""
       ;;
+    pi)
+      AGENT_ID="pi"
+      AGENT_DISPLAY_NAME="Pi"
+      AGENT_NPM_PKG="@mariozechner/pi-coding-agent"
+      AGENT_BIN="pi"
+      AGENT_CONFIG_DIR="$HOME/.pi"
+      AGENT_CONFIG_FILE="$HOME/.pi/config.json"
+      AGENT_CONFIG_FORMAT="json"
+      AGENT_VAULT_SKILL_DIR=""
+      AGENT_USER_SKILL_DIR="$HOME/.pi/skills"
+      AGENT_MEMORY_FILE="AGENTS.md"
+      AGENT_NEEDS_CLAUDE_MD=0
+      AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
+      AGENT_SERVE_CMD=""
+      ;;
     *)
       echo -e "${RED}✗ 无效的 --agent 值：$agent${NC}" >&2
-      echo "可选值：opencode | claude-code | codex" >&2
+      echo "可选值：opencode | claude-code | codex | pi" >&2
       exit 1
+      ;;
+  esac
+}
+
+# 根据 PLUGIN_CHOICE 调整 Obsidian 插件选择。
+# 默认 claudian（所有 agent 通用）；--plugin opencode-obsidian 仅 opencode 可用，切回 serve 模式。
+apply_plugin_choice() {
+  local plugin="${PLUGIN_CHOICE:-claudian}"
+
+  case "$plugin" in
+    opencode-obsidian)
+      if [[ "$AGENT_ID" != "opencode" ]]; then
+        echo -e "${YELLOW}⚠ --plugin opencode-obsidian 仅适用于 opencode agent，已忽略并使用 claudian${NC}"
+        AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
+        AGENT_SERVE_CMD=""
+        return 0
+      fi
+      AGENT_OBSIDIAN_PLUGIN="mtymek/opencode-obsidian"
+      AGENT_SERVE_CMD="serve --port 14096 --hostname 127.0.0.1 --cors app://obsidian.md"
+      ;;
+    claudian|*)
+      AGENT_OBSIDIAN_PLUGIN="YishenTu/claudian"
+      AGENT_SERVE_CMD=""
       ;;
   esac
 }
@@ -293,15 +332,46 @@ prompt_for_agent_choice() {
   echo ""
   echo "请选择驱动知识库的 AI Agent："
   echo ""
-  echo "  1) OpenCode     — 默认。带 Obsidian 插件，可在 Obsidian 内对话（推荐）"
-  echo "  2) Claude Code  — Anthropic 官方 CLI。带 claudian 插件，可在 Obsidian 内对话"
-  echo "  3) Codex        — OpenAI 官方 CLI。主要在终端使用（Obsidian 插件尚不成熟）"
+  echo "  1) OpenCode     — 默认。原生 6 大模型，claudian 插件可在 Obsidian 内对话（推荐）"
+  echo "  2) Claude Code  — Anthropic 官方 CLI，推理能力强，claudian 插件支持"
+  echo "  3) Codex        — OpenAI 官方 CLI，开放生态，claudian 插件支持"
+  echo "  4) Pi           — 开源轻量 CLI，支持 15+ provider，claudian 插件支持"
   echo ""
-  read -r -p "> 请选择 (1-3，默认 1): " AGENT_ANSWER
+  read -r -p "> 请选择 (1-4，默认 1): " AGENT_ANSWER
   case "$AGENT_ANSWER" in
     2) AGENT_CHOICE="claude-code" ;;
     3) AGENT_CHOICE="codex" ;;
+    4) AGENT_CHOICE="pi" ;;
     *) AGENT_CHOICE="opencode" ;;
+  esac
+}
+
+prompt_for_plugin_choice() {
+  if [[ -n "$PLUGIN_CHOICE" ]]; then
+    return 0
+  fi
+
+  # opencode-obsidian 仅 opencode 可选；其他 agent 只能用 claudian（已是默认）
+  if [[ "$AGENT_ID" != "opencode" ]]; then
+    PLUGIN_CHOICE="claudian"
+    return 0
+  fi
+
+  if [[ "$NON_INTERACTIVE" -eq 1 ]]; then
+    PLUGIN_CHOICE="claudian"
+    return 0
+  fi
+
+  echo ""
+  echo "选择 Obsidian 插件（仅 OpenCode agent 可选）："
+  echo ""
+  echo "  1) claudian（默认）      — 通用插件，支持 OpenCode/Claude Code/Codex/Pi"
+  echo "  2) opencode-obsidian     — OpenCode 原生插件，serve 后台服务模式"
+  echo ""
+  read -r -p "> 请选择 (1-2，默认 1): " PLUGIN_ANSWER
+  case "$PLUGIN_ANSWER" in
+    2) PLUGIN_CHOICE="opencode-obsidian" ;;
+    *) PLUGIN_CHOICE="claudian" ;;
   esac
 }
 
@@ -488,6 +558,7 @@ write_agent_config() {
     opencode)    write_opencode_config ;;
     claude-code) write_claude_code_config ;;
     codex)       write_codex_config ;;
+    pi)          write_pi_config ;;
   esac
 
   echo -e "${GREEN}✓ ${AGENT_DISPLAY_NAME} 服务配置完成${NC}"
@@ -623,6 +694,28 @@ env_key = \"${P_ENV_KEY}\"
   echo -e "${YELLOW}  或写入 ~/.codex/auth.json（Codex 也会读取）。${NC}"
 }
 
+# Pi: ~/.pi/config.json（JSON，OpenAI 兼容）
+# Pi 主要靠 `pi` → `/login` 交互配置；这里生成最小配置 + 提示用 /login。
+write_pi_config() {
+  run_cmd mkdir -p "$AGENT_CONFIG_DIR"
+  local base_url="${P_BASE_URL:-https://api.openai.com/v1}"
+  # 智谱用通用端点
+  [[ "$PROVIDER_CHOICE" == "1" ]] && base_url="https://open.bigmodel.cn/api/paas/v4"
+
+  local config_content
+  config_content=$(cat <<PI_EOF
+{
+  "model": "${P_DEFAULT_MODEL}",
+  "baseUrl": "${base_url}",
+  "apiKey": "${API_KEY}"
+}
+PI_EOF
+)
+  write_file "$AGENT_CONFIG_FILE" "$config_content"
+  echo -e "${YELLOW}  最小配置已写入 ${AGENT_CONFIG_FILE}${NC}"
+  echo -e "${YELLOW}  推荐运行 ${AGENT_BIN} 后用 /login 完成交互式配置（支持 15+ provider）。${NC}"
+}
+
 validate_option_combinations() {
   if [[ "$NON_INTERACTIVE" -eq 1 && "$PROVIDER_CHOICE" == "7" && -n "$API_KEY" ]]; then
     echo -e "${YELLOW}⚠ 已提供 API Key，但 provider=skip；将忽略 API Key${NC}"
@@ -677,12 +770,27 @@ while [[ $# -gt 0 ]]; do
     --agent)
       require_value "--agent" "${2:-}"
       case "$2" in
-        opencode|claude-code|claudecode|claude|codex)
+        opencode|claude-code|claudecode|claude|codex|pi)
           AGENT_CHOICE="$2"
           ;;
         *)
           echo "无效的 --agent 值：$2" >&2
-          echo "可选值：opencode | claude-code | codex" >&2
+          echo "可选值：opencode | claude-code | codex | pi" >&2
+          usage
+          exit 1
+          ;;
+      esac
+      shift 2
+      ;;
+    --plugin)
+      require_value "--plugin" "${2:-}"
+      case "$2" in
+        claudian|opencode-obsidian)
+          PLUGIN_CHOICE="$2"
+          ;;
+        *)
+          echo "无效的 --plugin 值：$2" >&2
+          echo "可选值：claudian（默认）| opencode-obsidian（仅 opencode）" >&2
           usage
           exit 1
           ;;
@@ -725,7 +833,10 @@ print_banner
 step "【选择 AI Agent】"
 prompt_for_agent_choice
 resolve_agent
+prompt_for_plugin_choice
+apply_plugin_choice
 echo -e "${BLUE}已选择 Agent: ${AGENT_DISPLAY_NAME}${NC}"
+echo -e "${BLUE}Obsidian 插件: $([[ "$AGENT_OBSIDIAN_PLUGIN" == *"claudian"* ]] && echo "claudian" || echo "opencode-obsidian")${NC}"
 echo ""
 
 step "【第 1 步 / 共 6 步】选择知识库存放位置"
@@ -947,6 +1058,15 @@ distribute_skills_and_memory() {
       # vault 内移除 .opencode/（codex 不用它）；AGENTS.md 保留（codex 加载它）
       run_cmd rm -rf "$VAULT_PATH/.opencode"
       ;;
+    pi)
+      # Pi 技能是用户级：复制到 ~/.pi/skills/
+      if [[ -n "$AGENT_USER_SKILL_DIR" && -d "$vault_skill_source" ]]; then
+        run_cmd mkdir -p "$(dirname "$AGENT_USER_SKILL_DIR")"
+        run_cmd cp -R "$vault_skill_source" "$AGENT_USER_SKILL_DIR"
+        echo -e "${GREEN}✓ 技能已安装到用户目录：$AGENT_USER_SKILL_DIR${NC}"
+      fi
+      run_cmd rm -rf "$VAULT_PATH/.opencode"
+      ;;
   esac
 
   # Claude Code 额外需要 CLAUDE.md（内容与 AGENTS.md 相同，Claude Code 自动加载）
@@ -1008,8 +1128,8 @@ write_obsidian_plugin_config() {
   node_bin_path="$(command -v node 2>/dev/null || true)"
   [[ -z "$node_bin_path" ]] && node_bin_path="node"
 
-  case "$AGENT_ID" in
-    opencode)
+  case "$AGENT_OBSIDIAN_PLUGIN" in
+    *opencode-obsidian)
       local plugin_content
       plugin_content=$(cat <<OPCODE_DAT
 {
@@ -1030,8 +1150,8 @@ OPCODE_DAT
       write_file "$plugin_dir/data.json" "$plugin_content"
       echo -e "${GREEN}✓ Obsidian 插件配置已生成（opencode-obsidian）${NC}"
       ;;
-    claude-code|codex)
-      # claudian 支持多个 agent（Claude Code / Codex / OpenCode）。
+    *claudian)
+      # claudian 支持多个 agent（OpenCode / Claude Code / Codex / Pi）。
       # 配置用 cliPathsByHost 按 OS 映射对应 agent 的 CLI 路径。
       local host_os="darwin"
       local plugin_content
@@ -1092,6 +1212,7 @@ echo -e "详细说明请参考同目录下的 ${BLUE}deployment-guide.md${NC}"
 TROUBLESHOOTING_DOC="opencode-obsidian-setup-troubleshooting.md"
 [[ "$AGENT_ID" == "claude-code" ]] && TROUBLESHOOTING_DOC="claude-code-setup-troubleshooting.md"
 [[ "$AGENT_ID" == "codex" ]] && TROUBLESHOOTING_DOC="codex-setup-troubleshooting.md"
+[[ "$AGENT_ID" == "pi" ]] && TROUBLESHOOTING_DOC="pi-setup-troubleshooting.md"
 echo -e "插件配置与排障请参考 ${BLUE}${TROUBLESHOOTING_DOC}${NC}"
 echo -e "一键诊断脚本：${BLUE}bash \"$SCRIPT_DIR/scripts/opencode-obsidian-doctor.sh\" --vault \"$VAULT_PATH\"${NC}"
 echo ""

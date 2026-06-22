@@ -58,20 +58,23 @@ bash setup.sh
 
 ### Choose an AI Agent
 
-The knowledge base supports three AI agents. Pick one with `--agent` during deployment (default: `opencode`):
+The knowledge base supports four AI agents. Pick one with `--agent` during deployment (default: `opencode`):
 
 | Agent | Obsidian Plugin | Best For |
 |-------|-----------------|----------|
-| **OpenCode** ⭐ (default) | ✅ opencode-obsidian | Chat directly inside Obsidian |
-| **Claude Code** | ✅ claudian | Anthropic ecosystem users |
-| **Codex** | ✅ claudian | OpenAI ecosystem users |
+| **OpenCode** ⭐ (default) | ✅ claudian (default) / opencode-obsidian | Native 6 providers, best experience |
+| **Claude Code** | ✅ claudian | Anthropic ecosystem, strong reasoning |
+| **Codex** | ✅ claudian | OpenAI ecosystem |
+| **Pi** | ✅ claudian | Open-source lightweight, 15+ providers |
 
 ```bash
 bash setup.sh --agent opencode        # default, recommended for most users
 bash setup.sh --agent claude-code     # Claude Code
 bash setup.sh --agent codex           # OpenAI Codex
+bash setup.sh --agent pi              # Pi (open-source lightweight)
 ```
 
+> **Obsidian plugin:** defaults to [claudian](https://github.com/YishenTu/claudian) (supports all four agents). OpenCode can also use `--plugin opencode-obsidian` to switch to the native serve mode.
 > 📖 For a detailed comparison and selection guide, see [`docs/agents.md`](docs/agents.md)
 
 ### Start With a Read-Only Check

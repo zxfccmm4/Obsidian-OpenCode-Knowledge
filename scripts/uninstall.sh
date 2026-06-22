@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
     --vault) VAULT="$2"; shift 2 ;;
     --agent)
       case "$2" in
-        opencode|claude-code|codex) AGENT_CHOICE="$2" ;;
+        opencode|claude-code|codex|pi) AGENT_CHOICE="$2" ;;
         *) echo "无效的 --agent 值：$2" >&2; exit 1 ;;
       esac
       shift 2 ;;
@@ -61,7 +61,7 @@ case "$AGENT_CHOICE" in
   opencode)
     CONFIG_DIR="$HOME/.config/opencode"
     CONFIG_FILE="$CONFIG_DIR/opencode.json"
-    PLUGIN_SLUG="opencode-obsidian"
+    PLUGIN_SLUG="claudian"
     AGENT_NPM_PKG="opencode-ai"
     AGENT_DISPLAY="OpenCode"
     ;;
@@ -75,9 +75,16 @@ case "$AGENT_CHOICE" in
   codex)
     CONFIG_DIR="$HOME/.codex"
     CONFIG_FILE="$CONFIG_DIR/config.toml"
-    PLUGIN_SLUG=""
+    PLUGIN_SLUG="claudian"
     AGENT_NPM_PKG="@openai/codex"
     AGENT_DISPLAY="Codex"
+    ;;
+  pi)
+    CONFIG_DIR="$HOME/.pi"
+    CONFIG_FILE="$CONFIG_DIR/config.json"
+    PLUGIN_SLUG="claudian"
+    AGENT_NPM_PKG="@mariozechner/pi-coding-agent"
+    AGENT_DISPLAY="Pi"
     ;;
 esac
 
@@ -127,12 +134,17 @@ else
   printf '%b· %s 配置不存在，跳过%b\n' "$YELLOW" "$AGENT_DISPLAY" "$NC"
 fi
 
-# 2. 删除插件配置（不删 vault 本身；codex 无插件）
+# 2. 删除插件配置（不删 vault 本身）
 if [[ -n "$PLUGIN_SLUG" && -n "$VAULT" && -d "$VAULT/.obsidian/plugins/$PLUGIN_SLUG" ]]; then
   rm -rf "$VAULT/.obsidian/plugins/$PLUGIN_SLUG"
   printf '%b✓ 已删除 Obsidian 插件配置（%s）%b\n' "$GREEN" "$PLUGIN_SLUG" "$NC"
 else
   printf '%b· 插件配置不存在，跳过%b\n' "$YELLOW" "$NC"
+fi
+# opencode 用户可能用了 opencode-obsidian，一并尝试清理
+if [[ "$AGENT_CHOICE" == "opencode" && -n "$VAULT" && -d "$VAULT/.obsidian/plugins/opencode-obsidian" ]]; then
+  rm -rf "$VAULT/.obsidian/plugins/opencode-obsidian"
+  printf '%b✓ 已删除 Obsidian 插件配置（opencode-obsidian）%b\n' "$GREEN" "$NC"
 fi
 
 # 3. 可选：删除整个 vault
