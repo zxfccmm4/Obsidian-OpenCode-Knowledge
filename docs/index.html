@@ -3,283 +3,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 知识库 — Obsidian + AI Agent</title>
+<title>你的第二大脑，现在有了 AI — Obsidian + AI Agent 知识库</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 
   :root {
-    --bg: #fff;
-    --bg-dark: #000;
-    --bg-soft: #f5f5f7;
-    --bg-gray: #fafafa;
-    --text: #1d1d1f;
-    --text-soft: #6e6e73;
-    --text-dim: #86868b;
+    --black: #1d1d1f;
+    --bg: #ffffff;
+    --bg-primary: #f5f5f7;
+    --gray-text: #515154;
+    --text-dim: #6e6e73;
+    --text-faint: #86868b;
+    --primary: #8129d9;
     --blue: #0071e3;
-    --blue-hover: #0077ed;
-    --accent: #06c;
     --border: #d2d2d7;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
 
-  body {
-    font-family: "SF Pro SC", "SF Pro Text", "Noto Sans SC", -apple-system, "Helvetica Neue", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.47;
-    font-weight: 400;
+  html {
+    font-family: "SF Pro Text", "Noto Sans SC", -apple-system, "Helvetica Neue", sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .container { max-width: 980px; margin: 0 auto; padding: 0 22px; }
-  .container-narrow { max-width: 680px; margin: 0 auto; padding: 0 22px; }
+  body {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.47059;
+    font-weight: 400;
+    letter-spacing: -.022em;
+    background: var(--bg);
+    color: var(--black);
+  }
 
-  /* ============ NAV ============ */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--black);
+    margin: 0;
+  }
+
+  p { margin: 0; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ============ NAV (毛玻璃) ============ */
   .nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.72);
+    position: sticky; top: 0; z-index: 9997;
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255,255,255,0.72);
     border-bottom: 1px solid var(--border);
   }
   .nav-inner {
     max-width: 980px; margin: 0 auto; padding: 0 22px;
     height: 48px; display: flex; align-items: center; justify-content: space-between;
   }
-  .nav-brand { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
-  .nav-links { display: flex; gap: 28px; }
+  .nav-brand { font-size: 21px; font-weight: 600; letter-spacing: .011em; color: var(--black); }
+  .nav-links { display: flex; gap: 8px; }
   .nav-links a {
-    font-size: 12px; color: var(--text-soft); text-decoration: none; font-weight: 400;
+    font-size: 12px; color: var(--text-dim); padding: 8px 12px;
+    border-radius: 10px; font-weight: 500;
   }
-  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover { color: var(--blue); text-decoration: none; }
   @media (max-width: 700px) { .nav-links { display: none; } }
 
-  /* ============ HERO ============ */
-  .hero { text-align: center; padding: 96px 22px 64px; background: var(--bg); }
-  .hero-eyebrow {
-    font-size: 21px; font-weight: 600; color: var(--text-dim); margin-bottom: 8px;
+  /* ============ ARTICLE HEADER (文章头) ============ */
+  .article-header {
+    max-width: 980px; margin: 0 auto; padding: 64px 22px 0;
+    text-align: center;
   }
-  .hero h1 {
-    font-size: clamp(48px, 8vw, 96px); font-weight: 700; line-height: 1.05;
-    letter-spacing: -0.015em; margin-bottom: 16px;
+  .eyebrow {
+    display: flex; justify-content: center; align-items: center;
+    gap: 8px; margin-top: 16px;
   }
-  .hero h1 .gradient {
-    background: linear-gradient(180deg, #1d1d1f 0%, #6e6e73 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  .eyebrow .cat {
+    font-size: 12px; font-weight: 700; letter-spacing: -.01em; color: var(--text-dim);
   }
-  .hero-sub {
-    font-size: clamp(21px, 2.6vw, 28px); font-weight: 400;
-    color: var(--text-soft); max-width: 680px; margin: 0 auto 32px;
+  .eyebrow .cat::after { content: '•'; margin-left: 8px; color: var(--text-faint); }
+  .eyebrow .date {
+    font-size: 12px; font-weight: 600; color: var(--text-dim);
   }
-  .hero-cta { display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .article-title {
+    font-size: clamp(40px, 7vw, 56px); line-height: 1.07143;
+    font-weight: 700; letter-spacing: -.005em;
+    font-family: "SF Pro Display", "Noto Sans SC", sans-serif;
+    max-width: 83.333%; margin: 24px auto 0;
+  }
+  .article-sub {
+    font-size: clamp(21px, 2.6vw, 28px); line-height: 1.2;
+    font-weight: 400; color: var(--text-dim);
+    max-width: 83.333%; margin: 20px auto 0;
+  }
+  .article-divider {
+    max-width: 653px; margin: 44px auto 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ============ ARTICLE BODY (正文) ============ */
+  .article-body {
+    max-width: 680px; margin: 0 auto; padding: 48px 22px 24px;
+  }
+  .article-body section { margin-bottom: 56px; }
+  .article-body h2 {
+    font-size: 32px; line-height: 1.125; font-weight: 700;
+    letter-spacing: .004em; margin-top: 24px; margin-bottom: 16px;
+  }
+  .article-body h3 {
+    font-size: 21px; font-weight: 600; margin-top: 28px; margin-bottom: 10px;
+  }
+  .article-body p {
+    color: var(--gray-text); font-size: 17px; line-height: 1.52941;
+    margin-top: .8em;
+  }
+  .article-body p:first-child { margin-top: 0; }
+  .article-body p.lead { font-size: 19px; color: var(--black); font-weight: 500; }
+  .article-body strong { color: var(--black); font-weight: 600; }
+  .article-body code {
+    font-family: "SF Mono", "JetBrains Mono", monospace;
+    background: var(--bg-primary); padding: 2px 6px; border-radius: 4px;
+    font-size: .875em; color: var(--primary);
+  }
+
+  /* 引导句 */
+  .pull-quote {
+    font-size: 24px; line-height: 1.25; font-weight: 500;
+    color: var(--primary); text-align: center;
+    padding: 24px 0; margin: 32px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ============ 卡片网格 (在文章内嵌) ============ */
+  .card-grid {
+    display: grid; gap: 14px; margin: 28px 0;
+  }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .card {
+    background: var(--bg-primary); border-radius: 16px; padding: 24px;
+    overflow: hidden;
+  }
+  .card.dark { background: var(--black); color: #f5f5f7; }
+  .card.dark p { color: #a1a1a6; }
+  .card .c-icon { font-size: 32px; margin-bottom: 14px; }
+  .card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 14px; color: var(--text-dim); margin-top: 0; }
+  .card .c-tag {
+    display: inline-block; margin-top: 12px; font-size: 12px; color: var(--primary); font-weight: 600;
+  }
+  @media (max-width: 734px) {
+    .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; }
+  }
+
+  /* agent 卡片 */
+  .agent-card {
+    background: var(--bg-primary); border-radius: 16px; padding: 24px 20px; text-align: center;
+  }
+  .agent-card .a-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 14px;
+  }
+  .agent-card.oc .a-icon { background: rgba(129,41,217,0.12); }
+  .agent-card.cc .a-icon { background: rgba(245,158,11,0.12); }
+  .agent-card.cx .a-icon { background: rgba(16,163,127,0.12); }
+  .agent-card.pi .a-icon { background: rgba(236,72,153,0.12); }
+  .agent-card h4 { font-size: 17px; margin-bottom: 4px; }
+  .agent-card .a-cmd { font-family: "SF Mono", monospace; font-size: 11px; color: var(--text-faint); margin-bottom: 12px; }
+  .agent-card p { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+  .agent-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 980px; margin-bottom: 8px;
+  }
+  .agent-badge.rec { background: rgba(129,41,217,0.1); color: var(--primary); }
+  .agent-badge.new { background: rgba(236,72,153,0.1); color: #ec4899; }
+
+  /* 代码块 */
+  .code-block {
+    background: var(--black); color: #f5f5f7; border-radius: 12px;
+    padding: 20px 24px; font-family: "SF Mono", monospace; font-size: 13px;
+    line-height: 1.7; overflow-x: auto; margin: 20px 0;
+  }
+  .code-block .cmt { color: var(--text-faint); }
+  .code-block .kw { color: #a78bfa; }
+  .code-block .val { color: #34d399; }
+
+  /* 数据条 */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 28px 0;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 44px; font-weight: 700; line-height: 1; color: var(--primary);
+  }
+  .stat-label { font-size: 13px; color: var(--text-faint); margin-top: 6px; }
+  @media (max-width: 734px) { .stats-row { grid-template-columns: 1fr 1fr; gap: 28px; } }
+
+  /* CTA */
+  .cta-row { display: flex; gap: 20px; justify-content: center; align-items: center; margin: 32px 0; flex-wrap: wrap; }
   .btn {
     display: inline-block; padding: 12px 24px; border-radius: 980px;
     font-size: 17px; font-weight: 400; text-decoration: none;
-    transition: all 0.2s;
   }
   .btn-primary { background: var(--blue); color: #fff; }
-  .btn-primary:hover { background: var(--blue-hover); }
+  .btn-primary:hover { background: #0077ed; text-decoration: none; }
   .btn-link { color: var(--blue); font-size: 17px; }
-  .btn-link:hover { text-decoration: underline; }
   .btn-link::after { content: ' ›'; }
 
-  /* hero 视觉区 */
-  .hero-visual {
-    margin-top: 56px; text-align: center;
+  /* 版权声明 (文章底部) */
+  .article-copyright {
+    max-width: 980px; margin: 0 auto; padding: 32px 22px;
+    border-top: 1px solid var(--border);
   }
-  .hero-card {
-    display: inline-block; background: var(--bg-soft);
-    border-radius: 28px; padding: 48px 40px; max-width: 560px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  .article-copyright p {
+    font-size: 12px; color: var(--text-faint); line-height: 1.5; margin-top: 6px;
   }
-  .hero-card .emoji { font-size: 72px; margin-bottom: 20px; }
-  .hero-card h3 { font-size: 28px; font-weight: 600; margin-bottom: 10px; }
-  .hero-card p { color: var(--text-soft); font-size: 19px; }
-
-  /* ============ SECTION ============ */
-  .section { padding: 110px 0; }
-  .section.center { text-align: center; }
-  .section-title {
-    font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.08;
-    letter-spacing: -0.01em; margin-bottom: 20px;
-  }
-  .section-sub {
-    font-size: clamp(19px, 2.2vw, 24px); font-weight: 400;
-    color: var(--text-soft); max-width: 680px;
-  }
-  .section.center .section-sub { margin: 0 auto; }
-
-  /* ============ PROBLEM ============ */
-  .problem {
-    background: var(--bg-soft);
-    text-align: center; padding: 110px 22px;
-  }
-  .problem-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
-    max-width: 980px; margin: 56px auto 0;
-  }
-  .problem-card { text-align: center; }
-  .problem-card .icon { font-size: 48px; margin-bottom: 18px; }
-  .problem-card h3 { font-size: 23px; font-weight: 600; margin-bottom: 10px; }
-  .problem-card p { color: var(--text-soft); font-size: 17px; }
-  @media (max-width: 760px) { .problem-grid { grid-template-columns: 1fr; gap: 48px; } }
-
-  /* ============ FEATURES ============ */
-  .feature-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 64px;
-  }
-  .feature-box {
-    background: var(--bg-soft); border-radius: 24px; padding: 48px 40px;
-    min-height: 340px; display: flex; flex-direction: column;
-  }
-  .feature-box.dark { background: var(--bg-dark); color: #fff; }
-  .feature-box.dark p { color: #a1a1a6; }
-  .feature-box .f-icon { font-size: 44px; margin-bottom: 20px; }
-  .feature-box h3 { font-size: 28px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.01em; }
-  .feature-box p { color: var(--text-soft); font-size: 17px; flex: 1; }
-  .feature-box .tag {
-    display: inline-block; margin-top: 16px; font-size: 14px; color: var(--blue); font-weight: 500;
-  }
-  @media (max-width: 760px) { .feature-row { grid-template-columns: 1fr; } }
-
-  /* ============ AGENTS ============ */
-  .agents { background: var(--bg-dark); color: #fff; text-align: center; }
-  .agents .section-title { color: #f5f5f7; }
-  .agents .section-sub { color: #a1a1a6; }
-  .agents-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    max-width: 980px; margin: 64px auto 0;
-  }
-  .agent-box {
-    background: #1d1d1f; border-radius: 20px; padding: 36px 24px;
-    transition: transform 0.3s;
-  }
-  .agent-box:hover { transform: scale(1.03); }
-  .agent-box .a-icon {
-    width: 56px; height: 56px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; margin: 0 auto 20px;
-  }
-  .agent-box.opencode .a-icon { background: rgba(167,139,250,0.2); }
-  .agent-box.claude .a-icon { background: rgba(245,158,11,0.2); }
-  .agent-box.codex .a-icon { background: rgba(16,163,127,0.2); }
-  .agent-box.pi .a-icon { background: rgba(236,72,153,0.2); }
-  .agent-box h3 { font-size: 21px; font-weight: 600; margin-bottom: 6px; }
-  .agent-box .a-tag { font-size: 13px; color: #86868b; margin-bottom: 16px; font-family: 'SF Mono', monospace; }
-  .agent-box p { font-size: 14px; color: #a1a1a6; line-height: 1.5; }
-  .agent-badge {
-    display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
-    border-radius: 980px; margin-bottom: 12px;
-  }
-  .agent-badge.rec { background: rgba(0,113,227,0.2); color: #2997ff; }
-  .agent-badge.new { background: rgba(255,0,234,0.15); color: #ff66f0; }
-  @media (max-width: 760px) { .agents-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 480px) { .agents-grid { grid-template-columns: 1fr; } }
-
-  .claudian-line {
-    margin-top: 48px; font-size: 17px; color: #86868b;
-  }
-  .claudian-line b { color: #f5f5f7; }
-
-  /* ============ WORKFLOW ============ */
-  .workflow { text-align: center; background: var(--bg-soft); }
-  .wf-steps {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
-    max-width: 980px; margin: 64px auto 0;
-  }
-  .wf-item { text-align: center; }
-  .wf-item .num {
-    font-size: 56px; font-weight: 700; color: var(--blue);
-    line-height: 1; margin-bottom: 16px;
-  }
-  .wf-item h4 { font-size: 21px; font-weight: 600; margin-bottom: 8px; }
-  .wf-item p { color: var(--text-soft); font-size: 16px; margin-bottom: 12px; }
-  .wf-item .trigger {
-    display: inline-block; font-size: 13px; color: var(--blue);
-    background: rgba(0,113,227,0.08); padding: 6px 14px; border-radius: 980px;
-  }
-  @media (max-width: 760px) { .wf-steps { grid-template-columns: 1fr 1fr; } }
-
-  /* ============ STRUCTURE ============ */
-  .struct-pair {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-top: 56px;
-  }
-  .struct-text h3 { font-size: 32px; font-weight: 600; margin-bottom: 16px; }
-  .struct-text p { color: var(--text-soft); font-size: 18px; margin-bottom: 12px; }
-  .struct-code {
-    background: var(--bg-dark); color: #f5f5f7; border-radius: 20px;
-    padding: 32px; font-family: 'SF Mono', 'JetBrains Mono', monospace;
-    font-size: 14px; line-height: 1.9; overflow-x: auto;
-  }
-  .struct-code .cmt { color: #6e6e73; }
-  .struct-code .kw { color: #2997ff; }
-  .struct-code .dir { color: #ff9f0a; }
-  @media (max-width: 760px) { .struct-pair { grid-template-columns: 1fr; } }
-
-  /* ============ STATS ============ */
-  .stats { background: var(--bg-dark); color: #fff; text-align: center; }
-  .stats .section-title { color: #f5f5f7; }
-  .stats-grid {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px;
-    max-width: 980px; margin: 56px auto 0;
-  }
-  .stat-item { text-align: center; }
-  .stat-num {
-    font-size: clamp(48px, 7vw, 80px); font-weight: 700; line-height: 1;
-    background: linear-gradient(180deg, #fff 0%, #86868b 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .stat-label { font-size: 15px; color: #86868b; margin-top: 10px; }
-  @media (max-width: 760px) { .stats-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
-
-  /* ============ DEPLOY ============ */
-  .deploy { text-align: center; }
-  .deploy-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 56px;
-    text-align: left;
-  }
-  .deploy-card {
-    background: var(--bg-soft); border-radius: 20px; padding: 40px;
-  }
-  .deploy-card h3 { font-size: 24px; font-weight: 600; margin-bottom: 14px; }
-  .deploy-card p { color: var(--text-soft); font-size: 16px; margin-bottom: 16px; }
-  .deploy-code {
-    background: #f0f0f2; border-radius: 12px; padding: 16px 18px;
-    font-family: 'SF Mono', monospace; font-size: 13px; color: var(--text);
-    line-height: 1.7; overflow-x: auto;
-  }
-  .deploy-code .cmt { color: var(--text-dim); }
-  .deploy-code .val { color: var(--blue); }
-  @media (max-width: 760px) { .deploy-grid { grid-template-columns: 1fr; } }
-
-  /* ============ FAQ ============ */
-  .faq { background: var(--bg-soft); }
-  .faq-list { max-width: 760px; margin: 48px auto 0; }
-  .faq-item {
-    border-bottom: 1px solid var(--border); padding: 24px 0;
-  }
-  .faq-item h4 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
-  .faq-item p { color: var(--text-soft); font-size: 15px; }
-  .faq-item code { font-family: 'SF Mono', monospace; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
-
-  /* ============ FINAL CTA ============ */
-  .final-cta { text-align: center; padding: 120px 22px; background: var(--bg); }
-  .final-cta h2 {
-    font-size: clamp(40px, 6vw, 64px); font-weight: 700; line-height: 1.08;
-    letter-spacing: -0.01em; margin-bottom: 24px;
-  }
-  .final-cta p { font-size: 21px; color: var(--text-soft); margin-bottom: 32px; }
+  .article-copyright a { color: var(--blue); font-size: 12px; }
 
   /* ============ FOOTER ============ */
   footer {
-    background: var(--bg-soft); border-top: 1px solid var(--border);
-    padding: 40px 22px; text-align: center;
+    background: var(--bg-primary); border-top: 1px solid var(--border);
+    padding: 32px 22px; text-align: center;
   }
-  footer p { color: var(--text-dim); font-size: 13px; margin-bottom: 6px; }
-  .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-  .footer-links a { color: var(--blue); text-decoration: none; font-size: 13px; }
-  .footer-links a:hover { text-decoration: underline; }
+  footer p { font-size: 12px; color: var(--text-faint); margin-bottom: 6px; }
+  .footer-links { display: flex; gap: 16px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .footer-links a { font-size: 12px; color: var(--blue); }
 </style>
 </head>
 <body>
@@ -292,272 +242,157 @@
       <a href="#features">功能</a>
       <a href="#agents">Agent</a>
       <a href="#deploy">部署</a>
-      <a href="#faq">问答</a>
       <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">GitHub</a>
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">Obsidian + AI Agent</p>
-  <h1><span class="gradient">你的第二大脑，<br>现在有了 AI。</span></h1>
-  <p class="hero-sub">一个本地 AI 知识库。文章、PDF、社交媒体内容自动整理成结构化笔记。支持 OpenCode、Claude Code、Codex、Pi 四大 agent。</p>
-  <div class="hero-cta">
+<!-- ARTICLE HEADER -->
+<header class="article-header">
+  <div class="eyebrow">
+    <span class="cat">项目介绍</span>
+    <span class="date">2026 年 6 月</span>
+  </div>
+  <h1 class="article-title">你的第二大脑，<br>现在有了 AI。</h1>
+  <p class="article-sub">一个本地 AI 知识库。文章、PDF、社交媒体内容自动整理成结构化笔记，支持四大 AI agent。</p>
+  <div class="cta-row" style="margin-top:28px;">
     <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">查看 GitHub</a>
     <a class="btn-link" href="#deploy">5 分钟部署</a>
   </div>
-  <div class="hero-visual">
-    <div class="hero-card">
-      <div class="emoji">🧠</div>
-      <h3>AI 自动整理你的知识</h3>
-      <p>丢给它任何内容，它帮你归类、消化、建索引。</p>
-    </div>
-  </div>
-</section>
+  <div class="article-divider"></div>
+</header>
 
-<!-- PROBLEM -->
-<section class="problem" id="features">
-  <h2 class="section-title">为什么需要它。</h2>
-  <p class="section-sub" style="margin: 0 auto;">传统知识管理的三个痛点。</p>
-  <div class="problem-grid">
-    <div class="problem-card">
-      <div class="icon">💬</div>
-      <h3>ChatGPT 没记忆</h3>
-      <p>每次对话从零开始，知识无法沉淀积累。</p>
-    </div>
-    <div class="problem-card">
-      <div class="icon">📂</div>
-      <h3>笔记没人整理</h3>
-      <p>收藏一堆，但没人帮你归类、去重、建索引。</p>
-    </div>
-    <div class="problem-card">
-      <div class="icon">☁️</div>
-      <h3>数据在云端</h3>
-      <p>个人笔记和采集内容，不想全交给云服务。</p>
-    </div>
-  </div>
-</section>
+<!-- ARTICLE BODY -->
+<article class="article-body">
 
-<!-- FEATURES -->
-<section class="section">
-  <div class="container">
-    <h2 class="section-title">强大，且自动。</h2>
-    <p class="section-sub">一句话描述意图，AI 全自动执行。</p>
-    <div class="feature-row">
-      <div class="feature-box">
-        <div class="f-icon">📥</div>
-        <h3>自动录入</h3>
-        <p>文章、PDF、截图直接丢给 AI，自动存原始素材，整理成结构化 wiki 笔记，更新索引和操作日志。</p>
-        <span class="tag">一句话触发</span>
+  <p class="lead">我们每天都在阅读、收藏、截图，但知识从来没有真正沉淀下来。ChatGPT 没有长期记忆，笔记软件不会整理，云端服务又让人不放心。</p>
+  <p>这个项目想解决的就是这件事：让 AI 帮你把零散的内容，变成一个永久保存在你电脑上的、结构化的知识库。</p>
+
+  <div class="pull-quote">丢给它任何内容，它帮你归类、消化、建索引。</div>
+
+  <section id="features">
+    <h2>核心能力</h2>
+    <p>一句话描述你的意图，AI 全自动完成整理、归类、查询和体检。四个触发词，覆盖知识管理的完整流程。</p>
+    <div class="card-grid cols-2">
+      <div class="card">
+        <div class="c-icon">📥</div>
+        <h4>自动录入 Ingest</h4>
+        <p>文章、PDF、截图丢给 AI，自动存原始素材，整理成结构化 wiki 笔记，更新索引和日志。</p>
+        <span class="c-tag">「加到 wiki」</span>
       </div>
-      <div class="feature-box dark">
-        <div class="f-icon">📱</div>
-        <h3>社交采集</h3>
-        <p>小红书、抖音、Twitter、微博内容，一键归类、去除社交口语、评估可信度，同主题自动合并。</p>
-        <span class="tag" style="color:#2997ff;">100+ 平台</span>
+      <div class="card dark">
+        <div class="c-icon">📱</div>
+        <h4>社交采集 Social Ingest</h4>
+        <p>小红书、抖音、Twitter、微博内容，一键归类、去口语、评估可信度，同主题自动合并。</p>
+        <span class="c-tag">「收录这条」</span>
       </div>
-      <div class="feature-box dark">
-        <div class="f-icon">🔍</div>
-        <h3>智能查询</h3>
-        <p>像聊天一样问「我写过关于 XX 的内容吗」，AI 从索引定位相关笔记，合成答案并引用来源。</p>
-        <span class="tag" style="color:#2997ff;">引用来源</span>
+      <div class="card dark">
+        <div class="c-icon">🔍</div>
+        <h4>智能查询 Query</h4>
+        <p>像聊天一样问「我写过关于 XX 的内容吗」，AI 从索引定位，合成答案并引用来源。</p>
+        <span class="c-tag">「wiki 里有没有」</span>
       </div>
-      <div class="feature-box">
-        <div class="f-icon">🏥</div>
-        <h3>定期体检</h3>
-        <p>每周一次，AI 检查索引一致性、死链、孤岛页面、跨文章事实矛盾，发现问题自动修复。</p>
-        <span class="tag">保持健康</span>
-      </div>
-      <div class="feature-box">
-        <div class="f-icon">🔒</div>
-        <h3>数据本地</h3>
-        <p>笔记是普通 Markdown 文件，存在你电脑上。raw/ 原始素材永不被 AI 修改，随时可以备份。</p>
-        <span class="tag">永久保存</span>
-      </div>
-      <div class="feature-box dark">
-        <div class="f-icon">⚡</div>
-        <h3>一键部署</h3>
-        <p>运行 setup.sh，选 agent、选 provider、粘贴 Key，5 分钟从零到完全可用。</p>
-        <span class="tag" style="color:#2997ff;">5 分钟</span>
+      <div class="card">
+        <div class="c-icon">🏥</div>
+        <h4>定期体检 Lint</h4>
+        <p>每周一次，AI 检查索引一致性、死链、孤岛页面、事实矛盾，发现问题自动修复。</p>
+        <span class="c-tag">「lint wiki」</span>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- AGENTS -->
-<section class="section agents" id="agents">
-  <div class="container">
-    <h2 class="section-title">四大 Agent，<br>自由切换。</h2>
-    <p class="section-sub" style="margin: 0 auto;">同一套规则与技能。按你的偏好选择。</p>
-    <div class="agents-grid">
-      <div class="agent-box opencode">
+  <section id="agents">
+    <h2>四大 AI Agent</h2>
+    <p>同一套规则与技能，按你的偏好选择 agent。部署时用 <code>--agent</code> 指定，四个 agent 都能在 Obsidian 内直接对话。</p>
+    <div class="card-grid cols-4">
+      <div class="agent-card oc">
         <div class="a-icon">⚡</div>
         <span class="agent-badge rec">推荐</span>
-        <h3>OpenCode</h3>
-        <p class="a-tag">--agent opencode</p>
-        <p>6 大模型原生支持。配置最简单，体验最完整。</p>
+        <h4>OpenCode</h4>
+        <div class="a-cmd">--agent opencode</div>
+        <p>6 大模型原生支持。配置最简单。</p>
       </div>
-      <div class="agent-box claude">
+      <div class="agent-card cc">
         <div class="a-icon">🅒</div>
-        <h3>Claude Code</h3>
-        <p class="a-tag">--agent claude-code</p>
-        <p>Anthropic 官方 CLI。推理能力最强，长程任务出色。</p>
+        <h4>Claude Code</h4>
+        <div class="a-cmd">--agent claude-code</div>
+        <p>Anthropic 官方。推理能力最强。</p>
       </div>
-      <div class="agent-box codex">
+      <div class="agent-card cx">
         <div class="a-icon">◎</div>
-        <h3>Codex</h3>
-        <p class="a-tag">--agent codex</p>
-        <p>OpenAI 官方 CLI。生态最开放，终端工作流友好。</p>
+        <h4>Codex</h4>
+        <div class="a-cmd">--agent codex</div>
+        <p>OpenAI 官方。生态最开放。</p>
       </div>
-      <div class="agent-box pi">
+      <div class="agent-card pi">
         <div class="a-icon">π</div>
         <span class="agent-badge new">新增</span>
-        <h3>Pi</h3>
-        <p class="a-tag">--agent pi</p>
-        <p>开源轻量 CLI。支持 15+ provider，可扩展性强。</p>
+        <h4>Pi</h4>
+        <div class="a-cmd">--agent pi</div>
+        <p>开源轻量。支持 15+ provider。</p>
       </div>
     </div>
-    <p class="claudian-line">🔌 <b>claudian 统一插件</b> — 四个 agent 都能在 Obsidian 内直接对话。</p>
-  </div>
-</section>
+    <p style="text-align:center; margin-top:20px;">🔌 通过 <strong>claudian</strong> 统一插件，四个 agent 都能在 Obsidian 内直接对话，一行配置搞定。</p>
+  </section>
 
-<!-- WORKFLOW -->
-<section class="section workflow">
-  <div class="container">
-    <h2 class="section-title">日常怎么用。</h2>
-    <p class="section-sub" style="margin: 0 auto;">四个触发词，覆盖全流程。</p>
-    <div class="wf-steps">
-      <div class="wf-item">
-        <div class="num">1</div>
-        <h4>录入</h4>
-        <p>丢文章/链接给 AI</p>
-        <span class="trigger">加到 wiki</span>
-      </div>
-      <div class="wf-item">
-        <div class="num">2</div>
-        <h4>采集</h4>
-        <p>社交内容归档</p>
-        <span class="trigger">收录这条</span>
-      </div>
-      <div class="wf-item">
-        <div class="num">3</div>
-        <h4>查询</h4>
-        <p>问已有笔记</p>
-        <span class="trigger">wiki 里有没有</span>
-      </div>
-      <div class="wf-item">
-        <div class="num">4</div>
-        <h4>体检</h4>
-        <p>检查死链重复</p>
-        <span class="trigger">lint wiki</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- STRUCTURE -->
-<section class="section">
-  <div class="container">
-    <div class="struct-pair">
-      <div class="struct-text">
-        <h3>清晰的结构。<br>raw 永不改。</h3>
-        <p>原始素材（raw/）AI 只读永不修改，保证可追溯。</p>
-        <p>wiki/ 由 AI 维护，同主题自动合并，跨主题交叉引用。</p>
-        <p>9 个预装技能，四个 agent 共用。</p>
-      </div>
-      <div class="struct-code">
+  <section>
+    <h2>数据结构</h2>
+    <p>知识库有清晰的目录职责。原始素材（raw/）AI 只读永不修改，保证可追溯；wiki/ 由 AI 维护，同主题自动合并，跨主题交叉引用。</p>
+    <div class="code-block">
+<span class="cmt"># 部署后的知识库</span>
 我的知识库/
-├── <span class="kw">AGENTS.md</span>        <span class="cmt">// AI 规则</span>
-├── <span class="kw">AI_CONFIG.md</span>     <span class="cmt">// ⚙️ 用户可自定义</span>
-├── <span class="dir">raw/</span>             <span class="cmt">// 原始素材（AI 只读）</span>
-│   └── social/      <span class="cmt">// 按知识域分类</span>
-├── <span class="dir">wiki/</span>            <span class="cmt">// AI 整理的笔记</span>
-│   ├── index.md     <span class="cmt">// 全局索引</span>
-│   └── log.md       <span class="cmt">// 操作日志</span>
-├── <span class="dir">assets/</span>          <span class="cmt">// 配图资源</span>
-└── <span class="dir">.opencode/skill/</span> <span class="cmt">// 9 个预装技能</span>
-      </div>
+├── <span class="kw">AGENTS.md</span>        <span class="cmt"># AI 规则（系统维护）</span>
+├── <span class="kw">AI_CONFIG.md</span>     <span class="cmt"># ⚙️ 用户可自定义配置</span>
+├── raw/             <span class="cmt"># 原始素材（AI 只读）</span>
+│   └── social/      <span class="cmt"># 按知识域分类</span>
+├── wiki/            <span class="cmt"># AI 整理的笔记</span>
+│   ├── index.md     <span class="cmt"># 全局索引</span>
+│   └── log.md       <span class="cmt"># 操作日志</span>
+├── assets/          <span class="cmt"># 配图资源</span>
+└── <span class="kw">.opencode/skill/</span> <span class="cmt"># 9 个预装技能</span>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- STATS -->
-<section class="section stats">
-  <h2 class="section-title">为知识而造。</h2>
-  <div class="stats-grid">
-    <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">AI Agent</div></div>
-    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">模型 Provider</div></div>
-    <div class="stat-item"><div class="stat-num">9</div><div class="stat-label">预装技能</div></div>
-    <div class="stat-item"><div class="stat-num">100+</div><div class="stat-label">网站适配器</div></div>
-    <div class="stat-item"><div class="stat-num">5<span style="font-size:0.5em;">min</span></div><div class="stat-label">部署时间</div></div>
-  </div>
-</section>
+  <section>
+    <h2>为知识而造</h2>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">AI Agent</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Provider</div></div>
+      <div class="stat"><div class="stat-num">9</div><div class="stat-label">技能</div></div>
+      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">适配器</div></div>
+      <div class="stat"><div class="stat-num">5<span style="font-size:.6em;">min</span></div><div class="stat-label">部署</div></div>
+    </div>
+  </section>
 
-<!-- DEPLOY -->
-<section class="section deploy" id="deploy">
-  <div class="container">
-    <h2 class="section-title">5 分钟，<br>开始使用。</h2>
-    <p class="section-sub" style="margin: 0 auto;">两种方式，选适合你的。</p>
-    <div class="deploy-grid">
-      <div class="deploy-card">
-        <h3>🤖 让 AI 帮你部署</h3>
-        <p>把这句话发给任何 AI 助手，自动完成全部部署。</p>
-        <div class="deploy-code">请帮我部署 AI 知识库：
+  <section id="deploy">
+    <h2>5 分钟部署</h2>
+    <p>两种方式。最简单的是把一句话发给任何 AI 助手，它自动完成全部部署：</p>
+    <div class="code-block">
+请帮我部署 AI 知识库：
 https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge
-/blob/main/GUIDE_FOR_AI.md</div>
-      </div>
-      <div class="deploy-card">
-        <h3>⌨️ 手动 3 步</h3>
-        <p>克隆仓库，运行脚本，打开 Obsidian。</p>
-        <div class="deploy-code"><span class="cmt"># 1. 克隆</span>
+/blob/main/GUIDE_FOR_AI.md
+    </div>
+    <p>或者手动三步：</p>
+    <div class="code-block">
+<span class="cmt"># 1. 克隆仓库</span>
 <span class="val">git</span> clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
-<span class="cmt"># 2. 安装</span>
+<span class="cmt"># 2. 运行安装脚本</span>
 <span class="val">bash</span> setup.sh
-<span class="cmt"># 3. 在 Obsidian 打开</span></div>
-      </div>
+<span class="cmt"># 3. 在 Obsidian 打开「我的知识库」</span>
     </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="section faq" id="faq">
-  <div class="container-narrow">
-    <h2 class="section-title" style="text-align:center;">常见问题。</h2>
-    <div class="faq-list">
-      <div class="faq-item">
-        <h4>没有技术背景能用吗？</h4>
-        <p>完全可以。专为非技术用户设计，跟着部署指南操作不需要懂编程。也支持「让 AI 帮你部署」的零门槛方式。</p>
-      </div>
-      <div class="faq-item">
-        <h4>我的数据安全吗？</h4>
-        <p>笔记存在你自己电脑上，本项目不托管数据。使用 AI 时当前对话内容会发送给你配置的模型服务商。raw/ 原始素材永不被修改。</p>
-      </div>
-      <div class="faq-item">
-        <h4>四个 agent 怎么选？</h4>
-        <p>大多数用户选默认的 OpenCode。偏好 Anthropic 选 Claude Code，偏好 OpenAI 选 Codex，喜欢开源轻量选 Pi。四个都支持 claudian 插件在 Obsidian 内对话。</p>
-      </div>
-      <div class="faq-item">
-        <h4>和直接用 ChatGPT 有什么区别？</h4>
-        <p>ChatGPT 数据在云端、记忆是会话级、整理要手动。本方案数据本地、记忆永久、AI 自动整理归类、支持文件关联和交叉引用。</p>
-      </div>
-      <div class="faq-item">
-        <h4>想换 agent 或 provider？</h4>
-        <p>重跑 <code>setup.sh</code> 选新的即可，不会删除你已有的 raw/ wiki/ 笔记。</p>
-      </div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">前往 GitHub</a>
+      <a class="btn-link" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/docs/agents.md">查看 Agent 指南</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FINAL CTA -->
-<section class="final-cta">
-  <h2>现在就建一个<br>属于你的 AI 知识库。</h2>
-  <p>5 分钟，从零到完全可用。</p>
-  <div class="hero-cta">
-    <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">前往 GitHub</a>
-    <a class="btn-link" href="#deploy">查看部署</a>
-  </div>
-</section>
+</article>
+
+<!-- 版权声明 (文章底部) -->
+<div class="article-copyright">
+  <p>作者：Obsidian-OpenCode-Knowledge · 发表日期：2026 年 6 月</p>
+  <p>本项目采用 <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/LICENSE">MIT 开源协议</a>，可自由使用、修改、分发。</p>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -567,7 +402,7 @@ https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge
     <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/docs/agents.md">Agent 指南</a>
     <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/CHANGELOG.md">更新日志</a>
   </div>
-  <p>🧠 Obsidian + AI Agent 知识库 · MIT License</p>
+  <p>🧠 Obsidian + AI Agent 知识库</p>
   <p>github.com/zxfccmm4/Obsidian-OpenCode-Knowledge</p>
 </footer>
 
