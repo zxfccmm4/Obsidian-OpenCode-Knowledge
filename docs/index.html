@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Obsidian + AI Agent 知识库 — 项目介绍</title>
+<title>NEURAL VAULT // AI 知识库</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
   :root {
-    --bg: #0d0b1a;
-    --bg-soft: #15122a;
-    --card: rgba(167, 139, 250, 0.06);
-    --card-border: rgba(167, 139, 250, 0.18);
-    --purple: #a78bfa;
-    --purple-bright: #c4b5fd;
-    --indigo: #818cf8;
-    --green: #6ee7b7;
-    --yellow: #fbbf24;
-    --text: #f0eef7;
-    --text-soft: #b8b3d0;
-    --text-dim: #9b95b8;
-    --text-faint: #7c769a;
+    --bg: #050510;
+    --bg-2: #0a0a1a;
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff00ea;
+    --neon-green: #00ff9d;
+    --neon-yellow: #ffe600;
+    --neon-purple: #b537f2;
+    --text: #d0f4ff;
+    --text-dim: #6a8aa8;
+    --text-faint: #3a5a7a;
+    --line: rgba(0, 240, 255, 0.18);
+    --line-dim: rgba(0, 240, 255, 0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,280 +27,419 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    font-family: 'Noto Sans SC', sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.7;
     overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 全局扫描线 + 噪点 */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 240, 255, 0.025) 3px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: 99;
   }
 
   .mono { font-family: 'JetBrains Mono', monospace; }
+  .display { font-family: 'Orbitron', 'Noto Sans SC', sans-serif; }
 
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
 
   /* ============ HERO ============ */
   .hero {
     position: relative;
-    padding: 90px 0 70px;
-    text-align: center;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(167, 139, 250, 0.22) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(129, 140, 248, 0.18) 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
     overflow: hidden;
+    background: var(--bg);
   }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
+
+  /* 透视网格地平线 */
+  .grid-floor {
+    position: absolute;
+    bottom: -10%; left: -50%; width: 200%; height: 70%;
     background-image:
-      linear-gradient(rgba(167, 139, 250, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(167, 139, 250, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(600px) rotateX(60deg);
+    transform-origin: bottom;
+    mask-image: linear-gradient(transparent 0%, #000 60%);
+    -webkit-mask-image: linear-gradient(transparent 0%, #000 60%);
+    animation: gridScroll 8s linear infinite;
   }
-  .hero-content { position: relative; z-index: 1; }
+  @keyframes gridScroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 60px; }
+  }
+
+  .sun-glow {
+    position: absolute;
+    bottom: 25%; left: 50%; transform: translateX(-50%);
+    width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 0, 234, 0.35) 0%, transparent 70%);
+    filter: blur(20px);
+  }
+
+  .hero-content { position: relative; z-index: 5; text-align: center; padding: 40px 20px; }
+
   .logo-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 76px; height: 76px; border-radius: 20px;
-    background: linear-gradient(135deg, var(--purple), var(--indigo));
-    font-size: 40px; margin-bottom: 24px;
-    box-shadow: 0 12px 36px rgba(167, 139, 250, 0.4);
+    width: 90px; height: 90px;
+    border: 2px solid var(--neon-cyan);
+    background: rgba(0, 240, 255, 0.05);
+    font-size: 44px; margin-bottom: 28px;
+    clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.15);
+    animation: pulse 2.5s ease-in-out infinite;
   }
-  .hero h1 {
-    font-size: 52px; font-weight: 900; line-height: 1.1;
-    letter-spacing: -1.5px; margin-bottom: 16px;
-    background: linear-gradient(135deg, #fff 0%, var(--purple-bright) 60%, var(--purple) 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.4), inset 0 0 20px rgba(0, 240, 255, 0.15); }
+    50% { box-shadow: 0 0 50px rgba(0, 240, 255, 0.7), inset 0 0 30px rgba(0, 240, 255, 0.3); }
   }
-  .hero .tagline {
-    font-size: 21px; color: var(--text-soft); font-weight: 400;
-    max-width: 720px; margin: 0 auto 28px;
-  }
-  .hero .tagline strong { color: var(--purple-bright); font-weight: 500; }
-  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
-  .badge {
-    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
-    padding: 7px 16px; border-radius: 999px;
-    border: 1px solid var(--card-border);
-    background: rgba(167, 139, 250, 0.1); color: var(--purple-bright);
-  }
-  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 15px;
-    text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--purple), var(--indigo));
-    color: var(--bg); box-shadow: 0 8px 24px rgba(167, 139, 250, 0.4);
-  }
-  .btn-secondary {
-    background: var(--card); color: var(--text);
-    border: 1px solid var(--card-border);
-  }
-  .quick-install {
-    margin-top: 32px;
-    display: inline-flex; align-items: center; gap: 12px;
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    padding: 12px 20px; border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace; font-size: 14px;
-    color: var(--green);
-  }
-  .quick-install .prompt { color: var(--indigo); }
 
-  /* ============ SECTIONS ============ */
-  section { padding: 72px 0; }
-  section.alt { background: var(--bg-soft); }
-  .section-title {
-    font-size: 34px; font-weight: 900; text-align: center;
-    margin-bottom: 12px; letter-spacing: -0.5px;
+  .hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(38px, 7vw, 76px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow:
+      0 0 10px rgba(0, 240, 255, 0.6),
+      0 0 30px rgba(0, 240, 255, 0.4),
+      3px 3px 0 rgba(255, 0, 234, 0.5),
+      -3px -3px 0 rgba(0, 255, 157, 0.4);
+    animation: glitch 4s infinite;
   }
-  .section-sub {
-    text-align: center; color: var(--text-dim); font-size: 17px;
-    margin-bottom: 48px;
+  @keyframes glitch {
+    0%, 92%, 100% { transform: translate(0); }
+    93% { transform: translate(-2px, 1px); }
+    94% { transform: translate(2px, -1px); }
+    95% { transform: translate(-1px, -1px); }
+    96% { transform: translate(1px, 2px); }
   }
+
+  .hero .zh-title {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: clamp(22px, 3.5vw, 34px);
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 22px;
+    color: var(--neon-cyan);
+  }
+
+  .hero .tagline {
+    font-size: clamp(15px, 1.8vw, 19px);
+    color: var(--text-dim);
+    max-width: 760px; margin: 0 auto 32px;
+    font-weight: 300;
+  }
+  .hero .tagline strong { color: var(--neon-magenta); font-weight: 500; }
+
+  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+  .badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: rgba(0, 240, 255, 0.05);
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  }
+
+  .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 32px; font-weight: 700; font-size: 15px;
+    text-decoration: none; letter-spacing: 1px; text-transform: uppercase;
+    transition: all 0.2s;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  }
+  .btn:hover { transform: translateY(-3px); }
+  .btn-primary {
+    background: var(--neon-cyan); color: var(--bg);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+  }
+  .btn-primary:hover { box-shadow: 0 0 40px rgba(0, 240, 255, 0.8); }
+  .btn-secondary {
+    background: transparent; color: var(--neon-magenta);
+    border: 2px solid var(--neon-magenta);
+  }
+  .btn-secondary:hover { background: rgba(255, 0, 234, 0.1); box-shadow: 0 0 25px rgba(255, 0, 234, 0.4); }
+
+  .terminal {
+    display: inline-block;
+    background: rgba(0, 255, 157, 0.04);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    padding: 12px 22px;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    color: var(--neon-green);
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  }
+  .terminal .prompt { color: var(--neon-magenta); }
+  .terminal .cursor { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ============ SECTION ============ */
+  section { padding: 90px 0; position: relative; }
+  .sec-header { text-align: center; margin-bottom: 56px; }
+  .sec-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--neon-magenta); letter-spacing: 4px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .sec-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+    letter-spacing: 1px; margin-bottom: 12px;
+    color: var(--text);
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+  .sec-sub { color: var(--text-dim); font-size: 16px; font-weight: 300; }
 
   /* ============ PROBLEM ============ */
-  .problem-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-    align-items: center;
-  }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
   .pain-list { list-style: none; }
-  .pain-list li {
-    padding: 16px 18px; margin-bottom: 12px;
-    background: rgba(248, 113, 113, 0.06);
-    border-left: 3px solid #f87171;
-    border-radius: 0 10px 10px 0;
-    color: var(--text-soft);
+  .pain-item {
+    padding: 18px 20px; margin-bottom: 14px;
+    background: rgba(255, 50, 50, 0.05);
+    border-left: 3px solid #ff3232;
+    color: var(--text-dim);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+    position: relative;
   }
-  .pain-list li b { color: #fca5a5; }
+  .pain-item::before {
+    content: '⚠'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+    color: #ff3232; font-size: 20px; opacity: 0.5;
+  }
+  .pain-item b { color: #ff6b6b; }
   .solution-box {
-    background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(129, 140, 248, 0.08));
-    border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 32px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(181, 55, 242, 0.06));
+    border: 1px solid var(--line);
+    padding: 36px;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    position: relative;
   }
-  .solution-box h3 {
-    font-size: 22px; margin-bottom: 16px; color: var(--purple-bright);
-  }
-  .solution-box p { color: var(--text-soft); margin-bottom: 14px; }
+  .solution-box h3 { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); font-size: 22px; margin-bottom: 18px; letter-spacing: 1px; }
+  .solution-box p { color: var(--text-dim); margin-bottom: 14px; font-size: 14.5px; }
+  .solution-box p b { color: var(--neon-green); }
+  .solution-box .final { color: var(--neon-magenta); margin-top: 18px; font-weight: 500; }
 
   /* ============ FEATURES ============ */
-  .feature-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-  }
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .feature-card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; padding: 28px 24px;
-    transition: transform 0.2s, border-color 0.2s;
+    background: rgba(0, 240, 255, 0.03);
+    border: 1px solid var(--line);
+    padding: 30px 24px;
+    position: relative;
+    transition: all 0.25s;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
   }
-  .feature-card:hover { transform: translateY(-4px); border-color: var(--purple); }
-  .feature-icon { font-size: 36px; margin-bottom: 14px; }
-  .feature-card h3 { font-size: 19px; margin-bottom: 8px; }
-  .feature-card p { color: var(--text-dim); font-size: 14.5px; }
+  .feature-card::before {
+    content: ''; position: absolute; top: 0; left: 14px; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--neon-cyan), transparent);
+  }
+  .feature-card:hover {
+    background: rgba(0, 240, 255, 0.07);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    transform: translateY(-4px);
+  }
+  .feature-icon { font-size: 38px; margin-bottom: 16px; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5)); }
+  .feature-card h3 { font-family: 'Orbitron', sans-serif; font-size: 17px; margin-bottom: 8px; color: var(--neon-cyan); letter-spacing: 0.5px; }
+  .feature-card p { color: var(--text-dim); font-size: 14px; }
+  .feature-num { position: absolute; top: 14px; right: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); }
 
   /* ============ AGENTS ============ */
-  .agents-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    margin-bottom: 32px;
-  }
+  .agents-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
   .agent-card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; padding: 24px 20px;
-    position: relative; overflow: hidden;
-    transition: transform 0.2s;
+    background: rgba(10, 10, 26, 0.7);
+    border: 1px solid var(--line);
+    padding: 26px 20px;
+    position: relative;
+    transition: all 0.25s;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
   }
-  .agent-card:hover { transform: translateY(-4px); }
   .agent-card::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   }
-  .agent-card.opencode::before { background: linear-gradient(90deg, var(--purple), var(--indigo)); }
-  .agent-card.claude::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
-  .agent-card.codex::before { background: linear-gradient(90deg, #10a37f, #1a7f64); }
-  .agent-card.pi::before { background: linear-gradient(90deg, #ec4899, #be185d); }
+  .agent-card.opencode::before { background: var(--neon-purple); box-shadow: 0 0 12px var(--neon-purple); }
+  .agent-card.claude::before { background: var(--neon-yellow); box-shadow: 0 0 12px var(--neon-yellow); }
+  .agent-card.codex::before { background: var(--neon-green); box-shadow: 0 0 12px var(--neon-green); }
+  .agent-card.pi::before { background: var(--neon-magenta); box-shadow: 0 0 12px var(--neon-magenta); }
+  .agent-card:hover { transform: translateY(-5px); }
+  .agent-card.opencode:hover { border-color: var(--neon-purple); box-shadow: 0 0 30px rgba(181, 55, 242, 0.3); }
+  .agent-card.claude:hover { border-color: var(--neon-yellow); box-shadow: 0 0 30px rgba(255, 230, 0, 0.3); }
+  .agent-card.codex:hover { border-color: var(--neon-green); box-shadow: 0 0 30px rgba(0, 255, 157, 0.3); }
+  .agent-card.pi:hover { border-color: var(--neon-magenta); box-shadow: 0 0 30px rgba(255, 0, 234, 0.3); }
   .agent-logo {
-    width: 44px; height: 44px; border-radius: 10px;
+    width: 46px; height: 46px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 700; margin-bottom: 14px;
+    font-size: 24px; font-weight: 700; margin-bottom: 14px;
+    border: 1px solid var(--line);
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   }
-  .opencode .agent-logo { background: rgba(167, 139, 250, 0.2); color: var(--purple-bright); }
-  .claude .agent-logo { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
-  .codex .agent-logo { background: rgba(16, 163, 127, 0.2); color: #34d399; }
-  .pi .agent-logo { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
-  .agent-card h3 { font-size: 18px; margin-bottom: 4px; }
-  .agent-tag {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
-    color: var(--text-faint); margin-bottom: 14px;
-  }
+  .opencode .agent-logo { color: var(--neon-purple); }
+  .claude .agent-logo { color: var(--neon-yellow); }
+  .codex .agent-logo { color: var(--neon-green); }
+  .pi .agent-logo { color: var(--neon-magenta); }
+  .agent-card h3 { font-family: 'Orbitron', sans-serif; font-size: 18px; margin-bottom: 2px; letter-spacing: 0.5px; }
+  .agent-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); margin-bottom: 14px; }
   .agent-card ul { list-style: none; }
-  .agent-card li {
-    font-size: 13.5px; color: var(--text-soft); padding-left: 14px;
-    position: relative; margin-bottom: 6px;
-  }
-  .agent-card li::before { content: '·'; position: absolute; left: 4px; color: var(--indigo); font-weight: 700; }
+  .agent-card li { font-size: 13.5px; color: var(--text-dim); padding-left: 14px; position: relative; margin-bottom: 6px; }
+  .agent-card li::before { content: '▸'; position: absolute; left: 0; color: var(--neon-cyan); font-size: 10px; }
   .agent-badge {
-    display: inline-block; font-size: 10px; font-weight: 700; color: var(--indigo);
-    background: rgba(99, 102, 241, 0.15); padding: 2px 8px; border-radius: 999px;
-    margin-bottom: 8px;
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+    padding: 2px 8px; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase;
   }
-  .claudian-note {
-    background: rgba(167, 139, 250, 0.08); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 18px 24px; text-align: center;
-    color: var(--text-soft); font-size: 15px;
+  .agent-badge.rec { color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+  .agent-badge.new { color: var(--neon-magenta); border: 1px solid var(--neon-magenta); animation: pulse-badge 1.5s infinite; }
+  @keyframes pulse-badge { 50% { opacity: 0.4; } }
+
+  .claudian-bar {
+    background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 16px; text-align: center; color: var(--text-dim); font-size: 14.5px;
   }
-  .claudian-note b { color: var(--purple-bright); }
+  .claudian-bar b { color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
 
   /* ============ WORKFLOW ============ */
-  .workflow-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+  .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
   .wf-step {
-    text-align: center; padding: 24px 16px;
-    background: var(--card); border: 1px solid var(--card-border); border-radius: 14px;
+    text-align: center; padding: 28px 18px;
+    background: rgba(0, 240, 255, 0.03);
+    border: 1px solid var(--line);
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
     position: relative;
   }
   .wf-num {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--purple), var(--indigo));
-    color: var(--bg); font-weight: 900; font-size: 16px;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 16px;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 14px;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.1);
   }
-  .wf-step h4 { font-size: 16px; margin-bottom: 8px; }
+  .wf-step h4 { font-family: 'Orbitron', sans-serif; font-size: 15px; margin-bottom: 8px; letter-spacing: 0.5px; }
   .wf-step p { font-size: 13px; color: var(--text-dim); }
   .wf-trigger {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
-    color: var(--green); background: rgba(16,185,129,0.1);
-    padding: 6px 10px; border-radius: 6px; display: inline-block; margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--neon-green); background: rgba(0, 255, 157, 0.08);
+    padding: 5px 10px; display: inline-block; margin-top: 10px;
+    border: 1px solid rgba(0, 255, 157, 0.25);
   }
 
-  /* ============ ARCHITECTURE ============ */
-  .arch-diagram {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 40px; text-align: center;
-    font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8;
-    color: var(--text-soft); white-space: pre;
+  /* ============ ARCH ============ */
+  .arch-box {
+    background: rgba(0, 240, 255, 0.03); border: 1px solid var(--line);
+    padding: 40px; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9;
+    color: var(--text-dim); white-space: pre;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    overflow-x: auto;
   }
-  .arch-diagram .hl { color: var(--purple-bright); font-weight: 700; }
+  .arch-box .hl { color: var(--neon-cyan); }
+  .arch-box .hl2 { color: var(--neon-magenta); }
 
-  /* ============ CODE / STRUCTURE ============ */
+  /* ============ STRUCTURE / CODE ============ */
+  .struct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
   .code-block {
-    background: #0a0815; border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 20px 24px;
-    font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
-    color: var(--text-soft); line-height: 1.8; overflow-x: auto;
-    margin: 16px 0;
+    background: #02020a; border: 1px solid var(--line);
+    padding: 22px 24px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9;
+    color: var(--text-dim); overflow-x: auto;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    position: relative;
+  }
+  .code-block::before {
+    content: '// SYSTEM'; position: absolute; top: 8px; right: 14px;
+    font-size: 10px; color: var(--text-faint); letter-spacing: 1px;
   }
   .code-block .cmt { color: var(--text-faint); }
-  .code-block .kw { color: var(--purple-bright); }
-  .code-block .str { color: var(--green); }
-
-  .struct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .code-block .kw { color: var(--neon-cyan); }
+  .code-block .dir { color: var(--neon-magenta); }
+  .code-block .val { color: var(--neon-green); }
   .struct-card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; padding: 24px;
+    background: rgba(0, 240, 255, 0.03); border: 1px solid var(--line);
+    padding: 24px; margin-bottom: 14px;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   }
-  .struct-card h4 { color: var(--purple-bright); margin-bottom: 10px; font-size: 16px; }
-  .struct-card p { font-size: 14px; color: var(--text-dim); }
+  .struct-card h4 { font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); margin-bottom: 10px; font-size: 15px; letter-spacing: 0.5px; }
+  .struct-card p { font-size: 13.5px; color: var(--text-dim); }
 
   /* ============ STATS ============ */
-  .stats-row { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
-  .stat { text-align: center; }
-  .stat-num {
-    font-size: 44px; font-weight: 900;
-    background: linear-gradient(135deg, var(--purple-bright), var(--indigo));
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .stat {
+    text-align: center; padding: 24px 12px;
+    border: 1px solid var(--line);
+    background: rgba(0, 240, 255, 0.03);
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   }
-  .stat-label { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+  .stat-num {
+    font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  }
+  .stat-label { font-size: 12px; color: var(--text-faint); margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
 
   /* ============ FAQ ============ */
-  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-list { max-width: 780px; margin: 0 auto; }
   .faq-item {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 20px 24px; margin-bottom: 14px;
+    background: rgba(0, 240, 255, 0.03); border: 1px solid var(--line);
+    padding: 22px 26px; margin-bottom: 14px;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   }
-  .faq-item h4 { color: var(--purple-bright); font-size: 16px; margin-bottom: 8px; }
-  .faq-item p { color: var(--text-soft); font-size: 14.5px; }
+  .faq-item h4 { font-family: 'Orbitron', sans-serif; color: var(--neon-magenta); font-size: 15px; margin-bottom: 10px; letter-spacing: 0.5px; }
+  .faq-item p { color: var(--text-dim); font-size: 14px; }
+  .faq-item code { font-family: 'JetBrains Mono', monospace; color: var(--neon-green); background: rgba(0,255,157,0.1); padding: 2px 6px; }
 
   /* ============ FOOTER ============ */
   footer {
-    padding: 48px 0 56px; text-align: center;
-    border-top: 1px solid var(--card-border); margin-top: 40px;
+    padding: 56px 0 64px; text-align: center;
+    border-top: 1px solid var(--line); position: relative;
   }
-  footer p { color: var(--text-dim); font-size: 14px; margin-bottom: 8px; }
-  footer .mono { color: var(--text-faint); font-size: 12px; }
-  .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-  .footer-links a { color: var(--purple-bright); text-decoration: none; font-size: 14px; }
-  .footer-links a:hover { text-decoration: underline; }
+  footer::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-magenta), transparent);
+    box-shadow: 0 0 15px var(--neon-cyan);
+  }
+  footer p { color: var(--text-dim); font-size: 14px; margin-bottom: 10px; }
+  .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+  .footer-links a {
+    color: var(--neon-cyan); text-decoration: none; font-size: 13px;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .footer-links a:hover { color: var(--neon-magenta); text-shadow: 0 0 10px rgba(255, 0, 234, 0.5); }
+  .footer-mono { font-family: 'JetBrains Mono', monospace; color: var(--text-faint); font-size: 12px; }
 
   /* ============ RESPONSIVE ============ */
-  @media (max-width: 860px) {
-    .hero h1 { font-size: 36px; }
-    .feature-grid, .agents-grid, .workflow-steps { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) {
+    .feature-grid, .agents-grid, .workflow, .stats-row { grid-template-columns: 1fr 1fr; }
     .problem-grid, .struct-grid { grid-template-columns: 1fr; }
-    .section-title { font-size: 27px; }
   }
   @media (max-width: 560px) {
-    .feature-grid, .agents-grid, .workflow-steps, .stats-row { grid-template-columns: 1fr; }
-    .hero h1 { font-size: 28px; }
+    .feature-grid, .agents-grid, .workflow, .stats-row { grid-template-columns: 1fr; }
+    section { padding: 60px 0; }
   }
 </style>
 </head>
@@ -309,24 +447,26 @@
 
 <!-- ============ HERO ============ -->
 <header class="hero">
-  <div class="container hero-content">
+  <div class="grid-floor"></div>
+  <div class="sun-glow"></div>
+  <div class="hero-content">
     <div class="logo-badge">🧠</div>
-    <h1>Obsidian + AI Agent 知识库</h1>
-    <p class="tagline">面向非技术用户的本地 AI 知识管理方案。
-      支持 <strong>OpenCode / Claude Code / Codex / Pi</strong> 四大 agent，无需编程，一键部署，开箱即用。</p>
+    <h1 class="display">NEURAL VAULT</h1>
+    <div class="zh-title">本地 AI 知识库</div>
+    <p class="tagline">面向非技术用户的本地 AI 知识管理方案 · 支持 <strong>OpenCode / Claude Code / Codex / Pi</strong> 四大 agent · 无需编程，一键部署</p>
     <div class="badges">
-      <span class="badge">MIT License</span>
-      <span class="badge">Platform · macOS</span>
+      <span class="badge">MIT</span>
+      <span class="badge">macOS</span>
       <span class="badge">4 Agents</span>
       <span class="badge">6 Providers</span>
-      <span class="badge">100+ 适配器</span>
+      <span class="badge">100+ Adapters</span>
     </div>
     <div class="cta-row">
-      <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">⭐ GitHub 仓库</a>
-      <a class="btn btn-secondary" href="#quickstart">🚀 5 分钟部署</a>
+      <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">▶ GitHub</a>
+      <a class="btn btn-secondary" href="#deploy">⚡ Deploy</a>
     </div>
-    <div class="quick-install">
-      <span class="prompt">$</span> bash setup.sh --agent opencode
+    <div class="terminal">
+      <span class="prompt">root@vault:~$</span> bash setup.sh --agent opencode<span class="cursor">_</span>
     </div>
   </div>
 </header>
@@ -334,60 +474,72 @@
 <!-- ============ PROBLEM ============ -->
 <section>
   <div class="container">
-    <h2 class="section-title">为什么需要它？</h2>
-    <p class="section-sub">传统知识管理的三个痛点，本方案逐一解决</p>
+    <div class="sec-header">
+      <div class="sec-tag">// 01 SYSTEM ANALYSIS</div>
+      <h2 class="sec-title">为什么需要它</h2>
+      <p class="sec-sub">传统知识管理的三个系统缺陷</p>
+    </div>
     <div class="problem-grid">
       <ul class="pain-list">
-        <li><b>ChatGPT 没有长期记忆</b> — 每次对话从零开始，存不下你的知识积累</li>
-        <li><b>笔记软件不会整理</b> — 收藏一堆，但没人帮你归类、去重、建索引</li>
-        <li><b>数据在云端不放心</b> — 个人笔记、采集的社交内容，不想全交给云服务</li>
+        <li class="pain-item"><b>ChatGPT 无长期记忆</b><br>每次对话从零开始，知识无法沉淀</li>
+        <li class="pain-item"><b>笔记软件不会整理</b><br>收藏一堆，没人帮你归类去重建索引</li>
+        <li class="pain-item"><b>数据全在云端</b><br>个人笔记和采集内容不想交给云服务</li>
       </ul>
       <div class="solution-box">
-        <h3>💡 本方案的回答</h3>
+        <h3>// SOLUTION</h3>
         <p><b>AI 自动整理</b> — 文章、PDF、截图丢给 AI，自动归类成结构化笔记</p>
-        <p><b>永久本地记忆</b> — 笔记存在你电脑，AI 对话时才发送给模型服务商</p>
-        <p><b>定期自动体检</b> — AI 检查死链、重复、孤岛页面，保持知识库健康</p>
-        <p style="color:var(--purple-bright); margin-top:20px;"><b>四个 AI agent 自由切换，规则和技能全部共用</b></p>
+        <p><b>永久本地记忆</b> — 笔记存在你电脑，仅对话时发送给模型服务商</p>
+        <p><b>定期自动体检</b> — AI 检查死链、重复、孤岛页面，保持健康</p>
+        <p class="final">▸ 四大 AI agent 自由切换，规则技能全部共用</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============ FEATURES ============ -->
-<section class="alt">
+<section style="background: var(--bg-2);">
   <div class="container">
-    <h2 class="section-title">核心功能</h2>
-    <p class="section-sub">一句话描述你要做什么，AI 全自动完成</p>
+    <div class="sec-header">
+      <div class="sec-tag">// 02 CORE MODULES</div>
+      <h2 class="sec-title">核心功能</h2>
+      <p class="sec-sub">一句话描述意图，AI 全自动执行</p>
+    </div>
     <div class="feature-grid">
       <div class="feature-card">
+        <span class="feature-num">01</span>
         <div class="feature-icon">📥</div>
-        <h3>自动录入 Ingest</h3>
-        <p>文章、PDF、截图直接丢给 AI，自动存原始素材 + 整理成结构化 wiki 笔记 + 更新索引日志</p>
+        <h3>INGEST</h3>
+        <p>文章、PDF、截图丢给 AI，自动存原始素材 + 整理成 wiki 笔记 + 更新索引日志</p>
       </div>
       <div class="feature-card">
+        <span class="feature-num">02</span>
         <div class="feature-icon">📱</div>
-        <h3>社交采集 Social Ingest</h3>
-        <p>小红书、抖音、Twitter、微博内容一键归类、去口语、评估可信度、同主题自动合并</p>
+        <h3>SOCIAL INGEST</h3>
+        <p>小红书、抖音、Twitter、微博一键归类、去口语、评估可信度、同主题自动合并</p>
       </div>
       <div class="feature-card">
+        <span class="feature-num">03</span>
         <div class="feature-icon">🔍</div>
-        <h3>智能查询 Query</h3>
-        <p>像聊天一样问「我写过关于 XX 的内容吗」，AI 从索引定位 + 合成答案并引用来源</p>
+        <h3>QUERY</h3>
+        <p>像聊天一样问「我写过关于 XX 的内容吗」，AI 定位 + 合成答案 + 引用来源</p>
       </div>
       <div class="feature-card">
+        <span class="feature-num">04</span>
         <div class="feature-icon">🏥</div>
-        <h3>定期体检 Lint</h3>
-        <p>每周一次，AI 检查索引一致性、死链、孤岛页面、跨文章事实矛盾，自动修复</p>
+        <h3>LINT</h3>
+        <p>每周体检，AI 检查索引一致性、死链、孤岛页面、事实矛盾，自动修复</p>
       </div>
       <div class="feature-card">
+        <span class="feature-num">05</span>
         <div class="feature-icon">🔒</div>
-        <h3>数据本地</h3>
-        <p>笔记是普通 Markdown 文件，存在你电脑；raw/ 原始素材永不被 AI 修改，随时备份</p>
+        <h3>LOCAL VAULT</h3>
+        <p>笔记是普通 Markdown，存在你电脑；raw/ 永不被 AI 修改，随时备份</p>
       </div>
       <div class="feature-card">
+        <span class="feature-num">06</span>
         <div class="feature-icon">⚡</div>
-        <h3>一键部署</h3>
-        <p>运行 setup.sh，选 agent + 选 provider + 粘贴 Key，5 分钟从零到可用</p>
+        <h3>ONE-CLICK DEPLOY</h3>
+        <p>运行 setup.sh，选 agent + 选 provider + 粘 Key，5 分钟从零到可用</p>
       </div>
     </div>
   </div>
@@ -396,12 +548,15 @@
 <!-- ============ AGENTS ============ -->
 <section>
   <div class="container">
-    <h2 class="section-title">四大 AI Agent，自由切换</h2>
-    <p class="section-sub">同一套规则与技能，按你的偏好选 agent。部署时用 <code class="mono">--agent</code> 选择</p>
+    <div class="sec-header">
+      <div class="sec-tag">// 03 AGENT MATRIX</div>
+      <h2 class="sec-title">四大 AI Agent</h2>
+      <p class="sec-sub">同一套规则与技能，按你的偏好选择 · <code class="mono">--agent &lt;name&gt;</code></p>
+    </div>
     <div class="agents-grid">
       <div class="agent-card opencode">
         <div class="agent-logo">⚡</div>
-        <span class="agent-badge">推荐</span>
+        <span class="agent-badge rec">RECOMMENDED</span>
         <h3>OpenCode</h3>
         <div class="agent-tag">--agent opencode</div>
         <ul>
@@ -432,7 +587,7 @@
       </div>
       <div class="agent-card pi">
         <div class="agent-logo">π</div>
-        <span class="agent-badge">新增</span>
+        <span class="agent-badge new">NEW</span>
         <h3>Pi</h3>
         <div class="agent-tag">--agent pi</div>
         <ul>
@@ -442,40 +597,42 @@
         </ul>
       </div>
     </div>
-    <div class="claudian-note">
-      🔌 <b>claudian 统一插件</b> — 四个 agent 都能在 Obsidian 内直接对话，一行配置搞定。
-      OpenCode 还可选 <code class="mono">--plugin opencode-obsidian</code> 切回 serve 模式。
+    <div class="claudian-bar">
+      🔌 <b>CLAUDIAN UNIFIED PLUGIN</b> — 四个 agent 都能在 Obsidian 内直接对话，一行配置搞定
     </div>
   </div>
 </section>
 
 <!-- ============ WORKFLOW ============ -->
-<section class="alt">
+<section style="background: var(--bg-2);">
   <div class="container">
-    <h2 class="section-title">日常怎么用？</h2>
-    <p class="section-sub">四个触发词，覆盖知识管理的全流程</p>
-    <div class="workflow-steps">
+    <div class="sec-header">
+      <div class="sec-tag">// 04 OPERATIONS</div>
+      <h2 class="sec-title">日常怎么用</h2>
+      <p class="sec-sub">四个触发词，覆盖知识管理全流程</p>
+    </div>
+    <div class="workflow">
       <div class="wf-step">
         <div class="wf-num">1</div>
-        <h4>录入素材</h4>
+        <h4>INGEST</h4>
         <p>丢文章/链接/截图给 AI</p>
         <div class="wf-trigger">加到 wiki</div>
       </div>
       <div class="wf-step">
         <div class="wf-num">2</div>
-        <h4>社交采集</h4>
+        <h4>SOCIAL</h4>
         <p>小红书/抖音/Twitter 归档</p>
         <div class="wf-trigger">收录这条</div>
       </div>
       <div class="wf-step">
         <div class="wf-num">3</div>
-        <h4>智能查询</h4>
+        <h4>QUERY</h4>
         <p>问已有笔记，引用来源</p>
         <div class="wf-trigger">wiki 里有没有</div>
       </div>
       <div class="wf-step">
         <div class="wf-num">4</div>
-        <h4>定期体检</h4>
+        <h4>LINT</h4>
         <p>检查死链/重复/孤岛</p>
         <div class="wf-trigger">lint wiki</div>
       </div>
@@ -486,20 +643,23 @@
 <!-- ============ ARCHITECTURE ============ -->
 <section>
   <div class="container">
-    <h2 class="section-title">架构设计</h2>
-    <p class="section-sub">三个组件协同，中间的 AI Agent 可四选一</p>
-    <div class="arch-diagram">
+    <div class="sec-header">
+      <div class="sec-tag">// 05 ARCHITECTURE</div>
+      <h2 class="sec-title">架构设计</h2>
+      <p class="sec-sub">三个组件协同，AI Agent 四选一</p>
+    </div>
+    <div class="arch-box">
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
 │   ┌─────────────┐    ┌──────────────────────┐    ┌───────────┐   │
-│   │   Obsidian  │◄──►│   <span class="hl">AI Agent (四选一)</span>   │◄──►│ <span class="hl">AGENTS.md</span> │   │
+│   │   <span class="hl">Obsidian</span>  │◄──►│   <span class="hl2">AI Agent (四选一)</span>   │◄──►│ <span class="hl">AGENTS.md</span> │   │
 │   │  (笔记软件)  │    │ OpenCode/Claude/Codex│    │ (AI 规则) │   │
-│   │             │    │      / Pi            │    │           │   │
+│   │             │    │      / <span class="hl2">Pi</span>           │    │           │   │
 │   └─────────────┘    └──────────────────────┘    └───────────┘   │
 │                                                                  │
-│   · Obsidian：本地笔记，像普通笔记本                              │
-│   · AI Agent：模型接口，四选一，规则技能共用                       │
-│   · AGENTS.md：行为指南，定义 Ingest/Query/Lint/Social 行为        │
+│   ▸ Obsidian：本地笔记，像普通笔记本                              │
+│   ▸ AI Agent：模型接口，四选一，规则技能共用                       │
+│   ▸ AGENTS.md：行为指南，定义 Ingest/Query/Lint/Social 行为        │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
     </div>
@@ -507,92 +667,97 @@
 </section>
 
 <!-- ============ STRUCTURE ============ -->
-<section class="alt">
+<section style="background: var(--bg-2);">
   <div class="container">
-    <h2 class="section-title">知识库结构</h2>
-    <p class="section-sub">清晰的目录职责，raw 永不改，wiki AI 维护</p>
+    <div class="sec-header">
+      <div class="sec-tag">// 06 DATA STRUCTURE</div>
+      <h2 class="sec-title">知识库结构</h2>
+      <p class="sec-sub">raw 永不改，wiki AI 维护</p>
+    </div>
     <div class="struct-grid">
       <div class="code-block">
-<span class="cmt"># 部署后的知识库</span>
+<span class="cmt">// 部署后的知识库</span>
 我的知识库/
-├── <span class="kw">AGENTS.md</span>        <span class="cmt"># AI 规则（系统维护）</span>
-├── <span class="kw">AI_CONFIG.md</span>     <span class="cmt"># ⚙️ 用户可自定义配置</span>
-├── <span class="kw">raw/</span>             <span class="cmt"># 原始素材（AI 只读）</span>
-│   └── social/      <span class="cmt"># 按知识域分类</span>
-├── <span class="kw">wiki/</span>            <span class="cmt"># AI 整理的笔记</span>
-│   ├── index.md     <span class="cmt"># 全局索引</span>
-│   └── log.md       <span class="cmt"># 操作日志</span>
-├── <span class="kw">assets/</span>          <span class="cmt"># 配图资源</span>
-└── <span class="kw">.opencode/skill/</span> <span class="cmt"># 9 个预装技能</span>
-                      <span class="cmt"># (claude→.claude/skills)</span>
-                      <span class="cmt"># (codex/pi→用户级)</span>
+├── <span class="kw">AGENTS.md</span>        <span class="cmt">// AI 规则（系统维护）</span>
+├── <span class="kw">AI_CONFIG.md</span>     <span class="cmt">// ⚙️ 用户可自定义</span>
+├── <span class="dir">raw/</span>             <span class="cmt">// 原始素材（AI 只读）</span>
+│   └── social/      <span class="cmt">// 按知识域分类</span>
+├── <span class="dir">wiki/</span>            <span class="cmt">// AI 整理的笔记</span>
+│   ├── index.md     <span class="cmt">// 全局索引</span>
+│   └── log.md       <span class="cmt">// 操作日志</span>
+├── <span class="dir">assets/</span>          <span class="cmt">// 配图资源</span>
+└── <span class="dir">.opencode/skill/</span> <span class="cmt">// 9 预装技能</span>
       </div>
       <div>
-        <div class="struct-card" style="margin-bottom:14px;">
-          <h4>📦 raw/ — 不可变原始素材</h4>
-          <p>PDF、文章、截图、社交内容原样保存。AI 只读，永不修改，保证可追溯。按知识域分子目录。</p>
+        <div class="struct-card">
+          <h4>▸ raw/ 不可变原始素材</h4>
+          <p>PDF、文章、截图、社交内容原样保存。AI 只读永不修改，保证可追溯。按知识域分子目录。</p>
         </div>
-        <div class="struct-card" style="margin-bottom:14px;">
-          <h4>📝 wiki/ — AI 维护的消化笔记</h4>
+        <div class="struct-card">
+          <h4>▸ wiki/ AI 维护笔记</h4>
           <p>AI 整理后的结构化笔记。同主题自动合并，跨主题交叉引用。index.md 全局索引，log.md 操作日志。</p>
         </div>
         <div class="struct-card">
-          <h4>🛠️ .opencode/skill/ — 预装技能</h4>
-          <p>9 个技能（obsidian-cli、opencli-usage、smart-search 等），内容四 agent 共用，按 agent 分发到对应目录。</p>
+          <h4>▸ .opencode/skill/ 预装技能</h4>
+          <p>9 个技能（obsidian-cli、opencli-usage、smart-search 等），内容四 agent 共用，按 agent 分发。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ QUICK START ============ -->
-<section id="quickstart">
+<!-- ============ DEPLOY ============ -->
+<section id="deploy">
   <div class="container">
-    <h2 class="section-title">5 分钟部署</h2>
-    <p class="section-sub">两种方式，选适合你的</p>
+    <div class="sec-header">
+      <div class="sec-tag">// 07 DEPLOYMENT</div>
+      <h2 class="sec-title">5 分钟部署</h2>
+      <p class="sec-sub">两种方式，选适合你的</p>
+    </div>
     <div class="struct-grid">
       <div class="struct-card">
-        <h4>🤖 方式一：让 AI 帮你部署（零门槛）</h4>
-        <p>把这句话发给任何 AI 助手（ChatGPT、Claude、GLM），它自动完成全部部署：</p>
-        <div class="code-block">请帮我部署 AI 知识库：
+        <h4>🤖 方式一：AI 帮你部署</h4>
+        <p>把这句话发给任何 AI 助手，自动完成全部部署：</p>
+        <div class="code-block" style="margin-top:12px;">请帮我部署 AI 知识库：
 https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge
 /blob/main/GUIDE_FOR_AI.md</div>
-        <p>AI 会读取部署指南，自动完成环境检查、安装、配置。</p>
       </div>
       <div class="struct-card">
         <h4>⌨️ 方式二：手动 3 步</h4>
-        <div class="code-block"><span class="cmt"># 1. 克隆仓库</span>
-git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
-cd Obsidian-OpenCode-Knowledge
+        <div class="code-block" style="margin-top:12px;"><span class="cmt">// 1. 克隆</span>
+<span class="val">git</span> clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
+<span class="val">cd</span> Obsidian-OpenCode-Knowledge
 
-<span class="cmt"># 2. 运行安装脚本（macOS）</span>
-bash setup.sh
+<span class="cmt">// 2. 运行安装脚本</span>
+<span class="val">bash</span> setup.sh
 
-<span class="cmt"># 3. 在 Obsidian 打开「我的知识库」</span></div>
-        <p>交互式选 agent、选 provider、粘 Key，5 分钟搞定。</p>
+<span class="cmt">// 3. 在 Obsidian 打开知识库</span></div>
       </div>
     </div>
-    <div class="code-block" style="max-width:680px;margin:24px auto 0;">
-<span class="cmt"># 非交互式完整部署示例（脚本/CI 用）</span>
-bash setup.sh <span class="kw">--non-interactive</span> \
-  <span class="kw">--agent</span> <span class="str">claude-code</span> \
-  <span class="kw">--provider</span> <span class="str">anthropic</span> \
-  <span class="kw">--api-key</span> <span class="str">"&lt;KEY&gt;"</span> \
-  <span class="kw">--vault</span> <span class="str">"$HOME/Desktop/我的知识库"</span> \
-  <span class="kw">--overwrite-existing --overwrite-config</span>
+    <div class="code-block" style="max-width:720px; margin:24px auto 0;">
+<span class="cmt">// 非交互式完整部署（脚本/CI 用）</span>
+<span class="val">bash</span> setup.sh <span class="kw">--non-interactive</span> \
+  <span class="kw">--agent</span> <span class="val">claude-code</span> \
+  <span class="kw">--provider</span> <span class="val">anthropic</span> \
+  <span class="kw">--api-key</span> <span class="val">"&lt;KEY&gt;"</span> \
+  <span class="kw">--vault</span> <span class="val">"$HOME/Desktop/我的知识库"</span>
     </div>
   </div>
 </section>
 
 <!-- ============ STATS ============ -->
-<section class="alt">
+<section style="background: var(--bg-2);">
   <div class="container">
+    <div class="sec-header">
+      <div class="sec-tag">// 08 METRICS</div>
+      <h2 class="sec-title">数据一览</h2>
+    </div>
     <div class="stats-row">
-      <div class="stat"><div class="stat-num">4</div><div class="stat-label">AI Agent</div></div>
-      <div class="stat"><div class="stat-num">6</div><div class="stat-label">模型 Provider</div></div>
-      <div class="stat"><div class="stat-num">9</div><div class="stat-label">预装技能</div></div>
-      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">网站适配器</div></div>
-      <div class="stat"><div class="stat-num">5min</div><div class="stat-label">部署时间</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Agents</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Providers</div></div>
+      <div class="stat"><div class="stat-num">9</div><div class="stat-label">Skills</div></div>
+      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Adapters</div></div>
+      <div class="stat"><div class="stat-num">5m</div><div class="stat-label">Deploy</div></div>
     </div>
   </div>
 </section>
@@ -600,27 +765,30 @@ bash setup.sh <span class="kw">--non-interactive</span> \
 <!-- ============ FAQ ============ -->
 <section>
   <div class="container">
-    <h2 class="section-title">常见问题</h2>
+    <div class="sec-header">
+      <div class="sec-tag">// 09 FAQ</div>
+      <h2 class="sec-title">常见问题</h2>
+    </div>
     <div class="faq-list">
       <div class="faq-item">
-        <h4>Q：我没有技术背景，能用起来吗？</h4>
-        <p>完全可以。专为非技术用户设计，跟着部署指南一步步操作，不需要懂编程。也支持「让 AI 帮你部署」的零门槛方式。</p>
+        <h4>Q // 没有技术背景能用吗</h4>
+        <p>完全可以。专为非技术用户设计，跟着部署指南操作不需要懂编程。也支持「让 AI 帮你部署」的零门槛方式。</p>
       </div>
       <div class="faq-item">
-        <h4>Q：我的数据安全吗？</h4>
-        <p>笔记文件保存在你自己电脑上，本项目不托管你的数据。使用 AI 时，当前对话内容会发送给你配置的模型服务商。raw/ 目录的原始素材永远不会被 AI 修改。笔记是普通 Markdown，随时可备份。</p>
+        <h4>Q // 数据安全吗</h4>
+        <p>笔记存在你自己电脑上，本项目不托管数据。使用 AI 时，当前对话内容会发送给你配置的模型服务商。raw/ 原始素材永不被 AI 修改。笔记是普通 Markdown，随时可备份。</p>
       </div>
       <div class="faq-item">
-        <h4>Q：四个 agent 怎么选？</h4>
-        <p>大多数用户选默认的 <b>OpenCode</b>（6 大模型原生、体验最完整）。偏好 Anthropic 选 <b>Claude Code</b>，偏好 OpenAI 选 <b>Codex</b>，喜欢开源轻量选 <b>Pi</b>。四个都支持 claudian 插件在 Obsidian 内对话，规则技能完全共用。</p>
+        <h4>Q // 四个 agent 怎么选</h4>
+        <p>大多数用户选默认的 <b>OpenCode</b>。偏好 Anthropic 选 Claude Code，偏好 OpenAI 选 Codex，喜欢开源轻量选 Pi。四个都支持 claudian 插件在 Obsidian 内对话，规则技能完全共用。</p>
       </div>
       <div class="faq-item">
-        <h4>Q：和直接用 ChatGPT 有什么区别？</h4>
+        <h4>Q // 和 ChatGPT 的区别</h4>
         <p>ChatGPT 数据在云端、记忆是会话级、整理要手动。本方案数据本地、记忆永久、AI 自动整理归类、支持文件关联和交叉引用。</p>
       </div>
       <div class="faq-item">
-        <h4>Q：想换 agent 或 provider 怎么办？</h4>
-        <p>重跑 <code class="mono">setup.sh</code> 选新的即可，不会删除你已有的 raw/ wiki/ 笔记。详见 docs/agents.md 的切换指南。</p>
+        <h4>Q // 想换 agent 或 provider</h4>
+        <p>重跑 <code>setup.sh</code> 选新的即可，不会删除你已有的 raw/ wiki/ 笔记。详见 docs/agents.md。</p>
       </div>
     </div>
   </div>
@@ -630,14 +798,14 @@ bash setup.sh <span class="kw">--non-interactive</span> \
 <footer>
   <div class="container">
     <div class="footer-links">
-      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">GitHub 仓库</a>
-      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/releases">Releases</a>
-      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/docs/agents.md">Agent 指南</a>
-      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/CHANGELOG.md">更新日志</a>
-      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/issues">问题反馈</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">▸ GitHub</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/releases">▸ Releases</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/docs/agents.md">▸ Agents</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/CHANGELOG.md">▸ Changelog</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/issues">▸ Issues</a>
     </div>
-    <p>🧠 Obsidian + AI Agent 知识库 · MIT License · Made with ❤️ for knowledge seekers</p>
-    <p class="mono">github.com/zxfccmm4/Obsidian-OpenCode-Knowledge</p>
+    <p>🧠 NEURAL VAULT // Obsidian + AI Agent 知识库 · MIT License</p>
+    <p class="footer-mono">github.com/zxfccmm4/Obsidian-OpenCode-Knowledge</p>
   </div>
 </footer>
 
