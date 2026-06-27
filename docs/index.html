@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian + AI Agent 知识库 — 项目介绍</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #0d0b1a;
+    --bg-soft: #15122a;
+    --card: rgba(167, 139, 250, 0.06);
+    --card-border: rgba(167, 139, 250, 0.18);
+    --purple: #a78bfa;
+    --purple-bright: #c4b5fd;
+    --indigo: #818cf8;
+    --green: #6ee7b7;
+    --yellow: #fbbf24;
+    --text: #f0eef7;
+    --text-soft: #b8b3d0;
+    --text-dim: #9b95b8;
+    --text-faint: #7c769a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    padding: 90px 0 70px;
+    text-align: center;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(167, 139, 250, 0.22) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(129, 140, 248, 0.18) 0%, transparent 50%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(167, 139, 250, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167, 139, 250, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .logo-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 76px; height: 76px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--purple), var(--indigo));
+    font-size: 40px; margin-bottom: 24px;
+    box-shadow: 0 12px 36px rgba(167, 139, 250, 0.4);
+  }
+  .hero h1 {
+    font-size: 52px; font-weight: 900; line-height: 1.1;
+    letter-spacing: -1.5px; margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, var(--purple-bright) 60%, var(--purple) 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .tagline {
+    font-size: 21px; color: var(--text-soft); font-weight: 400;
+    max-width: 720px; margin: 0 auto 28px;
+  }
+  .hero .tagline strong { color: var(--purple-bright); font-weight: 500; }
+  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+  .badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    padding: 7px 16px; border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: rgba(167, 139, 250, 0.1); color: var(--purple-bright);
+  }
+  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; border-radius: 10px; font-weight: 700; font-size: 15px;
+    text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple), var(--indigo));
+    color: var(--bg); box-shadow: 0 8px 24px rgba(167, 139, 250, 0.4);
+  }
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--card-border);
+  }
+  .quick-install {
+    margin-top: 32px;
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 12px 20px; border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    color: var(--green);
+  }
+  .quick-install .prompt { color: var(--indigo); }
+
+  /* ============ SECTIONS ============ */
+  section { padding: 72px 0; }
+  section.alt { background: var(--bg-soft); }
+  .section-title {
+    font-size: 34px; font-weight: 900; text-align: center;
+    margin-bottom: 12px; letter-spacing: -0.5px;
+  }
+  .section-sub {
+    text-align: center; color: var(--text-dim); font-size: 17px;
+    margin-bottom: 48px;
+  }
+
+  /* ============ PROBLEM ============ */
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    align-items: center;
+  }
+  .pain-list { list-style: none; }
+  .pain-list li {
+    padding: 16px 18px; margin-bottom: 12px;
+    background: rgba(248, 113, 113, 0.06);
+    border-left: 3px solid #f87171;
+    border-radius: 0 10px 10px 0;
+    color: var(--text-soft);
+  }
+  .pain-list li b { color: #fca5a5; }
+  .solution-box {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(129, 140, 248, 0.08));
+    border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 32px;
+  }
+  .solution-box h3 {
+    font-size: 22px; margin-bottom: 16px; color: var(--purple-bright);
+  }
+  .solution-box p { color: var(--text-soft); margin-bottom: 14px; }
+
+  /* ============ FEATURES ============ */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 28px 24px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); border-color: var(--purple); }
+  .feature-icon { font-size: 36px; margin-bottom: 14px; }
+  .feature-card h3 { font-size: 19px; margin-bottom: 8px; }
+  .feature-card p { color: var(--text-dim); font-size: 14.5px; }
+
+  /* ============ AGENTS ============ */
+  .agents-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 32px;
+  }
+  .agent-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 24px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .agent-card:hover { transform: translateY(-4px); }
+  .agent-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .agent-card.opencode::before { background: linear-gradient(90deg, var(--purple), var(--indigo)); }
+  .agent-card.claude::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+  .agent-card.codex::before { background: linear-gradient(90deg, #10a37f, #1a7f64); }
+  .agent-card.pi::before { background: linear-gradient(90deg, #ec4899, #be185d); }
+  .agent-logo {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; margin-bottom: 14px;
+  }
+  .opencode .agent-logo { background: rgba(167, 139, 250, 0.2); color: var(--purple-bright); }
+  .claude .agent-logo { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
+  .codex .agent-logo { background: rgba(16, 163, 127, 0.2); color: #34d399; }
+  .pi .agent-logo { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+  .agent-card h3 { font-size: 18px; margin-bottom: 4px; }
+  .agent-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--text-faint); margin-bottom: 14px;
+  }
+  .agent-card ul { list-style: none; }
+  .agent-card li {
+    font-size: 13.5px; color: var(--text-soft); padding-left: 14px;
+    position: relative; margin-bottom: 6px;
+  }
+  .agent-card li::before { content: '·'; position: absolute; left: 4px; color: var(--indigo); font-weight: 700; }
+  .agent-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; color: var(--indigo);
+    background: rgba(99, 102, 241, 0.15); padding: 2px 8px; border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .claudian-note {
+    background: rgba(167, 139, 250, 0.08); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 18px 24px; text-align: center;
+    color: var(--text-soft); font-size: 15px;
+  }
+  .claudian-note b { color: var(--purple-bright); }
+
+  /* ============ WORKFLOW ============ */
+  .workflow-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+  .wf-step {
+    text-align: center; padding: 24px 16px;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 14px;
+    position: relative;
+  }
+  .wf-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--indigo));
+    color: var(--bg); font-weight: 900; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .wf-step h4 { font-size: 16px; margin-bottom: 8px; }
+  .wf-step p { font-size: 13px; color: var(--text-dim); }
+  .wf-trigger {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--green); background: rgba(16,185,129,0.1);
+    padding: 6px 10px; border-radius: 6px; display: inline-block; margin-top: 8px;
+  }
+
+  /* ============ ARCHITECTURE ============ */
+  .arch-diagram {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 40px; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8;
+    color: var(--text-soft); white-space: pre;
+  }
+  .arch-diagram .hl { color: var(--purple-bright); font-weight: 700; }
+
+  /* ============ CODE / STRUCTURE ============ */
+  .code-block {
+    background: #0a0815; border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+    color: var(--text-soft); line-height: 1.8; overflow-x: auto;
+    margin: 16px 0;
+  }
+  .code-block .cmt { color: var(--text-faint); }
+  .code-block .kw { color: var(--purple-bright); }
+  .code-block .str { color: var(--green); }
+
+  .struct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .struct-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 24px;
+  }
+  .struct-card h4 { color: var(--purple-bright); margin-bottom: 10px; font-size: 16px; }
+  .struct-card p { font-size: 14px; color: var(--text-dim); }
+
+  /* ============ STATS ============ */
+  .stats-row { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 44px; font-weight: 900;
+    background: linear-gradient(135deg, var(--purple-bright), var(--indigo));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+
+  /* ============ FAQ ============ */
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-item {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 14px;
+  }
+  .faq-item h4 { color: var(--purple-bright); font-size: 16px; margin-bottom: 8px; }
+  .faq-item p { color: var(--text-soft); font-size: 14.5px; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    padding: 48px 0 56px; text-align: center;
+    border-top: 1px solid var(--card-border); margin-top: 40px;
+  }
+  footer p { color: var(--text-dim); font-size: 14px; margin-bottom: 8px; }
+  footer .mono { color: var(--text-faint); font-size: 12px; }
+  .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .footer-links a { color: var(--purple-bright); text-decoration: none; font-size: 14px; }
+  .footer-links a:hover { text-decoration: underline; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 860px) {
+    .hero h1 { font-size: 36px; }
+    .feature-grid, .agents-grid, .workflow-steps { grid-template-columns: 1fr 1fr; }
+    .problem-grid, .struct-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 27px; }
+  }
+  @media (max-width: 560px) {
+    .feature-grid, .agents-grid, .workflow-steps, .stats-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container hero-content">
+    <div class="logo-badge">🧠</div>
+    <h1>Obsidian + AI Agent 知识库</h1>
+    <p class="tagline">面向非技术用户的本地 AI 知识管理方案。
+      支持 <strong>OpenCode / Claude Code / Codex / Pi</strong> 四大 agent，无需编程，一键部署，开箱即用。</p>
+    <div class="badges">
+      <span class="badge">MIT License</span>
+      <span class="badge">Platform · macOS</span>
+      <span class="badge">4 Agents</span>
+      <span class="badge">6 Providers</span>
+      <span class="badge">100+ 适配器</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">⭐ GitHub 仓库</a>
+      <a class="btn btn-secondary" href="#quickstart">🚀 5 分钟部署</a>
+    </div>
+    <div class="quick-install">
+      <span class="prompt">$</span> bash setup.sh --agent opencode
+    </div>
+  </div>
+</header>
+
+<!-- ============ PROBLEM ============ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">为什么需要它？</h2>
+    <p class="section-sub">传统知识管理的三个痛点，本方案逐一解决</p>
+    <div class="problem-grid">
+      <ul class="pain-list">
+        <li><b>ChatGPT 没有长期记忆</b> — 每次对话从零开始，存不下你的知识积累</li>
+        <li><b>笔记软件不会整理</b> — 收藏一堆，但没人帮你归类、去重、建索引</li>
+        <li><b>数据在云端不放心</b> — 个人笔记、采集的社交内容，不想全交给云服务</li>
+      </ul>
+      <div class="solution-box">
+        <h3>💡 本方案的回答</h3>
+        <p><b>AI 自动整理</b> — 文章、PDF、截图丢给 AI，自动归类成结构化笔记</p>
+        <p><b>永久本地记忆</b> — 笔记存在你电脑，AI 对话时才发送给模型服务商</p>
+        <p><b>定期自动体检</b> — AI 检查死链、重复、孤岛页面，保持知识库健康</p>
+        <p style="color:var(--purple-bright); margin-top:20px;"><b>四个 AI agent 自由切换，规则和技能全部共用</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="alt">
+  <div class="container">
+    <h2 class="section-title">核心功能</h2>
+    <p class="section-sub">一句话描述你要做什么，AI 全自动完成</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <h3>自动录入 Ingest</h3>
+        <p>文章、PDF、截图直接丢给 AI，自动存原始素材 + 整理成结构化 wiki 笔记 + 更新索引日志</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>社交采集 Social Ingest</h3>
+        <p>小红书、抖音、Twitter、微博内容一键归类、去口语、评估可信度、同主题自动合并</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>智能查询 Query</h3>
+        <p>像聊天一样问「我写过关于 XX 的内容吗」，AI 从索引定位 + 合成答案并引用来源</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏥</div>
+        <h3>定期体检 Lint</h3>
+        <p>每周一次，AI 检查索引一致性、死链、孤岛页面、跨文章事实矛盾，自动修复</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>数据本地</h3>
+        <p>笔记是普通 Markdown 文件，存在你电脑；raw/ 原始素材永不被 AI 修改，随时备份</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>一键部署</h3>
+        <p>运行 setup.sh，选 agent + 选 provider + 粘贴 Key，5 分钟从零到可用</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENTS ============ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">四大 AI Agent，自由切换</h2>
+    <p class="section-sub">同一套规则与技能，按你的偏好选 agent。部署时用 <code class="mono">--agent</code> 选择</p>
+    <div class="agents-grid">
+      <div class="agent-card opencode">
+        <div class="agent-logo">⚡</div>
+        <span class="agent-badge">推荐</span>
+        <h3>OpenCode</h3>
+        <div class="agent-tag">--agent opencode</div>
+        <ul>
+          <li>6 大模型原生支持</li>
+          <li>配置最简单</li>
+          <li>体验最完整</li>
+        </ul>
+      </div>
+      <div class="agent-card claude">
+        <div class="agent-logo">🅒</div>
+        <h3>Claude Code</h3>
+        <div class="agent-tag">--agent claude-code</div>
+        <ul>
+          <li>Anthropic 官方 CLI</li>
+          <li>推理能力最强</li>
+          <li>长程任务出色</li>
+        </ul>
+      </div>
+      <div class="agent-card codex">
+        <div class="agent-logo">◎</div>
+        <h3>Codex</h3>
+        <div class="agent-tag">--agent codex</div>
+        <ul>
+          <li>OpenAI 官方 CLI</li>
+          <li>生态最开放</li>
+          <li>终端工作流友好</li>
+        </ul>
+      </div>
+      <div class="agent-card pi">
+        <div class="agent-logo">π</div>
+        <span class="agent-badge">新增</span>
+        <h3>Pi</h3>
+        <div class="agent-tag">--agent pi</div>
+        <ul>
+          <li>开源轻量 CLI</li>
+          <li>支持 15+ provider</li>
+          <li>可扩展性强</li>
+        </ul>
+      </div>
+    </div>
+    <div class="claudian-note">
+      🔌 <b>claudian 统一插件</b> — 四个 agent 都能在 Obsidian 内直接对话，一行配置搞定。
+      OpenCode 还可选 <code class="mono">--plugin opencode-obsidian</code> 切回 serve 模式。
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORKFLOW ============ -->
+<section class="alt">
+  <div class="container">
+    <h2 class="section-title">日常怎么用？</h2>
+    <p class="section-sub">四个触发词，覆盖知识管理的全流程</p>
+    <div class="workflow-steps">
+      <div class="wf-step">
+        <div class="wf-num">1</div>
+        <h4>录入素材</h4>
+        <p>丢文章/链接/截图给 AI</p>
+        <div class="wf-trigger">加到 wiki</div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">2</div>
+        <h4>社交采集</h4>
+        <p>小红书/抖音/Twitter 归档</p>
+        <div class="wf-trigger">收录这条</div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">3</div>
+        <h4>智能查询</h4>
+        <p>问已有笔记，引用来源</p>
+        <div class="wf-trigger">wiki 里有没有</div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">4</div>
+        <h4>定期体检</h4>
+        <p>检查死链/重复/孤岛</p>
+        <div class="wf-trigger">lint wiki</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">架构设计</h2>
+    <p class="section-sub">三个组件协同，中间的 AI Agent 可四选一</p>
+    <div class="arch-diagram">
+┌──────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│   ┌─────────────┐    ┌──────────────────────┐    ┌───────────┐   │
+│   │   Obsidian  │◄──►│   <span class="hl">AI Agent (四选一)</span>   │◄──►│ <span class="hl">AGENTS.md</span> │   │
+│   │  (笔记软件)  │    │ OpenCode/Claude/Codex│    │ (AI 规则) │   │
+│   │             │    │      / Pi            │    │           │   │
+│   └─────────────┘    └──────────────────────┘    └───────────┘   │
+│                                                                  │
+│   · Obsidian：本地笔记，像普通笔记本                              │
+│   · AI Agent：模型接口，四选一，规则技能共用                       │
+│   · AGENTS.md：行为指南，定义 Ingest/Query/Lint/Social 行为        │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+    </div>
+  </div>
+</section>
+
+<!-- ============ STRUCTURE ============ -->
+<section class="alt">
+  <div class="container">
+    <h2 class="section-title">知识库结构</h2>
+    <p class="section-sub">清晰的目录职责，raw 永不改，wiki AI 维护</p>
+    <div class="struct-grid">
+      <div class="code-block">
+<span class="cmt"># 部署后的知识库</span>
+我的知识库/
+├── <span class="kw">AGENTS.md</span>        <span class="cmt"># AI 规则（系统维护）</span>
+├── <span class="kw">AI_CONFIG.md</span>     <span class="cmt"># ⚙️ 用户可自定义配置</span>
+├── <span class="kw">raw/</span>             <span class="cmt"># 原始素材（AI 只读）</span>
+│   └── social/      <span class="cmt"># 按知识域分类</span>
+├── <span class="kw">wiki/</span>            <span class="cmt"># AI 整理的笔记</span>
+│   ├── index.md     <span class="cmt"># 全局索引</span>
+│   └── log.md       <span class="cmt"># 操作日志</span>
+├── <span class="kw">assets/</span>          <span class="cmt"># 配图资源</span>
+└── <span class="kw">.opencode/skill/</span> <span class="cmt"># 9 个预装技能</span>
+                      <span class="cmt"># (claude→.claude/skills)</span>
+                      <span class="cmt"># (codex/pi→用户级)</span>
+      </div>
+      <div>
+        <div class="struct-card" style="margin-bottom:14px;">
+          <h4>📦 raw/ — 不可变原始素材</h4>
+          <p>PDF、文章、截图、社交内容原样保存。AI 只读，永不修改，保证可追溯。按知识域分子目录。</p>
+        </div>
+        <div class="struct-card" style="margin-bottom:14px;">
+          <h4>📝 wiki/ — AI 维护的消化笔记</h4>
+          <p>AI 整理后的结构化笔记。同主题自动合并，跨主题交叉引用。index.md 全局索引，log.md 操作日志。</p>
+        </div>
+        <div class="struct-card">
+          <h4>🛠️ .opencode/skill/ — 预装技能</h4>
+          <p>9 个技能（obsidian-cli、opencli-usage、smart-search 等），内容四 agent 共用，按 agent 分发到对应目录。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUICK START ============ -->
+<section id="quickstart">
+  <div class="container">
+    <h2 class="section-title">5 分钟部署</h2>
+    <p class="section-sub">两种方式，选适合你的</p>
+    <div class="struct-grid">
+      <div class="struct-card">
+        <h4>🤖 方式一：让 AI 帮你部署（零门槛）</h4>
+        <p>把这句话发给任何 AI 助手（ChatGPT、Claude、GLM），它自动完成全部部署：</p>
+        <div class="code-block">请帮我部署 AI 知识库：
+https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge
+/blob/main/GUIDE_FOR_AI.md</div>
+        <p>AI 会读取部署指南，自动完成环境检查、安装、配置。</p>
+      </div>
+      <div class="struct-card">
+        <h4>⌨️ 方式二：手动 3 步</h4>
+        <div class="code-block"><span class="cmt"># 1. 克隆仓库</span>
+git clone https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge.git
+cd Obsidian-OpenCode-Knowledge
+
+<span class="cmt"># 2. 运行安装脚本（macOS）</span>
+bash setup.sh
+
+<span class="cmt"># 3. 在 Obsidian 打开「我的知识库」</span></div>
+        <p>交互式选 agent、选 provider、粘 Key，5 分钟搞定。</p>
+      </div>
+    </div>
+    <div class="code-block" style="max-width:680px;margin:24px auto 0;">
+<span class="cmt"># 非交互式完整部署示例（脚本/CI 用）</span>
+bash setup.sh <span class="kw">--non-interactive</span> \
+  <span class="kw">--agent</span> <span class="str">claude-code</span> \
+  <span class="kw">--provider</span> <span class="str">anthropic</span> \
+  <span class="kw">--api-key</span> <span class="str">"&lt;KEY&gt;"</span> \
+  <span class="kw">--vault</span> <span class="str">"$HOME/Desktop/我的知识库"</span> \
+  <span class="kw">--overwrite-existing --overwrite-config</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="alt">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">AI Agent</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">模型 Provider</div></div>
+      <div class="stat"><div class="stat-num">9</div><div class="stat-label">预装技能</div></div>
+      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">网站适配器</div></div>
+      <div class="stat"><div class="stat-num">5min</div><div class="stat-label">部署时间</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section>
+  <div class="container">
+    <h2 class="section-title">常见问题</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h4>Q：我没有技术背景，能用起来吗？</h4>
+        <p>完全可以。专为非技术用户设计，跟着部署指南一步步操作，不需要懂编程。也支持「让 AI 帮你部署」的零门槛方式。</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q：我的数据安全吗？</h4>
+        <p>笔记文件保存在你自己电脑上，本项目不托管你的数据。使用 AI 时，当前对话内容会发送给你配置的模型服务商。raw/ 目录的原始素材永远不会被 AI 修改。笔记是普通 Markdown，随时可备份。</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q：四个 agent 怎么选？</h4>
+        <p>大多数用户选默认的 <b>OpenCode</b>（6 大模型原生、体验最完整）。偏好 Anthropic 选 <b>Claude Code</b>，偏好 OpenAI 选 <b>Codex</b>，喜欢开源轻量选 <b>Pi</b>。四个都支持 claudian 插件在 Obsidian 内对话，规则技能完全共用。</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q：和直接用 ChatGPT 有什么区别？</h4>
+        <p>ChatGPT 数据在云端、记忆是会话级、整理要手动。本方案数据本地、记忆永久、AI 自动整理归类、支持文件关联和交叉引用。</p>
+      </div>
+      <div class="faq-item">
+        <h4>Q：想换 agent 或 provider 怎么办？</h4>
+        <p>重跑 <code class="mono">setup.sh</code> 选新的即可，不会删除你已有的 raw/ wiki/ 笔记。详见 docs/agents.md 的切换指南。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge">GitHub 仓库</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/releases">Releases</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/docs/agents.md">Agent 指南</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/blob/main/CHANGELOG.md">更新日志</a>
+      <a href="https://github.com/zxfccmm4/Obsidian-OpenCode-Knowledge/issues">问题反馈</a>
+    </div>
+    <p>🧠 Obsidian + AI Agent 知识库 · MIT License · Made with ❤️ for knowledge seekers</p>
+    <p class="mono">github.com/zxfccmm4/Obsidian-OpenCode-Knowledge</p>
+  </div>
+</footer>
+
+</body>
+</html>
