@@ -60,20 +60,31 @@ cat ~/.claude/settings.json
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/paas/v4",
-    "ANTHROPIC_AUTH_TOKEN": "<你的智谱 API Key>"
+    "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+    "ANTHROPIC_AUTH_TOKEN": "<你的智谱 API Key>",
+    "ANTHROPIC_API_KEY": ""
   },
   "model": "glm-5.2"
 }
 ```
 
-**注意：** 智谱的 coding 端点（`/api/coding/paas/v4`）和通用端点（`/api/paas/v4`）不同。Claude Code 走通用端点。
+setup 只会改上面这几项，文件里的其他设置保持不变。
+
+**注意：** Claude Code 只会说 Anthropic 协议，`ANTHROPIC_BASE_URL` 必须是服务商的 **Anthropic 兼容端点**；OpenAI 兼容地址（如 `/api/paas/v4`、`/v1`）它连不上：
+
+| 服务商 | `ANTHROPIC_BASE_URL` |
+|--------|----------------------|
+| 智谱 GLM | `https://open.bigmodel.cn/api/anthropic` |
+| DeepSeek | `https://api.deepseek.com/anthropic` |
+| OpenRouter | `https://openrouter.ai/api` |
+
+`ANTHROPIC_API_KEY` 置空，是为了防止把你 shell 环境里的 Anthropic Key 一并发给第三方。
 
 ### Q3：OpenAI / Google 模型用不了
 
-Claude Code 原生只支持 Anthropic 系模型。OpenAI / Google 的模型通过 base_url 接入**兼容性有限**，可能出现请求格式不匹配。
+OpenAI 和 Google 没有 Anthropic 兼容端点，Claude Code 连不上它们，所以 setup 会在开始前直接拒绝这个组合。
 
-**建议：** 想用 OpenAI / Google，换用 **OpenCode**（`--agent opencode`），它原生支持全部 6 个 provider。
+**建议：** 想用 GPT / Gemini，换用 **OpenCode**（`--agent opencode`，原生支持全部 6 个 provider）或 **Codex**。
 
 ### Q4：技能不生效
 
@@ -105,10 +116,10 @@ Claude Code 在 vault 目录启动时会自动加载它。
 
 ## 重新部署
 
-如果配置乱了，最简单的办法是重新生成：
+如果配置乱了，最简单的办法是重新生成（`--keep-existing` 会保留你的笔记）：
 
 ```bash
-bash setup.sh --agent claude-code --provider anthropic --api-key <KEY> --overwrite-config
+bash setup.sh --agent claude-code --provider anthropic --api-key <KEY> --overwrite-config --keep-existing
 ```
 
 或只读检查环境：

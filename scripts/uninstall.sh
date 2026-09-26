@@ -2,8 +2,8 @@
 # ============================================================
 # uninstall.sh — 卸载 AI 知识库（可选删除 vault 和 npm 全局包）
 #
-# 默认只删除 OpenCode 配置和 Obsidian 插件配置；
-# vault 目录、npm 全局包需要显式确认才删。
+# 默认只删除所用 agent 的配置（会先备份）和 Obsidian 插件配置；
+# vault 目录、npm 全局包需要显式确认才删，且只会删除本项目创建的知识库。
 #
 # 用法：
 #   bash scripts/uninstall.sh
@@ -22,7 +22,7 @@ VAULT=""
 REMOVE_VAULT=0
 REMOVE_PACKAGES=0
 NON_INTERACTIVE=0
-AGENT_CHOICE="opencode"
+AGENT_CHOICE=""
 
 usage() {
   cat <<'EOF'
@@ -31,7 +31,8 @@ Usage:
 
 Options:
   --vault PATH          指定 vault 路径（默认：~/Desktop/我的知识库）
-  --agent NAME          AI agent：opencode | claude-code | codex（默认：opencode）
+  --agent NAME          AI agent：opencode | claude-code | codex | pi
+                        不传时按 vault 自动识别；codex / pi 需要显式指定
   --remove-vault        同时删除 vault 目录（含你的所有笔记，谨慎！）
   --remove-packages     同时卸载全局 npm 包（agent CLI + opencli）
   --non-interactive     不提问，按给定参数执行（必须显式指定要删什么）
@@ -39,12 +40,25 @@ Options:
 EOF
 }
 
+require_value() {
+  if [[ -z "${2:-}" ]]; then
+    echo "缺少 $1 的值" >&2
+    usage
+    exit 1
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --vault) VAULT="$2"; shift 2 ;;
+    --vault)
+      require_value "$1" "${2:-}"
+      VAULT="$2"
+      shift 2 ;;
     --agent)
+      require_value "$1" "${2:-}"
       case "$2" in
-        opencode|claude-code|codex|pi) AGENT_CHOICE="$2" ;;
+        opencode|codex|pi) AGENT_CHOICE="$2" ;;
+        claude-code|claudecode|claude) AGENT_CHOICE="claude-code" ;;
         *) echo "无效的 --agent 值：$2" >&2; exit 1 ;;
       esac
       shift 2 ;;
@@ -55,6 +69,21 @@ while [[ $# -gt 0 ]]; do
     *) echo "未知参数：$1" >&2; usage; exit 1 ;;
   esac
 done
+
+VAULT="${VAULT:-$DEFAULT_VAULT}"
+VAULT="${VAULT/#\~/$HOME}"
+
+# 没指定 --agent 时按 vault 判断，避免误删另一个 agent 的全局配置
+if [[ -z "$AGENT_CHOICE" ]]; then
+  if [[ -d "$VAULT/.claude/skills" || -f "$VAULT/CLAUDE.md" ]]; then
+    AGENT_CHOICE="claude-code"
+  elif [[ -d "$VAULT/.opencode/skill" ]]; then
+    AGENT_CHOICE="opencode"
+  else
+    echo -e "${RED}✗ 无法从 vault 判断你用的是哪个 agent，请用 --agent 指定${NC}" >&2
+    exit 1
+  fi
+fi
 
 # 按 agent 解析配置路径 / 插件目录 / npm 包名
 case "$AGENT_CHOICE" in
@@ -88,8 +117,21 @@ case "$AGENT_CHOICE" in
     ;;
 esac
 
-VAULT="${VAULT:-$DEFAULT_VAULT}"
-VAULT="${VAULT/#\~/$HOME}"
+# 只允许删除确实由本项目创建的知识库：--vault 写错（比如写成桌面）时绝不能整个删掉
+if [[ "$REMOVE_VAULT" -eq 1 && -d "$VAULT" ]]; then
+  vault_real="$(cd "$VAULT" && pwd -P)"
+  home_real="$(cd "$HOME" && pwd -P)"
+  case "$vault_real" in
+    "/"|"$home_real"|"$home_real/Desktop"|"$home_real/Documents"|"$home_real/Downloads")
+      echo -e "${RED}✗ 拒绝删除：$VAULT 不是一个单独的知识库目录${NC}" >&2
+      exit 1
+      ;;
+  esac
+  if [[ ! -f "$VAULT/AGENTS.md" || ! -d "$VAULT/wiki" ]]; then
+    echo -e "${RED}✗ 拒绝删除：$VAULT 里没有 AGENTS.md 和 wiki/，看起来不是本项目创建的知识库${NC}" >&2
+    exit 1
+  fi
+fi
 
 confirm() {
   local prompt="$1"

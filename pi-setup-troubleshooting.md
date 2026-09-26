@@ -73,14 +73,14 @@ ls ~/.pi/skills/
 bash scripts/upgrade.sh --agent pi
 ```
 
-> Pi 的 upgrade 不需要 `--vault`，因为技能装在用户目录。
+> 不传 `--vault` 时默认升级 `~/Desktop/我的知识库`；知识库在别处时加上 `--vault <路径>`。技能按名字逐个更新，`~/.pi/skills/` 里你自己装的其他技能不受影响。
 
 ---
 
 ## 重新部署
 
 ```bash
-bash setup.sh --agent pi --provider openai --api-key <KEY> --overwrite-config
+bash setup.sh --agent pi --provider openai --api-key <KEY> --overwrite-config --keep-existing
 ```
 
 只读检查：

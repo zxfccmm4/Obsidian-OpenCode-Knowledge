@@ -12,6 +12,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install shellcheck
         run: |
           sudo apt-get update
@@ -27,6 +32,7 @@ jobs:
           bash -n scripts/check-doc-links.sh
           bash -n scripts/validate-docs.sh
           bash -n scripts/verify.sh
+          bash -n tests/smoke-test.sh
 
       - name: Run shellcheck
         run: |
@@ -38,7 +44,27 @@ jobs:
             scripts/opencode-obsidian-doctor.sh \
             scripts/check-doc-links.sh \
             scripts/validate-docs.sh \
-            scripts/verify.sh
+            scripts/verify.sh \
+            tests/smoke-test.sh
+
+      - name: Smoke test setup / upgrade / uninstall
+        run: bash tests/smoke-test.sh
 
       - name: Validate docs
         run: bash scripts/validate-docs.sh
+
+  macos-system-bash:
+    # 普通用户在 Mac 上跑脚本用的是系统自带的 /bin/bash 3.2，这里专门覆盖它
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Smoke test with /bin/bash 3.2
+        run: BASH_BIN=/bin/bash /bin/bash tests/smoke-test.sh

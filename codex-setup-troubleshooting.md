@@ -59,7 +59,7 @@ cat ~/.codex/config.toml
 应包含 `[model_providers.<id>]` 段，例如智谱：
 
 ```toml
-model = "zhipuglm/glm-5.2"
+model = "glm-5.2"
 model_provider = "zhipuglm"
 
 [model_providers.zhipuglm]
@@ -84,7 +84,7 @@ Codex 通过 `env_key` 指定的环境变量读取密钥。两种方式：
 1. **环境变量**（推荐）：`export <ENV_KEY>=<你的Key>`，写入 shell 配置持久化。
 2. **auth.json**：Codex 也读 `~/.codex/auth.json`，但环境变量更通用。
 
-setup 生成配置时会提示你需要设置哪个环境变量。
+setup 生成配置时会提示你需要设置哪个环境变量（出于安全考虑，不会在终端里显示你的 Key）。
 
 ### Q4：技能不生效
 
@@ -100,7 +100,7 @@ ls ~/.codex/skills/
 bash scripts/upgrade.sh --agent codex
 ```
 
-> 注意：codex 的 upgrade 不需要 `--vault`，因为技能装在用户目录。
+> 不传 `--vault` 时默认升级 `~/Desktop/我的知识库`；知识库在别处时加上 `--vault <路径>`。技能按名字逐个更新，`~/.codex/skills/` 里你自己装的其他技能不受影响。
 
 ### Q5：AGENTS.md 没被加载
 
@@ -122,14 +122,14 @@ ls <你的vault>/AGENTS.md
 - `chat`：OpenAI 兼容的 Chat Completions API（智谱/DeepSeek/OpenRouter 等第三方用这个）
 - `responses`：OpenAI 原生 Responses API（仅 OpenAI 官方用）
 
-setup 会自动选择：OpenAI provider 用 `responses`，其他用 `chat`。
+setup 会自动选择：OpenAI provider 用 `responses`，其他用 `chat`。OpenAI 生成的 provider 名叫 `openai-api`，避免和 Codex 内置的 `openai` 重名，确保 `env_key` 生效。
 
 ---
 
 ## 重新部署
 
 ```bash
-bash setup.sh --agent codex --provider openai --api-key <KEY> --overwrite-config
+bash setup.sh --agent codex --provider openai --api-key <KEY> --overwrite-config --keep-existing
 ```
 
 只读检查：

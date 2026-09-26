@@ -64,6 +64,11 @@ check_script_exists() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --vault)
+      if [[ -z "${2:-}" ]]; then
+        echo "Missing value for --vault" >&2
+        usage
+        exit 1
+      fi
       VAULT_PATH="$2"
       shift 2
       ;;
@@ -95,6 +100,7 @@ check_script_exists "scripts/opencode-obsidian-doctor.sh"
 check_script_exists "scripts/check-doc-links.sh"
 check_script_exists "scripts/validate-docs.sh"
 check_script_exists "scripts/verify.sh"
+check_script_exists "tests/smoke-test.sh"
 check_path "vault-template/AGENTS.md" "vault template AGENTS"
 check_path "vault-template/AI_CONFIG.md" "vault template AI_CONFIG"
 check_path "vault-template/wiki/index.md" "vault template wiki index"
@@ -110,6 +116,7 @@ run_required_check "doctor script syntax" bash -n scripts/opencode-obsidian-doct
 run_required_check "doc link checker syntax" bash -n scripts/check-doc-links.sh
 run_required_check "doc validation syntax" bash -n scripts/validate-docs.sh
 run_required_check "verify script syntax" bash -n scripts/verify.sh
+run_required_check "smoke test syntax" bash -n tests/smoke-test.sh
 
 echo ""
 echo "== Doc Checks =="
@@ -120,7 +127,7 @@ if command -v shellcheck &>/dev/null; then
   echo "== Shellcheck =="
   run_required_check \
     "shellcheck" \
-    shellcheck setup.sh scripts/upgrade.sh scripts/uninstall.sh vault-template/scripts/organize-social-assets.sh scripts/opencode-obsidian-doctor.sh scripts/check-doc-links.sh scripts/validate-docs.sh scripts/verify.sh
+    shellcheck setup.sh scripts/upgrade.sh scripts/uninstall.sh vault-template/scripts/organize-social-assets.sh scripts/opencode-obsidian-doctor.sh scripts/check-doc-links.sh scripts/validate-docs.sh scripts/verify.sh tests/smoke-test.sh
 else
   warn "shellcheck not installed; skipping shell lint"
 fi

@@ -115,6 +115,7 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh --dry-run --non-intera
 
 4. 按照脚本提示操作：
    - **选择知识库位置**：直接回车 = 放在桌面
+   - **目录已存在**（重装时会遇到）：选 1，保留你的笔记，只更新规则和技能
    - **安装 Node.js**：如果提示没装，选 1 自动安装
    - **安装 OpenCode**：自动进行
    - **选择 AI 服务**：输入数字选择你的 AI 服务提供商（1-6），然后粘贴 API Key
