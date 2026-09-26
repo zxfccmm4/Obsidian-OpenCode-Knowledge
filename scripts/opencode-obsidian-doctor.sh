@@ -26,6 +26,15 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --vault|--port|--host)
+      if [[ -z "${2:-}" ]]; then
+        echo "[ERR] Missing value for $1" >&2
+        usage
+        exit 1
+      fi
+      ;;
+  esac
+  case "$1" in
     --vault)
       VAULT_DIR="$2"
       shift 2
@@ -131,7 +140,11 @@ if [[ "$KILL_PORT" -eq 1 ]]; then
   if [[ -z "$LSOF_OUTPUT" ]]; then
     warn "Nothing is listening on port $PORT"
   else
-    mapfile -t PIDS < <(printf '%s\n' "$LSOF_OUTPUT" | awk 'NR > 1 { print $2 }' | sort -u)
+    # macOS 自带的 bash 3.2 没有 mapfile，用 while read 收集 PID
+    PIDS=()
+    while IFS= read -r pid; do
+      [[ -n "$pid" ]] && PIDS+=("$pid")
+    done < <(printf '%s\n' "$LSOF_OUTPUT" | awk 'NR > 1 { print $2 }' | sort -u)
     if [[ "${#PIDS[@]}" -gt 0 ]]; then
       echo "Trying to stop: ${PIDS[*]}"
       kill "${PIDS[@]}" 2>/dev/null || kill -9 "${PIDS[@]}" 2>/dev/null || true
@@ -190,11 +203,14 @@ if [[ -d "$LOG_DIR" ]]; then
   LOG_FILES=("$LOG_DIR"/*)
   shopt -u nullglob
   LATEST_LOG=""
-  for log_file in "${LOG_FILES[@]}"; do
-    if [[ -z "$LATEST_LOG" || "$log_file" -nt "$LATEST_LOG" ]]; then
-      LATEST_LOG="$log_file"
-    fi
-  done
+  # bash 3.2 在 set -u 下展开空数组会报错，先判断再遍历
+  if [[ "${#LOG_FILES[@]}" -gt 0 ]]; then
+    for log_file in "${LOG_FILES[@]}"; do
+      if [[ -z "$LATEST_LOG" || "$log_file" -nt "$LATEST_LOG" ]]; then
+        LATEST_LOG="$log_file"
+      fi
+    done
+  fi
   if [[ -n "$LATEST_LOG" ]]; then
     ok "Latest log: $LATEST_LOG"
     sed -n '1,80p' "$LATEST_LOG"

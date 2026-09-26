@@ -7,6 +7,30 @@
 
 ## [Unreleased]
 
+### 修复
+- **重新运行 `setup.sh` 不再删除已有知识库**：以前目录已存在时选「覆盖」会直接 `rm -rf`，而且删除发生在检查 Node.js、安装依赖之前——后面任何一步失败，笔记就没了。现在可以选「保留笔记，只更新规则和技能」或「旧目录改名备份后新建」，所有文件操作都挪到依赖装好之后。
+- **`--provider skip` 会让 setup 中途退出**：跳过 AI 配置时函数返回非零，在 `set -e` 下直接终止，Obsidian 插件配置和最后的使用说明都不会生成。
+- **Claude Code 连第三方服务商**：智谱 / DeepSeek / OpenRouter 改用各自的 Anthropic 兼容端点（之前写的是 OpenAI 兼容地址，Claude Code 连不上）。OpenAI / Google 没有 Anthropic 兼容端点，选 Claude Code 时会在开始前直接提示，不再生成一份用不了的配置。
+- **Codex 配置**：`model` 只写模型名（之前写成 `provider/model`，会被当成模型名发给接口）；Anthropic / Google 补上 OpenAI 兼容地址（之前是空的）；删除一段无效的死代码。
+- **Codex / Pi 用户级技能**：`~/.codex/skills` 已存在时，技能不再被嵌套复制到 `skills/skill/`；`upgrade.sh` 不再用 `rsync --delete` 清空这个目录里你自己装的其他技能。
+- OpenCLI 安装失败不再中止整个部署（它只用于社交媒体采集）。
+- `opencode-obsidian-doctor.sh` 在 macOS 自带的 bash 3.2 下崩溃：`--kill-port` 用到的 `mapfile` 不存在；日志目录为空时空数组在 `set -u` 下报错。
+
+### 变更
+- **配置改为合并写入**：OpenCode / Claude Code / Pi 的 JSON 配置只更新模型和 API Key 相关字段，其他设置（如 `~/.claude/settings.json` 里的权限、hooks）保留，写入前仍会备份。JSON 由 node 生成，Key 或路径里有引号、反斜杠也不会把文件写坏。
+- **`upgrade.sh` 不再覆盖你改过的 `AI_CONFIG.md`**：原样保留，新模板另存为 `AI_CONFIG.md.new`；从没改过的直接更新。技能和辅助脚本逐个同步，不删除你自己添加的文件；缺失的 `raw/` `wiki/` `assets/`、`wiki/index.md`、`wiki/log.md` 会补齐。
+- `upgrade.sh` / `uninstall.sh` 不传 `--agent` 时按 vault 自动识别（codex / pi 需要显式指定）；`upgrade.sh` 不传 `--vault` 时默认 `~/Desktop/我的知识库`。
+- `uninstall.sh --remove-vault` 只删除含 `AGENTS.md` 和 `wiki/` 的目录，并拒绝主目录、桌面等路径。
+- 含 API Key 的配置文件及其备份权限改为 600（仅自己可读）；Codex 配置完成后不再在终端回显 API Key（终端截图常被贴进 Issue）。
+- `setup.sh` 新增 `--keep-existing`；`--overwrite-existing` 改为「旧目录改名备份后新建」。
+- npm 全局目录不可写时才使用 sudo；安装失败时提示切换国内镜像。
+- 交互选择 provider 时校验输入；危险路径检查会先解析 `..` 和软链接，并拦截桌面、文稿、下载等目录；输入的路径会去掉首尾空格和引号（兼容把文件夹拖进终端）。
+- Claude Code 选 Anthropic 时 `model` 用别名 `opus`，始终指向最新的 Opus。
+- claudian 用户的部署结束提示改为推荐 `verify.sh`（诊断脚本只适用于 opencode-obsidian）。
+
+### 新增
+- `tests/smoke-test.sh`：在临时 HOME 里用桩命令端到端运行 setup / upgrade / uninstall / doctor，不联网、不改真实配置。CI 同时在 Linux 和 macOS 自带的 `/bin/bash` 3.2 上运行。
+
 ---
 
 ## [0.6.0] - 2026-06-22

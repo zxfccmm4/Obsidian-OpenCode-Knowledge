@@ -87,17 +87,19 @@ cd ~/Desktop/Obsidian-OpenCode-Knowledge && bash setup.sh --dry-run --non-intera
 | 提示 | 建议回答 | 备注 |
 |------|----------|------|
 | 知识库存放位置 | 直接回车（默认 `~/Desktop/我的知识库`） | 可按用户意愿修改 |
-| 目录已存在是否覆盖 | 看用户意愿 | 新用户通常不会遇到 |
+| 目录已存在怎么处理 | 1（保留笔记，只更新规则和技能） | 脚本不会删除任何文件；选 2 会把旧目录改名备份后新建 |
 | Node.js 安装方式 | 1（Homebrew 自动安装） | 前面已装好则不会出现 |
-| 检测到已有 OpenCode 配置是否覆盖 | **必须问用户** | 脚本会先备份旧配置 |
+| 检测到已有 agent 配置是否更新 | **必须问用户** | 脚本会先备份旧配置 |
 | 选择 AI 服务提供商 | 见下方决策表 | **必须问用户** |
 | 粘贴 API Key | 用户提供的 Key | **必须问用户** |
 
 如果你需要完全自动化执行，可以改用这些参数组合：
 
 ```bash
-bash setup.sh --non-interactive --vault "<路径>" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+bash setup.sh --non-interactive --vault "<路径>" --provider openai --api-key "<KEY>" --keep-existing --overwrite-config
 ```
+
+> ⚠️ 不要自己 `rm -rf` 用户已有的知识库目录。目录已存在时用 `--keep-existing`（保留笔记）；确实要重新开始时用 `--overwrite-existing`，脚本会把旧目录改名备份。
 
 ### AI 服务选择决策表
 
@@ -155,6 +157,8 @@ OpenCLI 是社交媒体采集功能的驱动工具，支持 100+ 网站适配器
 
 ### 4.3 复制 Vault 模板
 
+目标目录必须还不存在（已存在时不要删除它，改用 `setup.sh --keep-existing` 或换一个路径）：
+
 ```bash
 VAULT_PATH="$HOME/Desktop/我的知识库"
 cp -R ~/Desktop/Obsidian-OpenCode-Knowledge/vault-template "$VAULT_PATH"
@@ -199,10 +203,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "anthropic/claude-opus-4-1",
+  "model": "anthropic/claude-opus-4-8",
   "provider": {
     "anthropic": {
-      "models": { "claude-opus-4-1": { "name": "Claude Opus 4.1" }, "claude-sonnet-4-5": { "name": "Claude Sonnet 4.5" } },
+      "models": { "claude-opus-4-8": { "name": "claude-opus-4-8" }, "claude-sonnet-4-6": { "name": "claude-sonnet-4-6" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -214,10 +218,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "openai/gpt-5",
+  "model": "openai/gpt-5.5",
   "provider": {
     "openai": {
-      "models": { "gpt-5": { "name": "GPT-5" }, "gpt-5-mini": { "name": "GPT-5 Mini" } },
+      "models": { "gpt-5.5": { "name": "gpt-5.5" }, "gpt-5.4-mini": { "name": "gpt-5.4-mini" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -229,10 +233,10 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "google/gemini-3-pro",
+  "model": "google/gemini-3.1-pro-preview",
   "provider": {
     "google": {
-      "models": { "gemini-3-pro": { "name": "Gemini 3 Pro" }, "gemini-3-flash": { "name": "Gemini 3 Flash" } },
+      "models": { "gemini-3.1-pro-preview": { "name": "gemini-3.1-pro-preview" }, "gemini-3-flash": { "name": "gemini-3-flash" } },
       "options": { "apiKey": "<用户的API Key>" }
     }
   }
@@ -244,11 +248,11 @@ cp ~/.config/opencode/opencode.json ~/.config/opencode/opencode.json.backup-$(da
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": { "build": { "options": { "store": false } }, "plan": { "options": { "store": false } } },
-  "model": "openrouter/anthropic/claude-opus-4.1",
+  "model": "openrouter/anthropic/claude-opus-4.8",
   "provider": {
     "openrouter": {
-      "models": { "anthropic/claude-opus-4.1": { "name": "Claude Opus 4.1" }, "openai/gpt-5": { "name": "GPT-5" } },
-      "options": { "apiKey": "<用户的API Key>" }
+      "models": { "anthropic/claude-opus-4.8": { "name": "claude-opus-4.8" }, "openai/gpt-5.5": { "name": "gpt-5.5" } },
+      "options": { "apiKey": "<用户的API Key>", "baseURL": "https://openrouter.ai/api/v1" }
     }
   }
 }

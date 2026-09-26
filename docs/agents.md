@@ -48,7 +48,7 @@ bash setup.sh --agent codex
 
 - Anthropic 官方 CLI，能力最强
 - 通过 [claudian](https://github.com/YishenTu/claudian) 插件也能在 Obsidian 内用
-- 第三方 provider（智谱/DeepSeek）通过 `ANTHROPIC_BASE_URL` 接入，配 OpenAI/Google 兼容性有限
+- 第三方 provider（智谱 / DeepSeek / OpenRouter）通过它们的 Anthropic 兼容端点（`ANTHROPIC_BASE_URL`）接入；不支持 OpenAI / Google
 
 ### ⚡ Codex
 
@@ -86,25 +86,25 @@ claudian 是一个通用插件，支持 Claude Code / Codex / OpenCode 等多个
 |----------|----------|-------------|-------|
 | 智谱 GLM | ✅ 原生 | ⚠️ 走 base_url | ⚠️ 走 base_url |
 | Anthropic | ✅ 原生 | ✅ 原生（最佳） | ⚠️ 走 base_url |
-| OpenAI | ✅ 原生 | ⚠️ 兼容性有限 | ✅ 原生（最佳） |
-| Google | ✅ 原生 | ⚠️ 兼容性有限 | ⚠️ 走 base_url |
+| OpenAI | ✅ 原生 | ❌ 不支持 | ✅ 原生（最佳） |
+| Google | ✅ 原生 | ❌ 不支持 | ⚠️ 走 base_url |
 | OpenRouter | ✅ 原生 | ⚠️ 走 base_url | ⚠️ 走 base_url |
 | DeepSeek | ✅ 原生 | ⚠️ 走 base_url | ⚠️ 走 base_url |
 
-> 「走 base_url」表示通过自定义端点接入，功能可用但可能有兼容性细节差异。
+> 「走 base_url」表示通过自定义端点接入，功能可用但可能有兼容性细节差异。Claude Code 只能连 Anthropic 协议的端点，OpenAI / Google 没有这样的端点，setup 会直接拒绝这个组合。
 > 想要最大兼容性，选 **OpenCode**（6 个 provider 全原生支持）。
 
 ---
 
 ## 切换 agent
 
-想换 agent？重新运行 setup 并指定新的 `--agent`：
+想换 agent？重新运行 setup 并指定新的 `--agent`（交互运行时，在「目录已存在」处选 1 保留笔记）：
 
 ```bash
-bash setup.sh --agent claude-code --provider anthropic --api-key <KEY> --overwrite-config
+bash setup.sh --agent claude-code --provider anthropic --api-key <KEY> --overwrite-config --keep-existing
 ```
 
-> 切换会重新生成对应 agent 的配置和技能目录，但**不会删除你已有的 raw/ wiki/ 笔记**。
+> 切换会重新生成对应 agent 的配置和技能目录，但**不会删除你已有的 raw/ wiki/ 笔记**；你改过的 `AI_CONFIG.md` 也会原样保留。
 
 卸载某个 agent 的配置：
 

@@ -93,11 +93,11 @@ The setup script handles everything automatically:
 2. **Checks Node.js** — verifies Node.js is installed, offers to install via Homebrew if missing
 3. **Installs the Chosen Agent** — installs the corresponding CLI globally via npm (opencode-ai / @anthropic-ai/claude-code / @openai/codex)
 4. **Installs OpenCLI** — installs the CLI tool for web automation and social media scraping (100+ site adapters)
-5. **Creates Your Vault** — copies the `vault-template/` to your chosen location
+5. **Creates Your Vault** — copies the `vault-template/` to your chosen location; if the folder already exists you can keep your notes and only refresh rules/skills, or rename the old folder as a backup — nothing is ever deleted
 6. **Distributes Skills & Rules** — places skills into the agent-specific directory; generates `AGENTS.md` (claude-code also generates `CLAUDE.md`)
 7. **Configures AI Service** — choose from 6 providers and generate the config file for the chosen agent
-8. **Handles Existing Config** — if the agent config already exists, the script asks before overwriting and creates a backup first
-9. **Sets Up Obsidian Plugin** — generates plugin `data.json` for the chosen agent (opencode → opencode-obsidian; claude-code/codex → claudian)
+8. **Handles Existing Config** — if the agent config already exists, the script asks first and makes a backup; OpenCode / Claude Code / Pi configs only get their model and key updated, other settings are kept
+9. **Sets Up Obsidian Plugin** — writes the claudian plugin `data.json` (OpenCode can switch to the native plugin with `--plugin opencode-obsidian`); existing plugin settings are kept
 
 ### Automation Mode
 
@@ -115,8 +115,10 @@ bash setup.sh --dry-run --non-interactive --vault "$HOME/Desktop/My Knowledge Ba
 For a real non-interactive install, a common flag combination looks like:
 
 ```bash
-bash setup.sh --non-interactive --vault "$HOME/Desktop/My Knowledge Base" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+bash setup.sh --non-interactive --vault "$HOME/Desktop/My Knowledge Base" --provider openai --api-key "<KEY>" --keep-existing --overwrite-config
 ```
+
+> If the folder already exists: `--keep-existing` keeps your notes and only refreshes rules and skills; `--overwrite-existing` renames the old folder as a backup and creates a fresh vault. Neither deletes anything.
 
 ### 🔄 Upgrade & Uninstall
 
@@ -129,7 +131,7 @@ bash scripts/upgrade.sh --agent <your-agent> --vault "$HOME/Desktop/My Knowledge
 # e.g.: bash scripts/upgrade.sh --agent claude-code --vault "$HOME/Desktop/My Knowledge Base"
 ```
 
-> `upgrade.sh` only refreshes `AGENTS.md`/`CLAUDE.md`, skills, and helper scripts; `raw/` `wiki/` `assets/` are left untouched; `AI_CONFIG.md` is backed up first. Omitting `--agent` defaults to opencode.
+> `upgrade.sh` only refreshes `AGENTS.md`/`CLAUDE.md`, skills, and helper scripts; `raw/` `wiki/` `assets/` are left untouched; an `AI_CONFIG.md` you have edited is kept as-is and the new template is saved as `AI_CONFIG.md.new`. Without `--agent`, the agent is detected from the vault (codex / pi must be specified).
 
 To clean up (remove the agent config / plugin config / optionally delete the vault and npm packages):
 

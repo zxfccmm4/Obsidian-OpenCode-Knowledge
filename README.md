@@ -91,11 +91,11 @@ bash scripts/verify.sh
 2. **检查 Node.js**：确认是否已安装，缺失时可引导用 Homebrew 安装
 3. **安装所选 Agent**：通过 npm 全局安装对应的 CLI（opencode-ai / @anthropic-ai/claude-code / @openai/codex）
 4. **安装 OpenCLI**：安装社交媒体采集和网页自动化所需 CLI
-5. **创建你的 Vault**：把 `vault-template/` 复制到你选择的位置
+5. **创建你的 Vault**：把 `vault-template/` 复制到你选择的位置；目录已存在时可以选择「保留笔记，只更新规则和技能」或「旧目录改名备份后新建」，不会删除任何文件
 6. **分发技能与规则**：按所选 agent 把技能放到对应目录，生成 `AGENTS.md`（claude-code 额外生成 `CLAUDE.md`）
 7. **配置 AI 服务**：从 6 个 provider 中选择一个，生成对应 agent 的配置文件
-8. **处理已有配置**：如果检测到已有 agent 配置，会先询问是否覆盖，并在覆盖前自动备份
-9. **生成 Obsidian 插件配置**：按所选 agent 写入插件 `data.json`（opencode → opencode-obsidian；claude-code/codex → claudian）
+8. **处理已有配置**：如果检测到已有 agent 配置，会先询问并自动备份；OpenCode / Claude Code / Pi 的配置只更新模型和 Key，其他设置保留
+9. **生成 Obsidian 插件配置**：写入 claudian 插件的 `data.json`（OpenCode 可用 `--plugin opencode-obsidian` 换成原生插件）；插件里已有的设置会保留
 
 ### 自动化模式
 
@@ -113,8 +113,10 @@ bash setup.sh --dry-run --non-interactive --vault "$HOME/Desktop/我的知识库
 如果要真正的非交互安装，常见参数组合是：
 
 ```bash
-bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provider openai --api-key "<KEY>" --overwrite-existing --overwrite-config
+bash setup.sh --non-interactive --vault "$HOME/Desktop/我的知识库" --provider openai --api-key "<KEY>" --keep-existing --overwrite-config
 ```
+
+> 目录已存在时：`--keep-existing` 保留笔记，只更新规则和技能；`--overwrite-existing` 把旧目录改名备份后再新建。两者都不会删除任何文件。
 
 ### 🔄 升级与卸载
 
@@ -127,7 +129,7 @@ bash scripts/upgrade.sh --agent <你的agent> --vault "$HOME/Desktop/我的知�
 # 例如：bash scripts/upgrade.sh --agent claude-code --vault "$HOME/Desktop/我的知识库"
 ```
 
-> `upgrade.sh` 只刷新 `AGENTS.md`/`CLAUDE.md`、技能、辅助脚本；`raw/` `wiki/` `assets/` 原封不动；`AI_CONFIG.md` 会先备份。不传 `--agent` 时默认 opencode。
+> `upgrade.sh` 只刷新 `AGENTS.md`/`CLAUDE.md`、技能、辅助脚本；`raw/` `wiki/` `assets/` 原封不动；你改过的 `AI_CONFIG.md` 原样保留，新模板另存为 `AI_CONFIG.md.new`。不传 `--agent` 时按 vault 自动识别（codex / pi 需要指定）。
 
 想清理（卸载对应 agent 的配置 / 插件配置 / 可选删除 vault 与 npm 包）：
 
